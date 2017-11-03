@@ -1,6 +1,20 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    
+    <!-- Navbar -->
+    <nav class= "navbar navbar-default navbar-static-top">
+      <div class="container-fluid">
+        <div class= "navbar-header">
+          <a class="navbar-brand" href="#">Bitflow</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">Page 1</a></li>
+          <li><a href="#">Page 2</a></li>
+        </ul>
+      </div>
+    </nav>
+
     <router-view/>
   </div>
 </template>
@@ -16,8 +30,6 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

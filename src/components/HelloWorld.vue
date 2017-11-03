@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="home-content">
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -17,6 +17,7 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
+    <button type="button" class="btn btn-success btn-lg">This is a bootstrap button :)</button>
   </div>
 </template>
 
@@ -33,6 +34,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.home-content {
+  margin: 40px 15px 40px 15px;
+}
+
 h1, h2 {
   font-weight: normal;
 }
