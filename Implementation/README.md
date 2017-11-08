@@ -2,6 +2,7 @@
 
 It is possbible to generate the projeect online under
 * http://editor2.swagger.io/#!/
+
 However that is not recommended as one has no control over package name, artifact- and group-id.
 So what we should use is the swagger-cli which can be downloaded here
 * https://mvnrepository.com/artifact/io.swagger/swagger-codegen-cli/2.2.3
