@@ -13,3 +13,6 @@ Once downloaded use it as follows:
 * o specifies the output directory
 
 In order to run the server with jetty (like described in the generated README file) you have to remove the scope-attribute from 'javax.validation' in the pom file
+
+Analog to this, we can generate the agent API by running:
+* java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger-agent.json --group-id cit.bitflow.backend --artifact-id backend-agent-mgmt --artifact-version 1.0.0 --api-package de.cit.agent.api -l java -o bitflow-agend-api

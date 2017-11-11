@@ -1,0 +1,304 @@
+swagger: '2.0'
+info:
+  description: "Process-Agent-REST-API"
+  version: 1.0.0
+  title: "bitflow-process-agent: REST-API"
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: "sven.carlin@campus.tu-berlin.de"
+  license:
+    name: "Apache 2.0"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: "tba"
+basePath: "/v2"
+tags:
+- name: "pipeline"
+  description: "Operations about pipelines"
+- name: "infos"
+  description: "Common operations"
+schemes:
+- "http"
+paths:
+  /ping:
+    get:
+      tags: 
+      - "infos"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - string
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: string
+            example: "pong"
+  /info:
+    get:
+      tags: 
+      - "infos"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Info"
+  /capabilities:
+    get:
+      tags: 
+      - "infos"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Capability"
+  /pipelines:
+    get:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Return a list of IDs of all pipelines in all states, including failed, finished and killed pipelines'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+            example: [0,1,2,3,4,5]
+  /running:
+    get:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Return a list of IDs of all currently running pipelines.'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int32
+            example: [0,3,4]
+  /pipeline:
+    post:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Return a list of IDs of all currently running pipelines.'
+      parameters:
+      - name: "delay"
+        in: "query"
+        required: false
+        type: string
+        default: "200ms"
+      responses:
+        201:
+          description: "If the subprocess is spawned successfully and does not fail early."
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PipelineResponse"
+        400:
+          description: "If the request body is empty or the delay parameter cannot be parsed"
+        412:
+          description: "If the subprocess cannot be spawned or exits within the defined delay. In the latter case, the response body will also contain the combined standard output and standard error of the process."
+        500:
+          description: "If the server fails to read the request body"
+  /pipeline/{id}:
+    get:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Return a JSON formatted view of the given pipeline. The Errors property can contain hints about how the current Status of the pipeline was reached, but usually the GET /pipeline/:id/out function provides more useful insights.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Statte of the pipeline"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PipelineResponse"
+        400:
+          description: "If the :id part of the URL cannot be parsed to an integer."
+        404:
+          description: "If the given pipeline id does not exist."
+    delete:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Try to kill the given pipeline.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If the pipeline was successfully killed. The response body will be the state of the pipeline, as returned by GET /pipeline/:id."
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PipelineResponse"
+        400:
+          description: "If the :id part of the URL cannot be parsed to an integer."
+        404:
+          description: "If the given pipeline id does not exist."
+        500:
+          description: "If the subprocess could not be killed. In this case the subprocess might still be running and might require manual cleanup (see Current limitations)"
+  /pipeline/{id}/out:
+    get:
+      tags: 
+      - "pipeline"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Return the combined standard output and standard error of the given pipeline.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Statte of the pipeline"
+          schema:
+            type: string
+        400:
+          description: "If the :id part of the URL cannot be parsed to an integer."
+        404:
+          description: "If the given pipeline id does not exist."
+        500:
+          description: "If the output of the pipeline could not be obtained."
+definitions:
+  PipelineResponse:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      Script:
+        type: string
+        example: "localhost:4444 -> output.csv"
+      Status:
+        type: string
+        example: "running"
+      Errors:
+        type: string
+        example: ""
+  Capability:
+    type: object
+    properties:
+      Name:
+        type: string
+        example: "avg"
+      IsFork:
+        type: boolean
+        example: false
+      Description:
+        type: string
+        example: "Add an average metric for every incoming metric. Optional parameter: duration or number of samples. Optional parameters: [window]"
+      RequiredParams:
+        type: array
+        items:
+          type: string
+        example: []
+      OptionalParams:
+        type: array
+        items:
+          type: string
+        example: ["window"]
+  Info:
+    type: object
+    properties:
+      Hostname:
+        type: string
+        example: "worker12"
+      Tags:
+        $ref: "#/definitions/Tag"
+      NumCores:
+        type: integer
+        format: int32
+        example: 6
+      TotalMem:
+        type: integer
+        format: int64
+        example: 456464
+      UsedCpuCores:
+        type: array
+        items:
+          type: number
+          format: double
+        example: [2.3, 4.6, 3.4567]
+      UsedCpu:
+        type: number
+        format: double
+        example: 2.3
+      UsedMem:
+        type: integer
+        format: int64
+        example: 65243
+      NumProcs:
+        type: integer
+        format: int32
+        example: 247
+      Goroutines:
+        type: integer
+        format: int32
+        example: 6
+  Tag:
+    type: object
+    properties:
+      resources:
+        type: string
+        example: "medium"
+      slots:
+        type: string
+        example: "6"
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
