@@ -8,11 +8,21 @@ So what we should use is the swagger-cli which can be downloaded here
 * https://mvnrepository.com/artifact/io.swagger/swagger-codegen-cli/2.2.3
 
 Once downloaded use it as follows:
-* java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id backend-impl --artifact-version 1.0.0 --api-package de.cit.backend.api -l jaxrs -o bitflow-backend
+
+```shell
+java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-api --artifact-version 1.0.0 --api-package de.cit.backend.api -l jaxrs -o bitflow-backend-api
+```
+
 * i specifies the swagger schema-file
 * o specifies the output directory
 
 In order to run the server with jetty (like described in the generated README file) you have to remove the scope-attribute from 'javax.validation' in the pom file
 
 Analog to this, we can generate the agent API by running:
-* java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger-agent.json --group-id cit.bitflow.backend --artifact-id backend-agent-mgmt --artifact-version 1.0.0 --api-package de.cit.agent.api -l java -o bitflow-agend-api
+
+```shell
+java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger-agent.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-agent-api --artifact-version 1.0.0 --api-package de.cit.backend.agent.api -l java -o bitflow-backend-agent-api
+```
+
+
+
