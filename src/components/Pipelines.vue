@@ -5,7 +5,9 @@
         <h1>{{ title }}</h1>
       </div>
       <div class="col-xs-5 add-button-col">
-        <button type="button" class="btn btn-default btn-lg pull-right add-button">Create new pipeline</button>
+        <router-link to="/create">
+          <button type="button" class="btn btn-default btn-lg pull-right add-button">Create new pipeline</button>
+        </router-link>
       </div>
     </div>
     <ul class="preview-items list-group">

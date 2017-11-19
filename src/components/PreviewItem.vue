@@ -7,7 +7,7 @@
 
 <script>
 export default {
-	name: "previewitem",
+	name: "PreviewItem",
 	props: [{'id', 'name'}]
 }
 </script>
