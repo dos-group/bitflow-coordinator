@@ -2,7 +2,7 @@
   <div id="app">
     <header class="header">
       <nav class="inner">
-        <router-link to="/" exact>Home</router-link>
+        <router-link to="/" exact>Pipelines</router-link>
         <router-link to="/top">Top</router-link>
         <router-link to="/new">New</router-link>
         <router-link to="/show">Show</router-link>
@@ -28,8 +28,17 @@ body {
   font-weight: 500;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-top: 55px;
+  padding-top: 75px;
   overflow-y: scroll;
+}
+h1 {
+  font-weight: 500;
+}
+h2 {
+  font-weight: 300;
+}
+a {
+  color: #42b983;
 }
 .header {
   background-color: #42b983;
@@ -41,7 +50,6 @@ body {
   right: 0;
 }
 .header .inner {
-  max-width: 800px;
   box-sizing: border-box;
   margin: 0px 50px;
   padding: 15px 0px;
@@ -64,7 +72,6 @@ body {
   color: #fff;
 }
 .view {
-  max-width: 800px;
   margin: 0px 50px;
   position: relative;
 }
