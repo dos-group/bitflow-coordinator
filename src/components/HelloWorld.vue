@@ -1,5 +1,5 @@
 <template>
-  <div class="home-content">
+  <div>
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -34,9 +34,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.home-content {
-  margin: 40px 15px 40px 15px;
-}
 
 h1, h2 {
   font-weight: normal;
