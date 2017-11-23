@@ -10,7 +10,7 @@ So what we should use is the swagger-cli which can be downloaded here
 Once downloaded use it as follows:
 
 ```shell
-java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-api --artifact-version 1.0.0 --api-package de.cit.backend.api -l jaxrs -o bitflow-backend-api
+java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-api --artifact-version 1.0.0 --api-package de.cit.backend.api --model-package de.cit.backend.api.model -l jaxrs -o bitflow-backend-api
 ```
 
 * i specifies the swagger schema-file
@@ -21,8 +21,17 @@ In order to run the server with jetty (like described in the generated README fi
 Analog to this, we can generate the agent API by running:
 
 ```shell
-java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger-agent.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-agent-api --artifact-version 1.0.0 --api-package de.cit.backend.agent.api -l java -o bitflow-backend-agent-api
+java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger-agent.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-agent-api --artifact-version 1.0.0 --api-package de.cit.backend.agent.api --model-package de.cit.backend.agent.api.model -l java -o bitflow-backend-agent-api
 ```
+
+You can type
+
+```shell
+java -jar .\swagger-codegen-cli-2.2.3.jar help generate
+```
+
+to explore more options.
+
 
 
 
