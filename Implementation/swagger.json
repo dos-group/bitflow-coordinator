@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
-  description: "Process-Agent-REST-API"
+  description: "This file defines all possible communication between bitflow frontend and backend."
   version: 1.0.0
-  title: "bitflow-process-agent: REST-API"
+  title: "Bitflow Backend API"
   termsOfService: 'http://swagger.io/terms/'
   contact:
     email: "sven.carlin@campus.tu-berlin.de"
@@ -27,6 +27,7 @@ paths:
     get:
       tags: 
       - "project"
+      summary: "Query information about the specified project."
       consumes:
         - application/json
         - application/xml
@@ -48,10 +49,90 @@ paths:
           description: "If the user has no access to that projectt"
         404:
           description: "If the project with the given id does not exist."
+  /project/{id}/users:
+    get:
+      tags: 
+      - "project"
+      summary: "Query all users with access to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns all users associated with the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Project infos"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "If the user has no access to that project"
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{projectId}/users/{userId}:
+    delete:
+      tags: 
+      - "project"
+      summary: "Removing a user from the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project or the user with the given id does not exist."
+    post:
+      tags: 
+      - "project"
+      summary: "Adding a user to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        400:
+          description: "User validation failed."
+        404:
+          description: "If the project with the given id does not exist."
   /project/{id}/pipeline:
     get:
       tags: 
       - "pipeline"
+      summary: "Query the specified pipeline."
       consumes:
         - application/json
         - application/xml
@@ -73,10 +154,51 @@ paths:
           description: "If the user has no access to that projectt"
         404:
           description: "If the project with the given id does not exist."
+    post:
+      tags: 
+      - "pipeline"
+      summary: "Create new pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Creates new Pipeline as specified.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Pipeline"
+      responses:
+        400:
+          description: "If pipeline validation failed."
+        404:
+          description: "If the project with the given id does not exist."
+    delete:
+      tags: 
+      - "pipeline"
+      summary: "Delete the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Deletes the pipeline from the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
   /user/{id}:
     get:
       tags: 
       - "users"
+      summary: "Query an existing user."
       consumes:
         - application/json
         - application/xml
@@ -96,10 +218,71 @@ paths:
             $ref: "#/definitions/User"
         404:
           description: "If the project with the given id does not exist."
+    delete:
+      tags: 
+      - "users"
+      summary: "Delete an existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
+    post:
+      tags: 
+      - "users"
+      summary: "Update existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "User validation failed."
+        404:
+          description: "If the project with the given id does not exist."
+  /users:
+    post:
+      tags: 
+      - "users"
+      summary: "Create new user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "User validation failed."
   /info:
     get:
       tags: 
       - "infos"
+      summary: "Query infos about the running process agents."
       consumes:
         - application/json
         - application/xml
