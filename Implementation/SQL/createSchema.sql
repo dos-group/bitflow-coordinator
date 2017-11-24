@@ -20,6 +20,7 @@ Create Table USERDATA(
 --Each project has one 'admin user', the one who created the project
 Create Table PROJECT(
 	ID INT NOT NULL AUTO_INCREMENT,
+	NAME VARCHAR(256) NOT NULL,
 	CREATED_AT DATETIME NOT NULL,
 	CREATE_USER_ID INT NOT NULL,
 	PRIMARY KEY (ID),
