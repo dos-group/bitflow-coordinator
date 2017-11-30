@@ -18,7 +18,15 @@ TODO
 
 ### Creating a security group
 
-TODO
+Creating the security group and then adding rules which allow ssh and icmp from everywhere. In the end check if everything worked.
+
+```shell
+openstack security group create <group-name> --description <description>
+openstack security group rule create <group-name> --protocol tcp --dst-port 22:22 --remote-ip 0.0.0.0/0
+openstack security group rule create <group-name> --protocol icmp
+openstack security group rule list <group-name>
+openstack security group list
+```
 
 ### Create a key pair for SSH-connections
 
@@ -39,8 +47,12 @@ Run the following command (and specify an instance name)
 openstack server create --flavor m1.smaller --image ubuntu-16.04 --security-group bitflow_backend_sec_group --network internal-net --key-name bitflow-backend-key <instanceName>
 ```
 
-For assigning a Floating IP to the created instance I recommend using the Openstack GUI again.
-
+For assigning a Floating IP to the created instance I recommend using the Openstack GUI again or use the following commands.
+```shell
+openstack floating ip create tu-internal
+openstack floating ip list
+openstack server add floating ip <instanceName> <floating-ip>
+```
 
 ## Setting up the instances
 
@@ -52,7 +64,7 @@ Use SSH to connect to the server instance by running (now use your private key g
 ssh -i <path to private key> ubuntu@<instance IP>
 ```
 
-(You can also use PuTTY for the connection)
+(You can also use PuTTY for the connection just remember that putty wants its own key format)
 
 ### Setting up a MySQL database
 
