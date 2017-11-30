@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from '@/components/Login'
+import Projects from '@/components/Projects'
+import Infrastructure from '@/components/Infrastructure'
 import Pipelines from '@/components/Pipelines'
-import CreatePipeline from '@/components/CreatePipeline'
-import Root from '@/components/Root'
+import Editor from '@/components/Editor'
 
 Vue.use(Router)
 
@@ -10,18 +12,28 @@ export default new Router({
   routes: [
   	{
   		path: '/',
-  		name: 'Root',
-  		component: Root
+  		name: 'Login',
+  		component: Login
   	},
     {
-     	path: '/pipelines',
-      	name: 'Pipelines',
-      	component: Pipelines
+      path: '/projects',
+      name: 'Projects',
+      component: Projects
     },
     {
-    	path: '/create',
-    	name: 'CreatePipeline',
-    	component: CreatePipeline
+      path: '/infrastructure',
+      name: 'Infrastructure',
+      component: Infrastructure
+    },
+    {
+     	path: '/pipelines',
+      name: 'Pipelines',
+      component: Pipelines
+    },
+    {
+    	path: '/editor',
+    	name: 'Editor',
+    	component: Editor
     }
   ]
 })

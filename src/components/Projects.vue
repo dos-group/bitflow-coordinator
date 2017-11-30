@@ -1,14 +1,11 @@
 <template>
   <div class="page-content">
-  	<h1>Create</h1>
+  	<h1>Projects</h1>
   </div>
 </template>
 
 <script>
 export default {
-	name: 'CreatePipeline',
-	data() {
-		return {}
-	}
+	name: 'Projects'
 }
 </script>

@@ -5,7 +5,7 @@
         <h1>{{ title }}</h1>
       </div>
       <div class="col-xs-5 add-button-col">
-        <router-link to="/create">
+        <router-link to="/editor">
           <button type="button" class="btn btn-default btn-lg pull-right add-button">Create new pipeline</button>
         </router-link>
       </div>

@@ -2,8 +2,8 @@
   <div id="app">
     <header class="header">
       <nav class="inner">
-        <router-link to="/pipelines">Pipelines</router-link>
-        <router-link to="/create">Create</router-link>
+        <router-link to="/projects">Projects</router-link>
+        <router-link to="/infrastructure">Infrastructure</router-link>
       </nav>
     </header>
     <transition name="fade" mode="out-in">
