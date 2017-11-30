@@ -35,5 +35,6 @@ export default new Router({
     	name: 'Editor',
     	component: Editor
     }
-  ]
+  ],
+  mode: "history"
 })
