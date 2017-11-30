@@ -1,9 +1,10 @@
 Create Table AGENT(
 	ID INT NOT NULL AUTO_INCREMENT,
 	IP_ADDRESS VARCHAR(128) NOT NULL,
+	PORT SMALLINT UNSIGNED NOT NULL,
 	CAPABILITIES VARCHAR(256),
-	STATUS INT NOT NULL,
-	LAST_CHECHED DATETIME,
+	STATUS INT NULL,
+	LAST_CHECKED DATETIME,
 	PRIMARY KEY (ID)
 );
 
@@ -17,7 +18,7 @@ Create Table USERDATA(
 	UNIQUE (NAME)
 );
 
---Each project has one 'admin user', the one who created the project
+-- Each project has one 'admin user', the one who created the project
 Create Table PROJECT(
 	ID INT NOT NULL AUTO_INCREMENT,
 	NAME VARCHAR(256) NOT NULL,
@@ -27,7 +28,7 @@ Create Table PROJECT(
 	FOREIGN KEY (CREATE_USER_ID) REFERENCES USERDATA(ID)
 );
 
---In addition the 'admin user' can add other users to this project, modeled by this JOIN table
+-- In addition the 'admin user' can add other users to this project, modeled by this JOIN table
 Create Table USER_PROJECT(
 	ID INT NOT NULL AUTO_INCREMENT,
 	USER_ID INT NOT NULL,
@@ -37,18 +38,22 @@ Create Table USER_PROJECT(
 	FOREIGN KEY (USER_ID) REFERENCES USERDATA(ID)
 );
 
---Modeled like this, each project contains exactly one pipeline. For now I believe we can make this restriction.
+-- Modeled like this, each project contains exactly one pipeline. For now I believe we can make this restriction.
+-- Status as described in bitflow-process-agent REST-API - GET /pipeline/:id
 Create Table PIPELINE(
 	ID INT NOT NULL AUTO_INCREMENT,
+	AGENT_ID INT NOT NULL,
+	ID_ON_AGENT INT NOT NULL,
 	PROJECT_ID INT NOT NULL,
-	NAME VARCHAR(256),
-	SCRIPT VARCHAR(256), --the actual script, defining this pipeline
+	STATUS VARCHAR(32),
+	SCRIPT VARCHAR(256), -- the actual script, defining this pipeline
 	LAST_CHANGED DATETIME,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (PROJECT_ID) REFERENCES PROJECT(ID)
+	FOREIGN KEY (PROJECT_ID) REFERENCES PROJECT(ID),
+	FOREIGN KEY (AGENT_ID) REFERENCES AGENT(ID)
 );
 
---This table models the pipeline steps, containing one specified algorithm
+-- This table models the pipeline steps, containing one specified algorithm
 Create Table PIPELINE_STEP(
 	ID INT NOT NULL AUTO_INCREMENT,
 	STEP_NUMBER INT NOT NULL,
