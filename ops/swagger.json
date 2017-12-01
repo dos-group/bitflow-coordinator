@@ -1,0 +1,438 @@
+swagger: '2.0'
+info:
+  description: "This file defines all possible communication between bitflow frontend and backend."
+  version: 1.0.0
+  title: "Bitflow Backend API"
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: "sven.carlin@campus.tu-berlin.de"
+  license:
+    name: "Apache 2.0"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: "tba"
+basePath: "/v2"
+tags:
+- name: "project"
+  description: "Operations about projects"
+- name: "pipeline"
+  description: "Operations about pipelines"
+- name: "infos"
+  description: "Common operations"
+- name: "users"
+  description: "Operations regarding user managment"  
+schemes:
+- "http"
+paths:
+  /project/{id}:
+    get:
+      tags: 
+      - "project"
+      summary: "Query information about the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Project infos"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "If the user has no access to that projectt"
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{id}/users:
+    get:
+      tags: 
+      - "project"
+      summary: "Query all users with access to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns all users associated with the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Project infos"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "If the user has no access to that project"
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{projectId}/users/{userId}:
+    delete:
+      tags: 
+      - "project"
+      summary: "Removing a user from the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project or the user with the given id does not exist."
+    post:
+      tags: 
+      - "project"
+      summary: "Adding a user to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        400:
+          description: "User validation failed."
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{id}/pipeline:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Query the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the pipeline from the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            $ref: "#/definitions/Pipeline"
+        400:
+          description: "If the user has no access to that projectt"
+        404:
+          description: "If the project with the given id does not exist."
+    post:
+      tags: 
+      - "pipeline"
+      summary: "Create new pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Creates new Pipeline as specified.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Pipeline"
+      responses:
+        400:
+          description: "If pipeline validation failed."
+        404:
+          description: "If the project with the given id does not exist."
+    delete:
+      tags: 
+      - "pipeline"
+      summary: "Delete the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Deletes the pipeline from the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
+  /user/{id}:
+    get:
+      tags: 
+      - "users"
+      summary: "Query an existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "User infos"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "If the project with the given id does not exist."
+    delete:
+      tags: 
+      - "users"
+      summary: "Delete an existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
+    post:
+      tags: 
+      - "users"
+      summary: "Update existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "User validation failed."
+        404:
+          description: "If the project with the given id does not exist."
+  /users:
+    post:
+      tags: 
+      - "users"
+      summary: "Create new user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "User validation failed."
+  /info:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query infos about the running process agents."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns information about the current backend infrastruccture: A list of available process agents and their current state.'
+      responses:
+        200:
+          description: "Common infos"
+          schema:
+            $ref: "#/definitions/Info"
+definitions:
+  PipelineStep:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      PipelineId:
+        type: integer
+        format: int32
+        example: 10
+      Algorithm:
+        type: string
+        example: "Avg"
+      Successors:
+        type: array
+        items:
+          $ref: "#/definitions/PipelineStep"
+        example: []
+  Pipeline:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      Name:
+        type: string
+        example: "Example Pipeline"
+      Project:
+        $ref: "#/definitions/Project"
+      Sript:
+        type: string
+        example: "Dies -> Das -> Hier -> Und -> Da"
+      LastChanged:
+        type: string
+        format: date-time
+      PipelineSteps:
+        type: array
+        items:
+          $ref: "#/definitions/PipelineStep"
+  User:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 5
+      Name:
+        type: string
+        example: "Achmed Schachbrett"
+      Email:
+        type: string
+        example: "achmed.schachbrett@test.de"
+      RegisteredSince:
+        type: string
+        format: date-time
+  Project:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      Name:
+        type: string
+        example: "Example Project"
+      CreateUser:
+        $ref: "#/definitions/User"
+      CreatedAt:
+        type: string
+        format: date-time
+      Users:
+        type: array
+        items:
+          $ref: "#/definitions/User"
+  Info:
+    type: object
+    properties:
+      NumberOfAgents:
+        type: integer
+        format: int32
+        example: 6
+      NumberOfIdleAgents:
+        type: integer
+        format: int32
+        example: 3
+      Agents:
+        type: array
+        items:
+          $ref: "#/definitions/Agent"
+  Agent:
+    type: object
+    properties:
+      Hostname:
+        type: string
+        example: "worker12"
+      Tags:
+        $ref: "#/definitions/Tag"
+      NumCores:
+        type: integer
+        format: int32
+        example: 6
+      TotalMem:
+        type: integer
+        format: int64
+        example: 456464
+      UsedCpuCores:
+        type: array
+        items:
+          type: number
+          format: double
+        example: [2.3, 4.6, 3.4567]
+      UsedCpu:
+        type: number
+        format: double
+        example: 2.3
+      UsedMem:
+        type: integer
+        format: int64
+        example: 65243
+      NumProcs:
+        type: integer
+        format: int32
+        example: 247
+      Goroutines:
+        type: integer
+        format: int32
+        example: 6
+  Tag:
+    type: object
+    properties:
+      resources:
+        type: string
+        example: "medium"
+      slots:
+        type: string
+        example: "6"
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
