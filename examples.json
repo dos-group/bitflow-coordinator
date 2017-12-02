@@ -1,0 +1,13 @@
+{  
+  "name": "Max Mustermann",
+  "email": "foo@bar.de",
+  "password": "p455w0rd",
+  "registeredSince": "149800"
+}
+
+{  
+  "name": "A fancy test project",
+  "creatorId": 0,
+  "createdAt": "149801",
+  "users": [{}]
+}

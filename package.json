@@ -1,0 +1,28 @@
+{
+  "name": "bitflow-mock-master-backend",
+  "version": "1.0.0",
+  "description": "mock for the bitflow master backend for temporary use in the frontend ",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "prod": "node src/index.js",
+    "start": "npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.tubit.tu-berlin.de:cit-master-project/bitflow-mock-master-backend.git"
+  },
+  "author": "Christian Hoffmann",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.33",
+    "mongoose": "4.10.8",
+    "mongoose-integer": "^0.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
