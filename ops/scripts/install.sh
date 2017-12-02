@@ -8,4 +8,4 @@ sudo npm install -g pm2
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 sudo cp ${DIR}/nginx.conf /etc/nginx/sites-available/default
-pm2 restart npm --name "bitflow-frontend" -- start
+pm2 start npm --name "bitflow-frontend" -- start
