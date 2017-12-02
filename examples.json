@@ -11,3 +11,10 @@
   "createdAt": "149801",
   "users": [{}]
 }
+
+{  
+  "name": "A fancy test pipeline",
+  "projectId": 0,
+  "lastChanged": "149802",
+  "pipelineSteps": [{}]
+}

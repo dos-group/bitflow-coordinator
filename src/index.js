@@ -62,24 +62,32 @@ app.options('/pipelinestep/:id', cors());
 
 // Insert infrastructure mock data
 (function () {
-	let info = new Info(mockObjects.testInfo);
-	info.save((err, i) => {
-		if (err || i === null) {
-			console.log(err);
-		} else {
-			console.log('Created info mock object');
-		}
+	Info.find().exec((err, existingInfo) => {
+		existingInfo.forEach(info => info.remove());
+		let info = new Info(mockObjects.testInfo);
+		info.save((err, i) => {
+			if (err || i === null) {
+				console.log(err);
+			}
+		});
 	});
 }());
 
 (function () {
-	let step = new PipelineStep(mockObjects.testStep);
-	step.save((err, s) => {
-		if (err || s === null) {
-			console.log(err);
-		} else {
-			console.log('Created pipeline step mock object')
-		}
+	PipelineStep.find().exec((err, existingSteps) => {
+		existingSteps.forEach(step => step.remove());
+		let steps = [
+			new PipelineStep(mockObjects.testStep0),
+			new PipelineStep(mockObjects.testStep1),
+			new PipelineStep(mockObjects.testStep2)
+		]
+		steps.forEach(step => {
+			step.save((err, s) => {
+				if (err || s === null) {
+					console.log(err);
+				}
+			});
+		});
 	});
 }());
 
@@ -307,7 +315,7 @@ app.get('/pipelinesteps', (req, res) => {
 });
 
 // get a single pipeline step
-app.get('/pipelinesteps/:id', (req, res) => {
+app.get('/pipelinestep/:id', (req, res) => {
 	PipelineStep.findOne({'id': req.params.id}).exec((err, step) => {
 		if (err || step === null) {
 			res.status(404).end();

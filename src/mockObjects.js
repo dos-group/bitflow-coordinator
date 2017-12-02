@@ -22,14 +22,33 @@ let testInfo = {
 	}]
 }
 
-let testStep = {
+let testStep0 = {
 	'id': 0,
 	'pipelineId': 0,
-	'successors': [1, 2],
+	'successors': [1],
+	'algorithm': 'Input',
+	'isInputStep': true,
+	'isOutputStep': false,
+	'inputTechnologies': ['tcp', 'csv', 'binary']
+}
+
+let testStep1 = {
+	'id': 1,
+	'pipelineId': 0,
+	'successors': [2],
 	'algorithm': 'Avg',
 	'arguments': ['arg1', 'arg2'],
 	'isInputStep': false,
-	'isOutputStep': false,
+	'isOutputStep': false
 }
 
-module.exports = { testInfo, testStep};
+let testStep2 = {
+	'id': 2,
+	'pipelineId': 0,
+	'algorithm': 'Output',
+	'isInputStep': false,
+	'isOutputStep': true,
+	'outputTechnologies': ['tcp', 'csv', 'binary']
+}
+
+module.exports = { testInfo, testStep0, testStep1, testStep2 };
