@@ -10,7 +10,7 @@ So what we should use is the swagger-cli which can be downloaded here
 Once downloaded use it as follows:
 
 ```shell
-java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-api --artifact-version 1.0.0 --api-package de.cit.backend.api --model-package de.cit.backend.api.model -l jaxrs -o bitflow-backend-api
+java -jar .\swagger-codegen-cli-2.2.3.jar generate -i swagger.json --group-id cit.bitflow.backend --artifact-id bitflow-backend-api --artifact-version 1.0.0 --api-package de.cit.backend.api --model-package de.cit.backend.api.model -l jaxrs-resteasy -o bitflow-backend-api
 ```
 
 * i specifies the swagger schema-file

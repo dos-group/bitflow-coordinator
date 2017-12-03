@@ -258,7 +258,7 @@ paths:
           description: "User validation failed."
         404:
           description: "If the project with the given id does not exist."
-  /users:
+  /user:
     post:
       tags: 
       - "users"
