@@ -10,7 +10,7 @@ info:
     name: "Apache 2.0"
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: "tba"
-basePath: "/v2"
+basePath: "/bitflow"
 tags:
 - name: "project"
   description: "Operations about projects"
@@ -258,7 +258,7 @@ paths:
           description: "User validation failed."
         404:
           description: "If the project with the given id does not exist."
-  /users:
+  /user:
     post:
       tags: 
       - "users"
