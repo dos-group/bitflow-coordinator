@@ -49,6 +49,13 @@
         </plugins>
     </build>
     <dependencies>
+		<dependency>
+            <groupId>cit.bitflow.backend</groupId>
+            <artifactId>bitflow-backend-mgmt</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+		
+		
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>

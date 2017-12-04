@@ -6,18 +6,17 @@ import javax.persistence.Persistence;
 
 public class PersistenceManager {
 
-	private static PersistenceManager pm;
-	private EntityManager em;
+	private static EntityManager em;
 	
-	private PersistenceManager(){
+	private static EntityManager init(){
 		EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("bitflow-backend-mgmt");
-    	em = emFactory.createEntityManager();
+    	return emFactory.createEntityManager();
 	}
 	
-	public static PersistenceManager instance(){
-		if(pm == null){
-			pm = new PersistenceManager();
+	public static EntityManager instance(){
+		if(em == null){
+			em = init();
 		}
-		return pm;
+		return em;
 	}
 }

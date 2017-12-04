@@ -7,6 +7,7 @@ import de.cit.backend.api.model.*;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.services.DummyDataProvider;
 
 import java.util.List;
 import de.cit.backend.api.NotFoundException;
@@ -16,13 +17,13 @@ import java.io.InputStream;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-03T19:12:56.421+01:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
 public class ProjectApiServiceImpl extends ProjectApiService {
       @Override
       public Response projectIdGet(Integer id,SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+      return Response.ok().entity(DummyDataProvider.getDummyProject()).build();
   }
       @Override
       public Response projectIdPipelineDelete(Integer id,SecurityContext securityContext)
