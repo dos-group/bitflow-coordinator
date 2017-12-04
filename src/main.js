@@ -5,7 +5,8 @@ import App from './App'
 import router from './router'
 require('../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss')
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.prototype.$baseUrl = 'http://35.227.97.73:4000';
 
 /* eslint-disable no-new */
 new Vue({
