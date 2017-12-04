@@ -32,6 +32,63 @@ java -jar .\swagger-codegen-cli-2.2.3.jar help generate
 
 to explore more options.
 
+##Modifications to the generated backend-API
+
+After generating all code for the backend-API we have to modify it, to access the backend-mgmt module.
+
+###Add Dependencies
+First add the following dependencies to the bitflow-backend-apis pom file (inside the dependencies-tag):
+
+
+```shell
+<dependency>
+    <groupId>cit.bitflow.backend</groupId>
+    <artifactId>bitflow-backend-mgmt</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>javax</groupId>
+    <artifactId>javaee-api</artifactId>
+    <version>7.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+###Include Mgmt-EJBs
+After that we can include the mgmt-module. The only classes to be modified should be these inside src/main/java/de/cit/backend/api/impl.
+This package should include classes named like 'UserApiServiceImpl'. Since the mgmt-module is using EJB-API, we will inject the business logic using a lookup.
+
+Implement a Constructor to the ApiServiceImpl which looks like the following:
+
+```java
+    protected IUserService userService;
+	
+    public UserApiServiceImpl() {
+        Context ctx;
+        try {
+            ctx = new InitialContext();
+            userService = (IUserService)ctx.lookup("java:module/UserService");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+```
+
+The corresponding EJB inside the mgmt-module then looks like this:
+
+```java
+@Stateless
+@Local(IUserService.class)
+public class UserService implements IUserService {
+
+```
+and the interface
+
+```java
+@Local
+public interface IUserService {
+```
+
 
 
 
