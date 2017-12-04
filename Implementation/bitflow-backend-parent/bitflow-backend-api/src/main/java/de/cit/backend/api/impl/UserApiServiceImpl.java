@@ -35,6 +35,7 @@ public class UserApiServiceImpl extends UserApiService {
 			e.printStackTrace();
 		}
 	}
+	
       @Override
       public Response userIdDelete(Integer id,SecurityContext securityContext)
       throws NotFoundException {

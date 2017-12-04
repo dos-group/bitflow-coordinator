@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+@Deprecated
 public class PersistenceManager {
 
 	private static EntityManager em;
