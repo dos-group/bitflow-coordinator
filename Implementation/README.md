@@ -32,11 +32,11 @@ java -jar .\swagger-codegen-cli-2.2.3.jar help generate
 
 to explore more options.
 
-##Modifications to the generated backend-API
+## Modifications to the generated backend-API
 
 After generating all code for the backend-API we have to modify it, to access the backend-mgmt module.
 
-###Add Dependencies
+### Add Dependencies
 First add the following dependencies to the bitflow-backend-apis pom file (inside the dependencies-tag):
 
 
@@ -54,7 +54,7 @@ First add the following dependencies to the bitflow-backend-apis pom file (insid
 </dependency>
 ```
 
-###Include Mgmt-EJBs
+### Include Mgmt-EJBs
 After that we can include the mgmt-module. The only classes to be modified should be these inside src/main/java/de/cit/backend/api/impl.
 This package should include classes named like 'UserApiServiceImpl'. Since the mgmt-module is using EJB-API, we will inject the business logic using a lookup.
 
@@ -74,7 +74,7 @@ Implement a Constructor to the ApiServiceImpl which looks like the following:
     }
 ```
 
-The corresponding EJB inside the mgmt-module then looks like this:
+The corresponding EJB inside the mgmt-module then should be defnied like this:
 
 ```java
 @Stateless
@@ -82,7 +82,7 @@ The corresponding EJB inside the mgmt-module then looks like this:
 public class UserService implements IUserService {
 
 ```
-and the interface
+and its interface
 
 ```java
 @Local
