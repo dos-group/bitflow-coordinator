@@ -1,6 +1,8 @@
 package de.cit.backend.mgmt.services;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.cit.backend.persistence.model.Pipeline;
 import de.cit.backend.persistence.model.Project;
@@ -24,15 +26,18 @@ public class DummyDataProvider {
 		project.setCreatedAt(new Date());
 		project.setName("TestProject");
 		project.setUserdata(getDummyUser());
+		Set<Pipeline> set = new HashSet<>();
+		set.add(getDummyPipeline(1,1));
+		project.setPipelines(set);
 		
 		return project;
 	}
 	
-	public static Pipeline getDummyPipeline(){
+	public static Pipeline getDummyPipeline(int id, int step){
 		Pipeline pipe = new Pipeline();
-		pipe.setId(1);
-		pipe.setStepNumber(1);
-		pipe.setProject(getDummyProject());
+		pipe.setId(id);
+		pipe.setStepNumber(step);
+		pipe.setScript("Bitflow-script");
 		pipe.setStatus("running");
 		
 		return pipe;

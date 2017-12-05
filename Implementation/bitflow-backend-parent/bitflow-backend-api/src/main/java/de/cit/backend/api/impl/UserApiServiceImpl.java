@@ -1,25 +1,18 @@
 package de.cit.backend.api.impl;
 
-import de.cit.backend.api.*;
-import de.cit.backend.api.model.*;
+import java.util.Date;
 
-
-import de.cit.backend.api.model.User;
-import de.cit.backend.mgmt.services.DummyDataProvider;
-import de.cit.backend.mgmt.services.interfaces.IUserService;
-
-import java.util.List;
-import de.cit.backend.api.NotFoundException;
-
-import java.io.InputStream;
-
-import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+
+import de.cit.backend.api.ApiResponseMessage;
+import de.cit.backend.api.NotFoundException;
+import de.cit.backend.api.UserApiService;
+import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
 public class UserApiServiceImpl extends UserApiService {
@@ -46,8 +39,13 @@ public class UserApiServiceImpl extends UserApiService {
       public Response userIdGet(Integer id,SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-    	  userService.testCall();
-      return Response.ok().entity(DummyDataProvider.getDummyUser()).build();
+    	  User user = new User();
+    	  user.setEmail("cit@est.de");
+    	  user.setID(1);
+    	  user.setName("TestUser");
+    	  user.setRegisteredSince(new Date());
+    	  
+      return Response.ok().entity(user).build();
   }
       @Override
       public Response userIdPost(User body,SecurityContext securityContext)
