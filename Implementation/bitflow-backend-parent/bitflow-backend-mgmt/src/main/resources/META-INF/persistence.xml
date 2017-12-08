@@ -16,4 +16,16 @@
 
 		</properties>
 	</persistence-unit>
+	
+	<persistence-unit name="bitflow-backend-mgmt-server">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:jboss/datasources/CitDS</jta-data-source>
+
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+			<property name="hibernate.show_sql"   value="false" />
+			<property name="hibernate.format_sql" value="false" />
+
+		</properties>
+	</persistence-unit>
 </persistence>

@@ -44,7 +44,6 @@ public class UserApiServiceImpl extends UserApiService {
     	  user.setID(1);
     	  user.setName("TestUser");
     	  user.setRegisteredSince(new Date());
-    	  
       return Response.ok().entity(user).build();
   }
       @Override

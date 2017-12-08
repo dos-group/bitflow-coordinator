@@ -89,6 +89,66 @@ and its interface
 public interface IUserService {
 ```
 
+## Additional Configurations
 
+### Wildfly
+
+In order to configure the persistence context, you'll have to apply the following changes to your wildfly instance.
+First open the `standalone.xml` inside `standalone/configuration` and search for the datasource subsystem.
+Add the following lines:
+
+```xml
+<datasources>
+	...
+	<datasource jndi-name="java:jboss/datasources/CitDS" pool-name="CitDS">
+		<connection-url>jdbc:mysql://10.200.2.71:3306/citBitDB?useSSL=false</connection-url>
+        <driver>mysql</driver>
+        <pool>
+			<min-pool-size>10</min-pool-size>
+			<max-pool-size>20</max-pool-size>
+			<prefill>true</prefill>
+        </pool>
+        <security>
+			<user-name>admin</user-name>
+            <password>admin</password>
+        </security>
+    </datasource>
+    <drivers>
+		<driver name="mysql" module="com.mysql.driver">
+			<driver-class>com.mysql.jdbc.Driver</driver-class>
+		</driver>
+		...
+	</drivers>
+</datasources>
+```
+
+Then you have to provide the jdbc driver for that datasource.
+Inside the `modules`-folder of your wildfly installation create the path `system\layers\base\com\mysql\driver\main`.
+Drop the jdbc jar file in here. We are using MySQL, please use `mysql-connector-java-5.1.38.jar`
+(you can download it [here](https://mvnrepository.com/artifact/mysql/mysql-connector-java/5.1.38)).
+Additionaly create a file named `module.xml` with the following content:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.5" name="com.mysql.driver">
+	<resources>
+		<resource-root path="mysql-connector-java-5.1.38.jar" />
+	</resources>
+	<dependencies>
+		<module name="javax.api"/>
+		<module name="javax.transaction.api"/>
+	</dependencies>
+</module>
+```
+
+The database access is now fully setup, you can use it in your applications persistence.xml by declaring:
+
+```xml
+<persistence-unit name="<your persistence name>">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:jboss/datasources/CitDS</jta-data-source><!-- As defined in the standalone.xml -->
+		
+		<!-- ... additional properties -->
+```
 
 

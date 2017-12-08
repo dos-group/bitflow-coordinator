@@ -15,15 +15,10 @@ public class UserService implements IUserService {
 
 	@EJB
 	private PersistenceService persistence;
-	//FIXME persistence access not working yet
 	
 	@PostConstruct
 	public void init(){
 		System.out.println("PostConstruct - UserService");
-	}
-	
-	public void testCall(){
-		System.out.println("UserService is up and running");
 	}
 	
 	@Override

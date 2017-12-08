@@ -7,6 +7,5 @@ import de.cit.backend.persistence.model.Userdata;
 @Local
 public interface IUserService {
 
-	void testCall();
 	Userdata loadUser(int userId);
 }
