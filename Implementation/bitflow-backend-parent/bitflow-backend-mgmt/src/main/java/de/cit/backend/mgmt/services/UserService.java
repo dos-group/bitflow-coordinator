@@ -25,7 +25,22 @@ public class UserService implements IUserService {
 	public UserDTO loadUser(int userId) {
 		return persistence.findUser(userId);
 	}
-	//TODO
-	
 
+	@Override
+	public void createUser(UserDTO user) {
+		persistence.createUser(user);
+	}
+
+	
+	@Override
+	public void updateUser(int userId, UserDTO user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteUser(int userId) {
+		// TODO Auto-generated method stub
+		
+	}
 }

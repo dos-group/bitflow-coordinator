@@ -21,7 +21,7 @@ public class AgentMonitoringService {
 	@EJB
 	private PersistenceService persistence;
 	
-	@Schedule(second="*/30", minute="*", hour="*")
+	@Schedule(second="*/30", minute="*", hour="*", persistent=false)
 	public void monitorAgents(){
 		//read agents from db
 		List<AgentDTO> agents = persistence.findAgents();

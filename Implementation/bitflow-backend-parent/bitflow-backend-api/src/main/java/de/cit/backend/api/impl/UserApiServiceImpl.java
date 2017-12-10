@@ -53,7 +53,12 @@ public class UserApiServiceImpl extends UserApiService {
       @Override
       public Response userPost(User body,SecurityContext securityContext)
       throws NotFoundException {
-      // do some magic!
-      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+      
+    	  try{
+    		  userService.createUser(new UserConverter().convertToBackend(body));
+    	  }catch (Exception e) {
+			return Response.status(400).build();
+		}
+      return Response.ok().build();
   }
 }

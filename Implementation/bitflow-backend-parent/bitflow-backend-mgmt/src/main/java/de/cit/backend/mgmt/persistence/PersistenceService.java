@@ -32,4 +32,8 @@ public class PersistenceService {
 
 		return (List<AgentDTO>) query.getResultList();
 	}
+
+	public void createUser(UserDTO user) {
+		entityManager.persist(user);
+	}
 }
