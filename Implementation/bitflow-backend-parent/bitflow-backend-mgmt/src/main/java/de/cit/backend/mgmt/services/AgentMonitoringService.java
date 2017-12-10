@@ -12,7 +12,7 @@ import de.cit.backend.agent.ApiClient;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.InfosApi;
 import de.cit.backend.mgmt.persistence.PersistenceService;
-import de.cit.backend.mgmt.persistence.model.Agent;
+import de.cit.backend.mgmt.persistence.model.AgentDTO;
 
 @Singleton
 @Startup
@@ -24,13 +24,13 @@ public class AgentMonitoringService {
 	@Schedule(second="*/30", minute="*", hour="*")
 	public void monitorAgents(){
 		//read agents from db
-		List<Agent> agents = persistence.findAgents();
+		List<AgentDTO> agents = persistence.findAgents();
 		
 		//query the status of each agent
 		ApiClient conf = Configuration.getDefaultApiClient();
 		conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
 
-		for(Agent agent : agents){
+		for(AgentDTO agent : agents){
 			conf.setBasePath("http://" + agent.getIpAddress() + ":" + agent.getPort());
 			InfosApi agentApi = new InfosApi(conf);
 			

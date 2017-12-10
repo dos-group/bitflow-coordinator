@@ -26,28 +26,28 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "USERDATA", catalog = "citBitDB", uniqueConstraints = @UniqueConstraint(columnNames = "NAME"))
-public class User implements java.io.Serializable {
+public class UserDTO implements java.io.Serializable {
 
 	private Integer id;
 	private String email;
 	private String password;
 	private String name;
 	private Date registeredSince;
-	private List<Project> joinedProjects = new ArrayList<>();
-	private List<Project> createdProjects = new ArrayList<>();
+	private List<ProjectDTO> joinedProjects = new ArrayList<>();
+	private List<ProjectDTO> createdProjects = new ArrayList<>();
 
-	public User() {
+	public UserDTO() {
 	}
 
-	public User(String email, String password, String name, Date registeredSince) {
+	public UserDTO(String email, String password, String name, Date registeredSince) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.registeredSince = registeredSince;
 	}
 
-	public User(String email, String password, String name, Date registeredSince, List<Project> joinedProjects,
-			List<Project> projects) {
+	public UserDTO(String email, String password, String name, Date registeredSince, List<ProjectDTO> joinedProjects,
+			List<ProjectDTO> projects) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
@@ -109,20 +109,20 @@ public class User implements java.io.Serializable {
     @JoinTable(name="USER_PROJECT",
     	joinColumns= @JoinColumn(name="USER_ID", referencedColumnName="ID"),
     	inverseJoinColumns= @JoinColumn(name="PROJECT_ID", referencedColumnName="ID"))
-	public List<Project> getJoinedProjects() {
+	public List<ProjectDTO> getJoinedProjects() {
 		return this.joinedProjects;
 	}
 
-	public void setJoinedProjects(List<Project> joinedProjects) {
+	public void setJoinedProjects(List<ProjectDTO> joinedProjects) {
 		this.joinedProjects = joinedProjects;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userdata")
-	public List<Project> getCreatedProjects() {
+	public List<ProjectDTO> getCreatedProjects() {
 		return this.createdProjects;
 	}
 
-	public void setCreatedProjects(List<Project> projects) {
+	public void setCreatedProjects(List<ProjectDTO> projects) {
 		this.createdProjects = projects;
 	}
 

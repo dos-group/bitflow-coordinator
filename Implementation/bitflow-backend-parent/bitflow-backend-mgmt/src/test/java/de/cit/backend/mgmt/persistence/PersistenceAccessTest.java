@@ -7,8 +7,8 @@ import javax.persistence.EntityManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.cit.backend.mgmt.persistence.model.Project;
-import de.cit.backend.mgmt.persistence.model.User;
+import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.UserDTO;
 
 public class PersistenceAccessTest {
 
@@ -21,7 +21,7 @@ public class PersistenceAccessTest {
 	
 	@Test
 	public void findUserTest(){
-		User user = em.find(User.class, 1);
+		UserDTO user = em.find(UserDTO.class, 1);
 		System.out.println(user.getCreatedProjects().size());
 		System.out.println(user.getJoinedProjects().size());
 		System.out.println(user.getEmail());
@@ -29,7 +29,7 @@ public class PersistenceAccessTest {
 	
 	@Test
 	public void findProjectTest(){
-		Project pro = em.find(Project.class, 1);
+		ProjectDTO pro = em.find(ProjectDTO.class, 1);
 		
 		System.out.println(pro.getName());
 		System.out.println(pro.getUserdata().getName());

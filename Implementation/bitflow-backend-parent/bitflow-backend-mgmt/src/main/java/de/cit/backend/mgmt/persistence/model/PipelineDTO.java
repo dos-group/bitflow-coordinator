@@ -24,24 +24,24 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PIPELINE", catalog = "citBitDB")
-public class Pipeline implements java.io.Serializable {
+public class PipelineDTO implements java.io.Serializable {
 
 	private Integer id;
-	private Project project;
+	private ProjectDTO project;
 	private String status;
 	private String script;
 	private Date lastChanged;
-	private List<PipelineStep> pipelineSteps = new ArrayList();
+	private List<PipelineStepDTO> pipelineSteps = new ArrayList();
 
-	public Pipeline() {
+	public PipelineDTO() {
 	}
 
-	public Pipeline(Project project, String script) {
+	public PipelineDTO(ProjectDTO project, String script) {
 		this.project = project;
 		this.script = script;
 	}
 
-	public Pipeline(Project project, String status, String script, Date lastChanged, List<PipelineStep> pipelineSteps) {
+	public PipelineDTO(ProjectDTO project, String status, String script, Date lastChanged, List<PipelineStepDTO> pipelineSteps) {
 		this.project = project;
 		this.status = status;
 		this.script = script;
@@ -63,11 +63,11 @@ public class Pipeline implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PROJECT_ID", nullable = false)
-	public Project getProject() {
+	public ProjectDTO getProject() {
 		return this.project;
 	}
 
-	public void setProject(Project project) {
+	public void setProject(ProjectDTO project) {
 		this.project = project;
 	}
 
@@ -100,11 +100,11 @@ public class Pipeline implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pipeline")
-	public List<PipelineStep> getPipelineSteps() {
+	public List<PipelineStepDTO> getPipelineSteps() {
 		return this.pipelineSteps;
 	}
 
-	public void setPipelineSteps(List<PipelineStep> pipelineSteps) {
+	public void setPipelineSteps(List<PipelineStepDTO> pipelineSteps) {
 		this.pipelineSteps = pipelineSteps;
 	}
 

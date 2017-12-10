@@ -8,8 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import de.cit.backend.mgmt.persistence.model.Agent;
-import de.cit.backend.mgmt.persistence.model.User;
+import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.UserDTO;
 
 @Stateless
 public class PersistenceService {
@@ -22,14 +22,14 @@ public class PersistenceService {
 		System.out.println("PostConstruct - PersistenceService");
 	}
 	
-	public User findUser(int userId){
-		return entityManager.find(User.class, userId);
+	public UserDTO findUser(int userId){
+		return entityManager.find(UserDTO.class, userId);
 	}
 	
-	public List<Agent> findAgents(){
+	public List<AgentDTO> findAgents(){
 		String sqlQuery = "SELECT * FROM AGENT";
-		Query query = entityManager.createNativeQuery(sqlQuery, Agent.class);
+		Query query = entityManager.createNativeQuery(sqlQuery, AgentDTO.class);
 
-		return (List<Agent>) query.getResultList();
+		return (List<AgentDTO>) query.getResultList();
 	}
 }

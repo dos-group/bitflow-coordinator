@@ -25,26 +25,26 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PROJECT", catalog = "citBitDB")
-public class Project implements java.io.Serializable {
+public class ProjectDTO implements java.io.Serializable {
 
 	private Integer id;
-	private User userdata;
+	private UserDTO userdata;
 	private String name;
 	private Date createdAt;
-	private List<User> projectMembers = new ArrayList<>();
-	private List<Pipeline> pipelines = new ArrayList<>();
+	private List<UserDTO> projectMembers = new ArrayList<>();
+	private List<PipelineDTO> pipelines = new ArrayList<>();
 
-	public Project() {
+	public ProjectDTO() {
 	}
 
-	public Project(User userdata, String name, Date createdAt) {
+	public ProjectDTO(UserDTO userdata, String name, Date createdAt) {
 		this.userdata = userdata;
 		this.name = name;
 		this.createdAt = createdAt;
 	}
 
-	public Project(User userdata, String name, Date createdAt, List<User> users,
-			List<Pipeline> pipelines) {
+	public ProjectDTO(UserDTO userdata, String name, Date createdAt, List<UserDTO> users,
+			List<PipelineDTO> pipelines) {
 		this.userdata = userdata;
 		this.name = name;
 		this.createdAt = createdAt;
@@ -66,11 +66,11 @@ public class Project implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CREATE_USER_ID", nullable = false)
-	public User getUserdata() {
+	public UserDTO getUserdata() {
 		return this.userdata;
 	}
 
-	public void setUserdata(User userdata) {
+	public void setUserdata(UserDTO userdata) {
 		this.userdata = userdata;
 	}
 
@@ -94,20 +94,20 @@ public class Project implements java.io.Serializable {
 	}
 
 	@ManyToMany(mappedBy="joinedProjects")
-	public List<User> getProjectMembers() {
+	public List<UserDTO> getProjectMembers() {
 		return this.projectMembers;
 	}
 
-	public void setProjectMembers(List<User> users) {
+	public void setProjectMembers(List<UserDTO> users) {
 		this.projectMembers = users;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-	public List<Pipeline> getPipelines() {
+	public List<PipelineDTO> getPipelines() {
 		return this.pipelines;
 	}
 
-	public void setPipelines(List<Pipeline> pipelines) {
+	public void setPipelines(List<PipelineDTO> pipelines) {
 		this.pipelines = pipelines;
 	}
 

@@ -19,27 +19,27 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "PIPELINE_STEP", catalog = "citBitDB")
-public class PipelineStep implements java.io.Serializable {
+public class PipelineStepDTO implements java.io.Serializable {
 
 	private Integer id;
-	private Agent agent;
-	private Pipeline pipeline;
+	private AgentDTO agent;
+	private PipelineDTO pipeline;
 	private int stepNumber;
 	private String script;
 	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId = new HashSet<PipelineStepSuccessors>(0);
 	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId = new HashSet<PipelineStepSuccessors>(0);
 
-	public PipelineStep() {
+	public PipelineStepDTO() {
 	}
 
-	public PipelineStep(Agent agent, Pipeline pipeline, int stepNumber, String script) {
+	public PipelineStepDTO(AgentDTO agent, PipelineDTO pipeline, int stepNumber, String script) {
 		this.agent = agent;
 		this.pipeline = pipeline;
 		this.stepNumber = stepNumber;
 		this.script = script;
 	}
 
-	public PipelineStep(Agent agent, Pipeline pipeline, int stepNumber, String script,
+	public PipelineStepDTO(AgentDTO agent, PipelineDTO pipeline, int stepNumber, String script,
 			Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId,
 			Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId) {
 		this.agent = agent;
@@ -64,21 +64,21 @@ public class PipelineStep implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AGENT_ID", nullable = false)
-	public Agent getAgent() {
+	public AgentDTO getAgent() {
 		return this.agent;
 	}
 
-	public void setAgent(Agent agent) {
+	public void setAgent(AgentDTO agent) {
 		this.agent = agent;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PIPELINE_ID", nullable = false)
-	public Pipeline getPipeline() {
+	public PipelineDTO getPipeline() {
 		return this.pipeline;
 	}
 
-	public void setPipeline(Pipeline pipeline) {
+	public void setPipeline(PipelineDTO pipeline) {
 		this.pipeline = pipeline;
 	}
 

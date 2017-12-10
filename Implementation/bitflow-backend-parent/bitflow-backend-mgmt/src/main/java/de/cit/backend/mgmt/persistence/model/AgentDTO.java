@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "AGENT", catalog = "citBitDB")
-public class Agent implements java.io.Serializable {
+public class AgentDTO implements java.io.Serializable {
 
 	private Integer id;
 	private String ipAddress;
@@ -28,16 +28,16 @@ public class Agent implements java.io.Serializable {
 	private Integer status;
 	private Date lastChecked;
 
-	public Agent() {
+	public AgentDTO() {
 	}
 
-	public Agent(String ipAddress, short port) {
+	public AgentDTO(String ipAddress, short port) {
 		this.ipAddress = ipAddress;
 		this.port = port;
 	}
 
-	public Agent(String ipAddress, short port, String capabilities, Integer status, Date lastChecked,
-			Set<PipelineStep> pipelineSteps) {
+	public AgentDTO(String ipAddress, short port, String capabilities, Integer status, Date lastChecked,
+			Set<PipelineStepDTO> pipelineSteps) {
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.capabilities = capabilities;

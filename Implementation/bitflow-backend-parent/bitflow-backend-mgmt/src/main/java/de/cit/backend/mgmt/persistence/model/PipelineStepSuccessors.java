@@ -21,13 +21,13 @@ import javax.persistence.UniqueConstraint;
 public class PipelineStepSuccessors implements java.io.Serializable {
 
 	private Integer id;
-	private PipelineStep pipelineStepByStepId;
-	private PipelineStep pipelineStepBySuccessorId;
+	private PipelineStepDTO pipelineStepByStepId;
+	private PipelineStepDTO pipelineStepBySuccessorId;
 
 	public PipelineStepSuccessors() {
 	}
 
-	public PipelineStepSuccessors(PipelineStep pipelineStepByStepId, PipelineStep pipelineStepBySuccessorId) {
+	public PipelineStepSuccessors(PipelineStepDTO pipelineStepByStepId, PipelineStepDTO pipelineStepBySuccessorId) {
 		this.pipelineStepByStepId = pipelineStepByStepId;
 		this.pipelineStepBySuccessorId = pipelineStepBySuccessorId;
 	}
@@ -46,21 +46,21 @@ public class PipelineStepSuccessors implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "STEP_ID", nullable = false)
-	public PipelineStep getPipelineStepByStepId() {
+	public PipelineStepDTO getPipelineStepByStepId() {
 		return this.pipelineStepByStepId;
 	}
 
-	public void setPipelineStepByStepId(PipelineStep pipelineStepByStepId) {
+	public void setPipelineStepByStepId(PipelineStepDTO pipelineStepByStepId) {
 		this.pipelineStepByStepId = pipelineStepByStepId;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "SUCCESSOR_ID", nullable = false)
-	public PipelineStep getPipelineStepBySuccessorId() {
+	public PipelineStepDTO getPipelineStepBySuccessorId() {
 		return this.pipelineStepBySuccessorId;
 	}
 
-	public void setPipelineStepBySuccessorId(PipelineStep pipelineStepBySuccessorId) {
+	public void setPipelineStepBySuccessorId(PipelineStepDTO pipelineStepBySuccessorId) {
 		this.pipelineStepBySuccessorId = pipelineStepBySuccessorId;
 	}
 
