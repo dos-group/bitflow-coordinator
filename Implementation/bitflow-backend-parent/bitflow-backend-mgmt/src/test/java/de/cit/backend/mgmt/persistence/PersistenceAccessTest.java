@@ -7,8 +7,7 @@ import javax.persistence.EntityManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.cit.backend.mgmt.persistence.PersistenceManager;
-import de.cit.backend.persistence.model.Userdata;
+import de.cit.backend.mgmt.persistence.model.Userdata;
 
 public class PersistenceAccessTest {
 

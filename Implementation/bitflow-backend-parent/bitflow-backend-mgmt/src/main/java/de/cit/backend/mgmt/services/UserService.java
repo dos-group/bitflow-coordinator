@@ -6,8 +6,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import de.cit.backend.mgmt.persistence.PersistenceService;
+import de.cit.backend.mgmt.persistence.model.Userdata;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
-import de.cit.backend.persistence.model.Userdata;
 
 @Stateless
 @Local(IUserService.class)

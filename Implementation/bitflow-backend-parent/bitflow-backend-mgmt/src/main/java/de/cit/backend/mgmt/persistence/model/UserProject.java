@@ -1,5 +1,5 @@
-package de.cit.backend.persistence.model;
-// Generated 04.12.2017 14:01:29 by Hibernate Tools 5.2.3.Final
+package de.cit.backend.mgmt.persistence.model;
+// Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -1,16 +1,15 @@
-package de.cit.backend.persistence.model;
-// Generated 04.12.2017 14:01:29 by Hibernate Tools 5.2.3.Final
+package de.cit.backend.mgmt.persistence.model;
+// Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
+
+import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,7 +27,6 @@ public class Agent implements java.io.Serializable {
 	private String capabilities;
 	private Integer status;
 	private Date lastChecked;
-	private Set<Pipeline> pipelines = new HashSet<Pipeline>(0);
 
 	public Agent() {
 	}
@@ -39,13 +37,12 @@ public class Agent implements java.io.Serializable {
 	}
 
 	public Agent(String ipAddress, short port, String capabilities, Integer status, Date lastChecked,
-			Set<Pipeline> pipelines) {
+			Set<PipelineStep> pipelineSteps) {
 		this.ipAddress = ipAddress;
 		this.port = port;
 		this.capabilities = capabilities;
 		this.status = status;
 		this.lastChecked = lastChecked;
-		this.pipelines = pipelines;
 	}
 
 	@Id
@@ -105,14 +102,4 @@ public class Agent implements java.io.Serializable {
 	public void setLastChecked(Date lastChecked) {
 		this.lastChecked = lastChecked;
 	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "agent")
-	public Set<Pipeline> getPipelines() {
-		return this.pipelines;
-	}
-
-	public void setPipelines(Set<Pipeline> pipelines) {
-		this.pipelines = pipelines;
-	}
-
 }

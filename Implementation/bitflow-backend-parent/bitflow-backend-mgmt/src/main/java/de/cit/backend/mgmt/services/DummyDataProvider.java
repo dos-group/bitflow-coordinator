@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.cit.backend.persistence.model.Pipeline;
-import de.cit.backend.persistence.model.Project;
-import de.cit.backend.persistence.model.Userdata;
+import de.cit.backend.mgmt.persistence.model.Pipeline;
+import de.cit.backend.mgmt.persistence.model.Project;
+import de.cit.backend.mgmt.persistence.model.Userdata;
 
 public class DummyDataProvider {
 
@@ -36,7 +36,6 @@ public class DummyDataProvider {
 	public static Pipeline getDummyPipeline(int id, int step){
 		Pipeline pipe = new Pipeline();
 		pipe.setId(id);
-		pipe.setStepNumber(step);
 		pipe.setScript("Bitflow-script");
 		pipe.setStatus("running");
 		
