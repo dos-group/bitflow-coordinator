@@ -6,7 +6,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import de.cit.backend.mgmt.persistence.PersistenceService;
-import de.cit.backend.mgmt.persistence.model.Userdata;
+import de.cit.backend.mgmt.persistence.model.User;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 @Stateless
@@ -22,7 +22,7 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
-	public Userdata loadUser(int userId) {
+	public User loadUser(int userId) {
 		return null;
 	}
 	//TODO

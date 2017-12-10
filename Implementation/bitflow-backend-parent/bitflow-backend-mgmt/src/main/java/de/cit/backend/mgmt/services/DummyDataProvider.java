@@ -6,12 +6,12 @@ import java.util.Set;
 
 import de.cit.backend.mgmt.persistence.model.Pipeline;
 import de.cit.backend.mgmt.persistence.model.Project;
-import de.cit.backend.mgmt.persistence.model.Userdata;
+import de.cit.backend.mgmt.persistence.model.User;
 
 public class DummyDataProvider {
 
-	public static Userdata getDummyUser(){
-		Userdata user = new Userdata();
+	public static User getDummyUser(){
+		User user = new User();
 		user.setId(1);
 		user.setEmail("cit@test.de");
 		user.setName("TestUser");
@@ -28,7 +28,7 @@ public class DummyDataProvider {
 		project.setUserdata(getDummyUser());
 		Set<Pipeline> set = new HashSet<>();
 		set.add(getDummyPipeline(1,1));
-		project.setPipelines(set);
+//		project.setPipelines(set);
 		
 		return project;
 	}

@@ -27,9 +27,10 @@ public class AgentMonitoringService {
 		List<Agent> agents = persistence.findAgents();
 		
 		//query the status of each agent
+		ApiClient conf = Configuration.getDefaultApiClient();
+		conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
+
 		for(Agent agent : agents){
-			ApiClient conf = Configuration.getDefaultApiClient();
-			conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
 			conf.setBasePath("http://" + agent.getIpAddress() + ":" + agent.getPort());
 			InfosApi agentApi = new InfosApi(conf);
 			

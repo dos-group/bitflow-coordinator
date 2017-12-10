@@ -1,14 +1,16 @@
 package de.cit.backend.mgmt.persistence.model;
 // Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,7 +31,7 @@ public class Pipeline implements java.io.Serializable {
 	private String status;
 	private String script;
 	private Date lastChanged;
-	private Set<PipelineStep> pipelineSteps = new HashSet<PipelineStep>(0);
+	private List<PipelineStep> pipelineSteps = new ArrayList();
 
 	public Pipeline() {
 	}
@@ -39,7 +41,7 @@ public class Pipeline implements java.io.Serializable {
 		this.script = script;
 	}
 
-	public Pipeline(Project project, String status, String script, Date lastChanged, Set<PipelineStep> pipelineSteps) {
+	public Pipeline(Project project, String status, String script, Date lastChanged, List<PipelineStep> pipelineSteps) {
 		this.project = project;
 		this.status = status;
 		this.script = script;
@@ -98,11 +100,11 @@ public class Pipeline implements java.io.Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pipeline")
-	public Set<PipelineStep> getPipelineSteps() {
+	public List<PipelineStep> getPipelineSteps() {
 		return this.pipelineSteps;
 	}
 
-	public void setPipelineSteps(Set<PipelineStep> pipelineSteps) {
+	public void setPipelineSteps(List<PipelineStep> pipelineSteps) {
 		this.pipelineSteps = pipelineSteps;
 	}
 

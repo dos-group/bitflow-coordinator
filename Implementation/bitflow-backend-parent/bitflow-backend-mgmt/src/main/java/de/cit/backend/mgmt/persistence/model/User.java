@@ -1,15 +1,20 @@
 package de.cit.backend.mgmt.persistence.model;
 // Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,34 +26,34 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "USERDATA", catalog = "citBitDB", uniqueConstraints = @UniqueConstraint(columnNames = "NAME"))
-public class Userdata implements java.io.Serializable {
+public class User implements java.io.Serializable {
 
 	private Integer id;
 	private String email;
 	private String password;
 	private String name;
 	private Date registeredSince;
-	private Set<UserProject> userProjects = new HashSet<UserProject>(0);
-	private Set<Project> projects = new HashSet<Project>(0);
+	private List<Project> joinedProjects = new ArrayList<>();
+	private List<Project> createdProjects = new ArrayList<>();
 
-	public Userdata() {
+	public User() {
 	}
 
-	public Userdata(String email, String password, String name, Date registeredSince) {
+	public User(String email, String password, String name, Date registeredSince) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.registeredSince = registeredSince;
 	}
 
-	public Userdata(String email, String password, String name, Date registeredSince, Set<UserProject> userProjects,
-			Set<Project> projects) {
+	public User(String email, String password, String name, Date registeredSince, List<Project> joinedProjects,
+			List<Project> projects) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.registeredSince = registeredSince;
-		this.userProjects = userProjects;
-		this.projects = projects;
+		this.joinedProjects = joinedProjects;
+		this.createdProjects = projects;
 	}
 
 	@Id
@@ -100,22 +105,25 @@ public class Userdata implements java.io.Serializable {
 		this.registeredSince = registeredSince;
 	}
 
+	@ManyToMany
+    @JoinTable(name="USER_PROJECT",
+    	joinColumns= @JoinColumn(name="USER_ID", referencedColumnName="ID"),
+    	inverseJoinColumns= @JoinColumn(name="PROJECT_ID", referencedColumnName="ID"))
+	public List<Project> getJoinedProjects() {
+		return this.joinedProjects;
+	}
+
+	public void setJoinedProjects(List<Project> joinedProjects) {
+		this.joinedProjects = joinedProjects;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userdata")
-	public Set<UserProject> getUserProjects() {
-		return this.userProjects;
+	public List<Project> getCreatedProjects() {
+		return this.createdProjects;
 	}
 
-	public void setUserProjects(Set<UserProject> userProjects) {
-		this.userProjects = userProjects;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "userdata")
-	public Set<Project> getProjects() {
-		return this.projects;
-	}
-
-	public void setProjects(Set<Project> projects) {
-		this.projects = projects;
+	public void setCreatedProjects(List<Project> projects) {
+		this.createdProjects = projects;
 	}
 
 }

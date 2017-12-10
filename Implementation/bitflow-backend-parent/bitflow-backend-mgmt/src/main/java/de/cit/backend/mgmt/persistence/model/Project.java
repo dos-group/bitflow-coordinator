@@ -1,16 +1,19 @@
 package de.cit.backend.mgmt.persistence.model;
 // Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -25,27 +28,27 @@ import javax.persistence.TemporalType;
 public class Project implements java.io.Serializable {
 
 	private Integer id;
-	private Userdata userdata;
+	private User userdata;
 	private String name;
 	private Date createdAt;
-	private Set<UserProject> userProjects = new HashSet<UserProject>(0);
-	private Set<Pipeline> pipelines = new HashSet<Pipeline>(0);
+	private List<User> projectMembers = new ArrayList<>();
+	private List<Pipeline> pipelines = new ArrayList<>();
 
 	public Project() {
 	}
 
-	public Project(Userdata userdata, String name, Date createdAt) {
+	public Project(User userdata, String name, Date createdAt) {
 		this.userdata = userdata;
 		this.name = name;
 		this.createdAt = createdAt;
 	}
 
-	public Project(Userdata userdata, String name, Date createdAt, Set<UserProject> userProjects,
-			Set<Pipeline> pipelines) {
+	public Project(User userdata, String name, Date createdAt, List<User> users,
+			List<Pipeline> pipelines) {
 		this.userdata = userdata;
 		this.name = name;
 		this.createdAt = createdAt;
-		this.userProjects = userProjects;
+		this.projectMembers = users;
 		this.pipelines = pipelines;
 	}
 
@@ -63,11 +66,11 @@ public class Project implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CREATE_USER_ID", nullable = false)
-	public Userdata getUserdata() {
+	public User getUserdata() {
 		return this.userdata;
 	}
 
-	public void setUserdata(Userdata userdata) {
+	public void setUserdata(User userdata) {
 		this.userdata = userdata;
 	}
 
@@ -90,21 +93,21 @@ public class Project implements java.io.Serializable {
 		this.createdAt = createdAt;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-	public Set<UserProject> getUserProjects() {
-		return this.userProjects;
+	@ManyToMany(mappedBy="joinedProjects")
+	public List<User> getProjectMembers() {
+		return this.projectMembers;
 	}
 
-	public void setUserProjects(Set<UserProject> userProjects) {
-		this.userProjects = userProjects;
+	public void setProjectMembers(List<User> users) {
+		this.projectMembers = users;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "project")
-	public Set<Pipeline> getPipelines() {
+	public List<Pipeline> getPipelines() {
 		return this.pipelines;
 	}
 
-	public void setPipelines(Set<Pipeline> pipelines) {
+	public void setPipelines(List<Pipeline> pipelines) {
 		this.pipelines = pipelines;
 	}
 

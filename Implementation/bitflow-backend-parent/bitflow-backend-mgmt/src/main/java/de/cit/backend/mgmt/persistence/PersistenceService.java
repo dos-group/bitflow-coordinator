@@ -9,7 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import de.cit.backend.mgmt.persistence.model.Agent;
-import de.cit.backend.mgmt.persistence.model.Userdata;
+import de.cit.backend.mgmt.persistence.model.User;
 
 @Stateless
 public class PersistenceService {
@@ -22,8 +22,8 @@ public class PersistenceService {
 		System.out.println("PostConstruct - PersistenceService");
 	}
 	
-	public Userdata findUser(int userId){
-		return entityManager.find(Userdata.class, userId);
+	public User findUser(int userId){
+		return entityManager.find(User.class, userId);
 	}
 	
 	public List<Agent> findAgents(){
