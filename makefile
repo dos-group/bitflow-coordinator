@@ -5,7 +5,7 @@ deploy: scp-files restart
 monitor:
 	ssh -i ops/tub-cit-frontend.key ubuntu@${FRONTEND} "pm2 show bitflow-frontend"
 
-npm-install: scp-files
+npm-install:
 	ssh -i ops/tub-cit-frontend.key ubuntu@${FRONTEND} "./scripts/npm-f3-install.sh"
 
 restart:
@@ -13,3 +13,6 @@ restart:
 
 scp-files:
 	scp -r -i ops/tub-cit-frontend.key build config src static index.html package.json ops/scripts ubuntu@${FRONTEND}:/home/ubuntu
+
+swagger:
+	bootprint openapi ops/swagger.yaml ops/scripts/swagger

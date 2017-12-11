@@ -10,7 +10,7 @@ info:
     name: "Apache 2.0"
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 host: "tba"
-basePath: "/v2"
+basePath: "/bitflow"
 tags:
 - name: "project"
   description: "Operations about projects"
@@ -19,13 +19,13 @@ tags:
 - name: "infos"
   description: "Common operations"
 - name: "users"
-  description: "Operations regarding user managment"  
+  description: "Operations regarding user managment"
 schemes:
 - "http"
 paths:
   /project/{id}:
     get:
-      tags: 
+      tags:
       - "project"
       summary: "Query information about the specified project."
       consumes:
@@ -51,7 +51,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{id}/users:
     get:
-      tags: 
+      tags:
       - "project"
       summary: "Query all users with access to the specified project."
       consumes:
@@ -79,7 +79,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{projectId}/users/{userId}:
     delete:
-      tags: 
+      tags:
       - "project"
       summary: "Removing a user from the specified project."
       consumes:
@@ -103,7 +103,7 @@ paths:
         404:
           description: "If the project or the user with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "project"
       summary: "Adding a user to the specified project."
       consumes:
@@ -130,7 +130,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{id}/pipeline:
     get:
-      tags: 
+      tags:
       - "pipeline"
       summary: "Query the specified pipeline."
       consumes:
@@ -155,7 +155,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "pipeline"
       summary: "Create new pipeline."
       consumes:
@@ -170,13 +170,18 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/Pipeline"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
       responses:
         400:
           description: "If pipeline validation failed."
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags: 
+      tags:
       - "pipeline"
       summary: "Delete the specified pipeline."
       consumes:
@@ -196,7 +201,7 @@ paths:
           description: "If the project with the given id does not exist."
   /user/{id}:
     get:
-      tags: 
+      tags:
       - "users"
       summary: "Query an existing user."
       consumes:
@@ -219,7 +224,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags: 
+      tags:
       - "users"
       summary: "Delete an existing user."
       consumes:
@@ -238,7 +243,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "users"
       summary: "Update existing user."
       consumes:
@@ -253,14 +258,19 @@ paths:
         required: true
         schema:
           $ref: "#/definitions/User"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
       responses:
         400:
           description: "User validation failed."
         404:
           description: "If the project with the given id does not exist."
-  /users:
+  /user:
     post:
-      tags: 
+      tags:
       - "users"
       summary: "Create new user."
       consumes:
@@ -280,7 +290,7 @@ paths:
           description: "User validation failed."
   /info:
     get:
-      tags: 
+      tags:
       - "infos"
       summary: "Query infos about the running process agents."
       consumes:

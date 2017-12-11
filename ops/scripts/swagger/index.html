@@ -9,7 +9,7 @@
 <div class="container">
     <h1>Bitflow Backend API</h1>
     <p class="sw-info">
-        Base URL: <span class="sw-info-basePath">/v2</span>,
+        Base URL: <span class="sw-info-basePath">/bitflow</span>,
         Version: <span class="sw-info-version">1.0.0</span>,     <a href="http://swagger.io" class="sw-external-doc">Find out more about Swagger</a>
     
     </p>
@@ -138,7 +138,7 @@
         </td>
                     </tr>
                     <tr>
-                        <td><a href="#operation--users-post">POST /users</a></td>
+                        <td><a href="#operation--user-post">POST /user</a></td>
                         <td><p>Create new user.</p>
         </td>
                     </tr>
@@ -540,6 +540,36 @@
                             </div></div>
                                         </div>
                             </section>        
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                id
+                                            </td>
+                                            <td></td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>    <span class="json-property-format">(int32)</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
                     
                         <section class="sw-responses">
                                 <p><span class="label label-default">application/json</span> 
@@ -911,6 +941,65 @@
                 </div>
             </div>
         
+        <span id="path--user"></span>
+            <div id="operation--user-post" class="swagger--panel-operation-post panel">
+                <div class="panel-heading">
+                    <div class="operation-summary">Create new user.</div>
+                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/user</strong></h3>
+                        Tags:
+                            <a href="#tag-users">users</a>
+                </div>
+                <div class="panel-body">
+                    <section class="sw-operation-description">
+                        <p>Returns the specified user.</p>
+            
+                    </section>
+            
+                        
+                            <section class="sw-request-body">
+                                
+                                    <p><span class="label label-default">application/json</span> <span class="label label-default">application/xml</span> 
+                        </p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p></p>
+                                            </div>
+                                            <div class="col-md-6 sw-request-model">
+                            <div  class="panel panel-definition">
+                                <div class="panel-body">
+                                            <a class="json-schema-ref" href="#/definitions/User">User</a>
+                                </div>
+                            </div></div>
+                                        </div>
+                            </section>        
+                    
+                        <section class="sw-responses">
+                                <p><span class="label label-default">application/json</span> 
+                    </p>
+                    
+                            <dl>
+                                    <dt class="sw-response-400">
+                                        400 Bad Request
+                                    
+                                    </dt>
+                                    <dd class="sw-response-400">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <p>User validation failed.</p>
+                                            
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                
+                                                <div class="col-md-6 sw-response-model">
+                                            </div>
+                                            
+                                            </div>                </dd>
+                            </dl>
+                        </section>
+                </div>
+            </div>
+        
         <span id="path--user--id-"></span>
             <div id="operation--user--id--delete" class="swagger--panel-operation-delete panel">
                 <div class="panel-heading">
@@ -1115,6 +1204,36 @@
                             </div></div>
                                         </div>
                             </section>        
+                        <section class="sw-request-params">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th class="sw-param-name"></th>
+                                    <th class="sw-param-description"></th>
+                                    <th class="sw-param-type"></th>
+                                    <th class="sw-param-data-type"></th>
+                                    <th class="sw-param-annotation"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <tr>
+                                            <td>
+                                                id
+                                            </td>
+                                            <td></td>
+                                            <td>path</td>
+                                            <td>
+                                        <span class="json-property-type">integer</span>    <span class="json-property-format">(int32)</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        
+                                            </td>
+                                            <td>
+                                                    <span class="json-property-required"></span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </section>
                     
                         <section class="sw-responses">
                                 <p><span class="label label-default">application/json</span> 
@@ -1146,65 +1265,6 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <p>If the project with the given id does not exist.</p>
-                                            
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                
-                                                <div class="col-md-6 sw-response-model">
-                                            </div>
-                                            
-                                            </div>                </dd>
-                            </dl>
-                        </section>
-                </div>
-            </div>
-        
-        <span id="path--users"></span>
-            <div id="operation--users-post" class="swagger--panel-operation-post panel">
-                <div class="panel-heading">
-                    <div class="operation-summary">Create new user.</div>
-                    <h3 class="panel-title"><span class="operation-name">POST</span> <strong>/users</strong></h3>
-                        Tags:
-                            <a href="#tag-users">users</a>
-                </div>
-                <div class="panel-body">
-                    <section class="sw-operation-description">
-                        <p>Returns the specified user.</p>
-            
-                    </section>
-            
-                        
-                            <section class="sw-request-body">
-                                
-                                    <p><span class="label label-default">application/json</span> <span class="label label-default">application/xml</span> 
-                        </p>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <p></p>
-                                            </div>
-                                            <div class="col-md-6 sw-request-model">
-                            <div  class="panel panel-definition">
-                                <div class="panel-body">
-                                            <a class="json-schema-ref" href="#/definitions/User">User</a>
-                                </div>
-                            </div></div>
-                                        </div>
-                            </section>        
-                    
-                        <section class="sw-responses">
-                                <p><span class="label label-default">application/json</span> 
-                    </p>
-                    
-                            <dl>
-                                    <dt class="sw-response-400">
-                                        400 Bad Request
-                                    
-                                    </dt>
-                                    <dd class="sw-response-400">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <p>User validation failed.</p>
                                             
                                                 </div>
                                             </div>
