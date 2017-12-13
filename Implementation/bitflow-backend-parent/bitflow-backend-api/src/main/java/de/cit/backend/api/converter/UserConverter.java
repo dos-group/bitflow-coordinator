@@ -6,6 +6,10 @@ import de.cit.backend.mgmt.persistence.model.UserDTO;
 public class UserConverter implements Converter<UserDTO, User>{
 
 	public UserDTO convertToBackend(User user) {
+		if(user == null){
+			return null;
+		}
+		
 		UserDTO userDto = new UserDTO();
 		
 		userDto.setId(user.getID());
@@ -16,6 +20,10 @@ public class UserConverter implements Converter<UserDTO, User>{
 	}
 
 	public User convertToFrontend(UserDTO userDto) {
+		if(userDto == null){
+			return null;
+		}
+		
 		User user = new User();
 		
 		user.setID(userDto.getId());

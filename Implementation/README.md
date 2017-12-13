@@ -151,4 +151,40 @@ The database access is now fully setup, you can use it in your applications pers
 		<!-- ... additional properties -->
 ```
 
+### Logging configuration`
+
+The wildfly already comes with build-in logging capabilities.
+To configure a new logging class for the application, add the following to your `standalone.xml`:
+
+```xml
+<subsystem xmlns="urn:jboss:domain:logging:3.0">
+	<periodic-rotating-file-handler name="APP_FILE" autoflush="true">
+		<formatter>
+			<named-formatter name="PATTERN"/>
+        </formatter>
+        <file relative-to="jboss.server.log.dir" path="application.log"/>
+        <suffix value=".yyyy-MM-dd"/>
+        <append value="true"/>
+    </periodic-rotating-file-handler>
+	
+	<logger category="de.cit.backend">
+		<level name="DEBUG"/>
+		<handlers>
+			<handler name="APP_FILE"/>
+		</handlers>
+    </logger>
+	
+	<!-- ... -->
+	
+</subsystem>
+```
+
+This creates a separate log file containing only those logs created by the application.
+You should make use of the logger by calling
+
+```java
+private static final Logger log = Logger.getLogger(ProjectService.class);
+log.info("Log message");
+```
+
 
