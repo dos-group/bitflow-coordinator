@@ -3,19 +3,38 @@ package de.cit.backend.api.impl;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
+import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
 public class ProjectApiServiceImpl extends ProjectApiService {
+	
+protected IProjectService projectService;
+	
+	public ProjectApiServiceImpl() {
+		Context ctx;
+		try {
+			ctx = new InitialContext();
+			projectService = (IProjectService) ctx.lookup("java:module/ProjectService");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+	}
+	
       @Override
       public Response projectIdGet(Integer id,SecurityContext securityContext)
       throws NotFoundException {
@@ -32,7 +51,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
     	  pro.setID(1);
     	  pro.setName("TestProject");
     	  
-      return Response.ok().entity(pro).build();
+    	  ProjectDTO project = projectService.loadProject(id);
+    	  if(project == null){
+    		  return Response.status(404).build();
+    	  }
+    	  
+      return Response.ok().entity(new ProjectConverter().convertToFrontend(project)).build();
   }
       @Override
       public Response projectIdPipelineDelete(Integer id,SecurityContext securityContext)

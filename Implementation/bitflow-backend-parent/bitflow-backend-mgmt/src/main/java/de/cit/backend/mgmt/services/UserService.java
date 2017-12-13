@@ -5,6 +5,8 @@ import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 
+import org.jboss.logging.Logger;
+
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
@@ -13,12 +15,14 @@ import de.cit.backend.mgmt.services.interfaces.IUserService;
 @Local(IUserService.class)
 public class UserService implements IUserService {
 
+	private static final Logger log = Logger.getLogger(UserService.class);
+	
 	@EJB
 	private PersistenceService persistence;
 	
 	@PostConstruct
 	public void init(){
-		System.out.println("PostConstruct - UserService");
+		log.info("EJB initialized");
 	}
 	
 	@Override

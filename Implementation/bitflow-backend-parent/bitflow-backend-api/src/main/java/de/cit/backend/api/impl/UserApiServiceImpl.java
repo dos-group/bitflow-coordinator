@@ -53,7 +53,6 @@ public class UserApiServiceImpl extends UserApiService {
       @Override
       public Response userPost(User body,SecurityContext securityContext)
       throws NotFoundException {
-      
     	  try{
     		  userService.createUser(new UserConverter().convertToBackend(body));
     	  }catch (Exception e) {

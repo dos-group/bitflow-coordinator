@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -25,7 +27,7 @@ public class AgentDTO implements java.io.Serializable {
 	private String ipAddress;
 	private short port;
 	private String capabilities;
-	private Integer status;
+	private AgentState status;
 	private Date lastChecked;
 
 	public AgentDTO() {
@@ -36,7 +38,7 @@ public class AgentDTO implements java.io.Serializable {
 		this.port = port;
 	}
 
-	public AgentDTO(String ipAddress, short port, String capabilities, Integer status, Date lastChecked,
+	public AgentDTO(String ipAddress, short port, String capabilities, AgentState status, Date lastChecked,
 			Set<PipelineStepDTO> pipelineSteps) {
 		this.ipAddress = ipAddress;
 		this.port = port;
@@ -85,11 +87,12 @@ public class AgentDTO implements java.io.Serializable {
 	}
 
 	@Column(name = "STATUS")
-	public Integer getStatus() {
+	@Enumerated(EnumType.ORDINAL)
+	public AgentState getStatus() {
 		return this.status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(AgentState status) {
 		this.status = status;
 	}
 
