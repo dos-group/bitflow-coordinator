@@ -30,3 +30,6 @@ INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `script`)
 
 -- Example Pipeline Succession
 INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (1, 2);
+
+-- Configuration
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the agents availability (in seconds)", "BITFLOW_MONITOR_INTERVAL", "30");

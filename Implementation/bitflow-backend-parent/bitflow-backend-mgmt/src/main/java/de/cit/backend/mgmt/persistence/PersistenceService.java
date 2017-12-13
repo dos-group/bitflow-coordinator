@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 
@@ -44,5 +45,14 @@ public class PersistenceService {
 
 	public ProjectDTO findProject(int projectId) {
 		return entityManager.find(ProjectDTO.class, projectId);
+	}
+
+	public List<AgentDTO> findAgentsByState(AgentState state) {
+		String hqlQuery = "SELECT agent FROM AgentDTO agent WHERE agent.status = :status";
+		Query query = entityManager.createQuery(hqlQuery);
+		query.setParameter("status", state);
+		
+
+		return (List<AgentDTO>) query.getResultList();
 	}
 }
