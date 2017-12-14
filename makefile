@@ -16,3 +16,10 @@ scp-files:
 
 swagger:
 	bootprint openapi ops/swagger.yaml ops/scripts/swagger
+
+test-production:
+	npm run build
+	echo "FROM kyma/docker-nginx\nCOPY dist/ /var/www\nCMD 'nginx'" > Dockerfile
+	docker build -t bitflow .
+	rm Dockerfile
+	docker run -p 80:80 bitflow
