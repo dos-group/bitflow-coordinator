@@ -1,10 +1,10 @@
 <template>
   <div class="page-content">
     <div class="row">
-      <div class="col-xs-7">
+      <div class="col-sm-8">
         <h1>{{ title }}</h1>
       </div>
-      <div class="col-xs-5">
+      <div class="col-sm-4">
         <router-link to="/editor">
           <button type="button" class="btn btn-success btn-lg float-right add-button">Create new pipeline</button>
         </router-link>
@@ -20,7 +20,6 @@
         </div>
       </li>
     </ul>
-    <!--debug output {{pipelines}}-->
   </div>
 </template>
 
@@ -38,7 +37,7 @@ export default {
   async created() {
     try {
       const response = await axios.get(this.$baseUrl + '/pipelines');
-      this.pipelines = response.data;
+      this.pipelines = response.data; //filter matching projectIds
     } catch (e) {
       this.errors.push(e);
     }

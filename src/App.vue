@@ -88,6 +88,10 @@ a {
   margin: 10px 0px 10px 0px; 
   padding: 15px 20px 10px 20px;
 }
+.list-item-link {
+  color: #000;
+  font-size: 1.25em;
+}
 .action-button {
   margin-top: 10px;
 }

@@ -24,7 +24,11 @@
 						class="btn btn-warning btn-md float-right action-button edit-button"
 						@click="selectedId = item.id"
 					>Edit</b-btn>
-					<div><h4>{{ item.name }}</h4></div>
+					<div>
+						<router-link :to="{path: '/projects/' + item.id + '/pipelines'}" class="list-item-link">
+							{{ item.name }}
+						</router-link>
+					</div>
 					<div>created at: {{ item.createdAt }}</div>
 				</div>
 			</li>
