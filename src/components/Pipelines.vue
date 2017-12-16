@@ -4,17 +4,17 @@
       <div class="col-xs-7">
         <h1>{{ title }}</h1>
       </div>
-      <div class="col-xs-5 add-button-col">
+      <div class="col-xs-5">
         <router-link to="/editor">
-          <button type="button" class="btn btn-default btn-lg pull-right add-button">Create new pipeline</button>
+          <button type="button" class="btn btn-success btn-lg float-right add-button">Create new pipeline</button>
         </router-link>
       </div>
     </div>
     <ul class="list-items list-group">
       <li v-for="item in pipelines">
         <div class="list-item list-group-item">
-          <button type="button" class="btn btn-danger btn-md pull-right action-button">Delete</button>
-          <button type="button" class="btn btn-warning btn-md pull-right action-button edit-button">Edit</button>
+          <button type="button" class="btn btn-danger btn-md float-right action-button">Delete</button>
+          <button type="button" class="btn btn-warning btn-md float-right action-button edit-button">Edit</button>
           <div><h4>{{ item.name }}</h4></div>
           <div>last changed: {{ item.lastChanged }}</div>
         </div>
