@@ -5,23 +5,25 @@
 				<h1>{{ title }}</h1>
 			</div>
 			<div class="col-sm-4">
-				<b-btn v-b-modal.add-project-modal type="button" class="btn btn-success btn-lg float-right add-button">
-					Create new project
-				</b-btn>
+				<b-btn v-b-modal.add-project-modal 
+					type="button" 
+					class="btn btn-success btn-lg float-right add-button"
+				>Create new project</b-btn>
 			</div>
 		</div>
 		<ul class="list-items list-group">
 			<li v-for="item in projects">
 				<div class="list-item list-group-item">
 					<b-btn v-b-modal.delete-project-modal 
-					type="button" 
-					class="btn btn-danger btn-md float-right action-button" 
-					@click="selectedId = item.id">
-						Delete
-					</b-btn>
-					<b-btn disabled type="button" class="btn btn-warning btn-md float-right action-button edit-button">
-						Edit
-					</b-btn>
+						type="button" 
+						class="btn btn-danger btn-md float-right action-button" 
+						@click="selectedId = item.id"
+					>Delete</b-btn>
+					<b-btn v-b-modal.edit-project-modal 
+						type="button" 
+						class="btn btn-warning btn-md float-right action-button edit-button"
+						@click="selectedId = item.id"
+					>Edit</b-btn>
 					<div><h4>{{ item.name }}</h4></div>
 					<div>created at: {{ item.createdAt }}</div>
 				</div>
@@ -30,14 +32,31 @@
 
 		<!-- modals -->
 
-		<b-modal id="add-project-modal" ref="createModal" title="New Project" @ok="handleOk" @shown="clearName">
+		<b-modal 
+			id="add-project-modal" 
+			ref="createModal" 
+			title="New Project" 
+			@ok="createProject" 
+			@shown="clearName"
+		>
+    	<form @submit.stop.prevent="handleSubmit">
+        <b-form-input type="text" placeholder="New Project Name" v-model="name"></b-form-input>
+      </form>
+  	</b-modal>
+
+		<b-modal 
+			id="edit-project-modal" 
+			ref="updateModal" 
+			title="Edit Project" 
+			@ok="updateProject(selectedId)" 
+			@shown="clearName"
+		>
     	<form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"></b-form-input>
       </form>
   	</b-modal>
 
 		<b-modal id="delete-project-modal" ref="deleteModal" title="Delete Project?" @ok="deleteProject(selectedId)"/>
-
 	</div>
 </template>
 
@@ -68,29 +87,40 @@ export default {
 		clearName() {
 			this.name = '';
 		},
-		handleOk(evt) {
+		async createProject(evt) {
 			evt.preventDefault();
 			if (!this.name) {
 				alert('Please enter a name');
 			} else {
-				this.handleSubmit();
+				moment().format();
+				const date = moment().year() + '-' + Number(moment().month()+1) + '-' + moment().date();
+				const project = {
+					"name": this.name,
+  				"creatorId": 0, //TODO: get current user id
+  				"createdAt": date
+				}
+				try {
+					await axios.post(this.$baseUrl + '/projects', project);
+					this.projects.push(project);
+      		this.clearName();
+      		this.$refs.createModal.hide();
+				} catch (e) {
+					alert(e);
+				}
 			}
 		},
-		async handleSubmit() {
-			moment().format();
-			const date = moment().year() + '-' + Number(moment().month()+1) + '-' + moment().date();
-			const project = {
-				"name": this.name,
-  			"creatorId": 0, //TODO: get current user id
-  			"createdAt": date
-			}
-			try {
-				await axios.post(this.$baseUrl + '/projects', project);
-				this.projects.push(project);
-      	this.clearName();
-      	this.$refs.createModal.hide();
-			} catch (e) {
-				alert(e);
+		async updateProject(id) {
+			if (!this.name) {
+				alert('Please enter a name');
+			} else {
+				try {
+					let updatedProject = this.projects.find(pr => pr.id === id);
+					updatedProject.name = this.name;
+					await axios.put(this.$baseUrl + '/project/' + id, updatedProject);
+					this.projects[id] = updatedProject;
+				} catch (e) {
+					alert(e);
+				}
 			}
 		},
 		async deleteProject(id) {
