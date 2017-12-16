@@ -5,7 +5,7 @@
 				<h1>{{ title }}</h1>
 			</div>
 			<div class="col-sm-4">
-				<b-btn v-b-modal.project-modal type="button" class="btn btn-success btn-lg float-right add-button">
+				<b-btn v-b-modal.add-project-modal type="button" class="btn btn-success btn-lg float-right add-button">
 					Create new project
 				</b-btn>
 			</div>
@@ -13,19 +13,31 @@
 		<ul class="list-items list-group">
 			<li v-for="item in projects">
 				<div class="list-item list-group-item">
-					<button type="button" class="btn btn-danger btn-md float-right action-button">Delete</button>
-					<button disabled type="button" class="btn btn-warning btn-md float-right action-button edit-button">Edit</button>
+					<b-btn v-b-modal.delete-project-modal 
+					type="button" 
+					class="btn btn-danger btn-md float-right action-button" 
+					@click="selectedId = item.id">
+						Delete
+					</b-btn>
+					<b-btn disabled type="button" class="btn btn-warning btn-md float-right action-button edit-button">
+						Edit
+					</b-btn>
 					<div><h4>{{ item.name }}</h4></div>
 					<div>created at: {{ item.createdAt }}</div>
 				</div>
 			</li>
 		</ul>
 
-		<b-modal id="project-modal" ref="modal" title="New Project" @ok="handleOk" @shown="clearName">
+		<!-- modals -->
+
+		<b-modal id="add-project-modal" ref="createModal" title="New Project" @ok="handleOk" @shown="clearName">
     	<form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"></b-form-input>
       </form>
   	</b-modal>
+
+		<b-modal id="delete-project-modal" ref="deleteModal" title="Delete Project?" @ok="deleteProject(selectedId)"/>
+
 	</div>
 </template>
 
@@ -39,6 +51,7 @@ export default {
 		return {
 			title: 'Your Projects',
 			name: '',
+			selectedId: null,
 			projects: [],
 			errors: []
 		}
@@ -75,7 +88,16 @@ export default {
 				await axios.post(this.$baseUrl + '/projects', project);
 				this.projects.push(project);
       	this.clearName();
-      	this.$refs.modal.hide();
+      	this.$refs.createModal.hide();
+			} catch (e) {
+				alert(e);
+			}
+		},
+		async deleteProject(id) {
+			try {
+				await axios.delete(this.$baseUrl + '/project/' + id);
+				this.projects = this.projects.filter(pr => pr.id !== id);
+				this.$refs.deleteModal.hide();
 			} catch (e) {
 				alert(e);
 			}
