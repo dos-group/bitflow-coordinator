@@ -151,7 +151,7 @@ The database access is now fully setup, you can use it in your applications pers
 		<!-- ... additional properties -->
 ```
 
-### Logging configuration`
+### Logging configuration
 
 The wildfly already comes with build-in logging capabilities.
 To configure a new logging class for the application, add the following to your `standalone.xml`:
