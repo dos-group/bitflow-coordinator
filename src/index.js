@@ -301,6 +301,18 @@ function createNewPipeline(req, res) {
 	});
 }
 
+// delete a pipeline
+app.delete('/pipeline/:id', (req, res) => {
+	Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
+		if (err || pipeline === null) {
+			res.status(400).end();
+		} else {
+			pipeline.remove();
+			res.status(204).end();
+		}
+	});
+});
+
 // - Pipeline Steps
 
 // get all pipeline steps

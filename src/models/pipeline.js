@@ -7,7 +7,7 @@ let pipelineSchema = new Schema({
   name: { type: String, required: true },
   projectId: { type: Number, integer: true, required: true },
   lastChanged: { type: String, required: true },
-  pipelineSteps: { type: Array, required: true } 
+  pipelineSteps: { type: Array } 
 });
 
 pipelineSchema.set('toJSON', {

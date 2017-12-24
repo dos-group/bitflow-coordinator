@@ -1,6 +1,6 @@
 # Bitflow Mock Server
 
-## Possible operations
+## Available operations
 
 - get /info
 - get /users
@@ -15,6 +15,7 @@
 - get /pipeline/{id}
 - post /pipelines
 - put /pipeline/{id}
+- delete /pipeline/{id}
 - get /pipelinesteps
 - get /pipelinestep/{id}
 
