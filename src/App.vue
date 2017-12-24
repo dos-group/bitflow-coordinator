@@ -93,9 +93,6 @@ a {
   font-size: 1.25em;
 }
 .action-button {
-  margin-top: 10px;
-}
-.edit-button {
-  margin-right: 10px;
+  margin: 10px 5px 10px 5px;
 }
 </style>

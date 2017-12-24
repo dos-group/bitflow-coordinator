@@ -21,7 +21,7 @@
 					>Delete</b-btn>
 					<b-btn v-b-modal.edit-project-modal 
 						type="button" 
-						class="btn btn-warning btn-md float-right action-button edit-button"
+						class="btn btn-secondary btn-md float-right action-button"
 						@click="selectedId = item.id"
 					>Edit</b-btn>
 					<div>
@@ -44,7 +44,7 @@
 			@shown="clearName"
 		>
     	<form @submit.stop.prevent="handleSubmit">
-        <b-form-input type="text" placeholder="New Project Name" v-model="name"></b-form-input>
+        <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
   	</b-modal>
 
@@ -56,7 +56,7 @@
 			@shown="clearName"
 		>
     	<form @submit.stop.prevent="handleSubmit">
-        <b-form-input type="text" placeholder="New Project Name" v-model="name"></b-form-input>
+        <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
   	</b-modal>
 
@@ -65,79 +65,82 @@
 </template>
 
 <script>
-import axios from 'axios';
-import moment from 'moment';
+import axios from "axios";
+import moment from "moment";
 
 export default {
-	name: 'Projects',
-	data() {
-		return {
-			title: 'Your Projects',
-			name: '',
-			selectedId: null,
-			projects: [],
-			errors: []
-		}
-	},
-	async created() {
-		try {
-			const response = await axios.get(this.$baseUrl + '/projects');
-			this.projects = response.data;
-		} catch (e) {
-			alert(e);
-		}
-	},
-	methods: {
-		clearName() {
-			this.name = '';
-		},
-		async createProject(evt) {
-			evt.preventDefault();
-			if (!this.name) {
-				alert('Please enter a name');
-			} else {
-				moment().format();
-				const date = moment().year() + '-' + Number(moment().month()+1) + '-' + moment().date();
-				const project = {
-					"name": this.name,
-  				"creatorId": 0, //TODO: get current user id
-  				"createdAt": date
-				}
-				try {
-					await axios.post(this.$baseUrl + '/projects', project);
-					this.projects.push(project);
-      		this.clearName();
-      		this.$refs.createModal.hide();
-				} catch (e) {
-					alert(e);
-				}
-			}
-		},
-		async updateProject(id) {
-			if (!this.name) {
-				alert('Please enter a name');
-			} else {
-				try {
-					let updatedProject = this.projects.find(pr => pr.id === id);
-					updatedProject.name = this.name;
-					await axios.put(this.$baseUrl + '/project/' + id, updatedProject);
-					this.projects[id] = updatedProject;
-				} catch (e) {
-					alert(e);
-				}
-			}
-		},
-		async deleteProject(id) {
-			try {
-				await axios.delete(this.$baseUrl + '/project/' + id);
-				this.projects = this.projects.filter(pr => pr.id !== id);
-				this.$refs.deleteModal.hide();
-			} catch (e) {
-				alert(e);
-			}
-		}
-	}
-}
+  name: "Projects",
+  data() {
+    return {
+      title: "Your Projects",
+      name: "",
+      selectedId: null,
+      projects: []
+    };
+  },
+  async created() {
+    try {
+      const response = await axios.get(this.$baseUrl + "/projects");
+      this.projects = response.data;
+    } catch (e) {
+      alert(e);
+    }
+  },
+  methods: {
+    clearName() {
+      this.name = "";
+    },
+    async createProject(evt) {
+      evt.preventDefault();
+      if (!this.name) {
+        alert("Please enter a name");
+      } else {
+        moment().format();
+        const date =
+          moment().year()
+          + "-"
+          + Number(moment().month() + 1)
+          + "-"
+          + moment().date();
+        const project = {
+          name: this.name,
+          creatorId: 0, //TODO: get current user id
+          createdAt: date
+        };
+        try {
+          await axios.post(this.$baseUrl + "/projects", project);
+          this.projects.push(project);
+          this.clearName();
+          this.$refs.createModal.hide();
+        } catch (e) {
+          alert(e);
+        }
+      }
+    },
+    async updateProject(id) {
+      if (!this.name) {
+        alert("Please enter a name");
+      } else {
+        try {
+          let updatedProject = this.projects.find(pr => pr.id === id);
+          updatedProject.name = this.name;
+          await axios.put(this.$baseUrl + "/project/" + id, updatedProject);
+        } catch (e) {
+          alert(e);
+        }
+      }
+    },
+    async deleteProject(id) {
+      try {
+        await axios.delete(this.$baseUrl + "/project/" + id);
+        this.projects = this.projects.filter(pr => pr.id !== id);
+        this.$refs.deleteModal.hide();
+      } catch (e) {
+        alert(e);
+      }
+    }
+  }
+};
 </script>
 
 <style scoped/>
