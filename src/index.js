@@ -161,9 +161,7 @@ function createNewUser(req, res) {
 			if (err || u === null) {
 				res.status(400).end();
 			} else {
-				let ip = req.hostname || "127.0.0.1";
-				let loc = 'http://' + ip +':4000' + '/user/' + u.id;
-				res.status(201).header('location', loc).end();
+				res.status(201).send(u);
 			}
 		});
 	});
@@ -221,9 +219,7 @@ function createNewProject(req, res) {
 			if (err || p === null) {
 				res.status(400).end();
 			} else {
-				let ip = req.hostname || "127.0.0.1";
-				let loc = 'http://' + ip +':4000' + '/project/' + p.id;
-				res.status(201).header('location', loc).end();
+				res.status(201).send(p);
 			}
 		});
 	});
@@ -293,9 +289,7 @@ function createNewPipeline(req, res) {
 			if (err || p === null) {
 				res.status(400).end();
 			} else {
-				let ip = req.hostname || "127.0.0.1";
-				let loc = 'http://' + ip +':4000' + '/pipeline/' + p.id;
-				res.status(201).header('location', loc).end();
+				res.status(201).send(p);
 			}
 		});
 	});
