@@ -3,10 +3,14 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-require('../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss')
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false;
+//Vue.prototype.$baseUrl = "http://localhost:4000";
 Vue.prototype.$baseUrl = 'http://35.227.97.73:4000';
+Vue.use(BootstrapVue);
 
 /* eslint-disable no-new */
 new Vue({

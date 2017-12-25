@@ -77,13 +77,8 @@ a {
 .fade-enter, .fade-leave-active {
   opacity: 0;
 }
-.add-button-col {
-  padding-top: 17px;
-}
 .add-button {
   background-color: #42b983;
-  border-color: #fff;
-  color: #fff;
 }
 .list-items {
   list-style-type: none;
@@ -91,12 +86,13 @@ a {
 }
 .list-item {
   margin: 10px 0px 10px 0px; 
-  padding: 5px 20px 10px 20px;
+  padding: 15px 20px 10px 20px;
+}
+.list-item-link {
+  color: #000;
+  font-size: 1.25em;
 }
 .action-button {
-  margin-top: 15px;
-}
-.edit-button {
-  margin-right: 10px;
+  margin: 10px 5px 10px 5px;
 }
 </style>
