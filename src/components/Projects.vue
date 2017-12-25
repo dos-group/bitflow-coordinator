@@ -66,7 +66,7 @@
 
 <script>
 import axios from "axios";
-import moment from "moment";
+import createCurrentTimeFormatted from '../utils';
 
 export default {
   name: "Projects",
@@ -95,21 +95,14 @@ export default {
       if (!this.name) {
         alert("Please enter a name");
       } else {
-        moment().format();
-        const date =
-          moment().year()
-          + "-"
-          + Number(moment().month() + 1)
-          + "-"
-          + moment().date();
         const project = {
           name: this.name,
           creatorId: 0, //TODO: get current user id
-          createdAt: date
+          createdAt: createCurrentTimeFormatted()
         };
         try {
-          await axios.post(this.$baseUrl + "/projects", project);
-          this.projects.push(project);
+          const resp = await axios.post(this.$baseUrl + "/projects", project);
+          this.projects.push(resp.data);
           this.clearName();
           this.$refs.createModal.hide();
         } catch (e) {

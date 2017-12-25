@@ -66,7 +66,7 @@
 
 <script>
 import axios from "axios";
-import moment from "moment";
+import createCurrentTimeFormatted from '../utils';
 
 export default {
   name: "Pipelines",
@@ -97,22 +97,14 @@ export default {
 			if (!this.name) {
 				alert("Please enter a name");
 			} else {
-				moment().format();
-				const date =
-          moment().year()
-          + "-"
-          + Number(moment().month() + 1)
-          + "-"
-					+ moment().date();
 				const pipeline = {
 					name: this.name,
 					projectId: this.projectId,
-					lastChanged: date,
-					pipelineSteps: [null] //TODO: change mock-server, field shouldn't be required
+					lastChanged: createCurrentTimeFormatted()
 				};
 				try {
-					await axios.post(this.$baseUrl + "/pipelines", pipeline);
-					this.pipelines.push(pipeline);
+					const resp = await axios.post(this.$baseUrl + "/pipelines", pipeline);
+					this.pipelines.push(resp.data);
 					this.clearName;
 					this.$refs.createModal.hide();
 				} catch (e) {
@@ -129,11 +121,10 @@ export default {
 				const clone = {
 					name: this.name,
 					projectId: template.projectId,
-					lastChanged: template.lastChanged, //TODO: update lastChanged
-					pipelineSteps: [null] //TODO: change mock-server, field shouldn't be required
+					lastChanged: createCurrentTimeFormatted()
 				}
-				await axios.post(this.$baseUrl + "/pipelines", clone);
-				this.pipelines.push(clone);
+				const resp = await axios.post(this.$baseUrl + "/pipelines", clone);
+				this.pipelines.push(resp.data);
 				this.clearName;
 				this.$refs.cloneModal.hide();
 				} catch (e) {
