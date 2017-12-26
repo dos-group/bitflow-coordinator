@@ -34,7 +34,7 @@ public class ProjectApi  {
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Query information about the specified project.", notes = "Returns the specified project.", response = Project.class, tags={ "project", })
+    @io.swagger.annotations.ApiOperation(value = "Query information about the specified project.", notes = "Returns the specified project.", response = Project.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "project", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "Project infos", response = Project.class),
         
@@ -49,7 +49,7 @@ public class ProjectApi  {
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Delete the specified pipeline.", notes = "Deletes the pipeline from the specified project.", response = Void.class, tags={ "pipeline", })
+    @io.swagger.annotations.ApiOperation(value = "Delete the specified pipeline.", notes = "Deletes the pipeline from the specified project.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "pipeline", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 404, message = "If the project with the given id does not exist.", response = Void.class) })
     public Response projectIdPipelineDelete( @PathParam("id") Integer id,@Context SecurityContext securityContext)
@@ -60,7 +60,7 @@ public class ProjectApi  {
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Query the specified pipeline.", notes = "Returns the pipeline from the specified project.", response = Pipeline.class, tags={ "pipeline", })
+    @io.swagger.annotations.ApiOperation(value = "Query the specified pipeline.", notes = "Returns the pipeline from the specified project.", response = Pipeline.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "pipeline", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "Pipeline infos", response = Pipeline.class),
         
@@ -75,7 +75,7 @@ public class ProjectApi  {
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Create new pipeline.", notes = "Creates new Pipeline as specified.", response = Void.class, tags={ "pipeline", })
+    @io.swagger.annotations.ApiOperation(value = "Create new pipeline.", notes = "Creates new Pipeline as specified.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "pipeline", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 400, message = "If pipeline validation failed.", response = Void.class),
         
@@ -88,7 +88,7 @@ public class ProjectApi  {
     @Path("/{id}/users")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Query all users with access to the specified project.", notes = "Returns all users associated with the specified project.", response = User.class, responseContainer = "List", tags={ "project", })
+    @io.swagger.annotations.ApiOperation(value = "Query all users with access to the specified project.", notes = "Returns all users associated with the specified project.", response = User.class, responseContainer = "List", authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "project", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "Project infos", response = User.class, responseContainer = "List"),
         
@@ -103,7 +103,7 @@ public class ProjectApi  {
     @Path("/{projectId}/users/{userId}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Removing a user from the specified project.", notes = "Returns the specified user.", response = Void.class, tags={ "project", })
+    @io.swagger.annotations.ApiOperation(value = "Removing a user from the specified project.", notes = "Returns the specified user.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "project", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 404, message = "If the project or the user with the given id does not exist.", response = Void.class) })
     public Response projectProjectIdUsersUserIdDelete( @PathParam("projectId") Integer projectId, @PathParam("userId") Integer userId,@Context SecurityContext securityContext)
@@ -114,7 +114,7 @@ public class ProjectApi  {
     @Path("/{projectId}/users/{userId}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Adding a user to the specified project.", notes = "Returns the specified user.", response = Void.class, tags={ "project", })
+    @io.swagger.annotations.ApiOperation(value = "Adding a user to the specified project.", notes = "Returns the specified user.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "project", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 400, message = "User validation failed.", response = Void.class),
         

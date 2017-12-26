@@ -32,7 +32,7 @@ public class UserApi  {
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Delete an existing user.", notes = "Returns the specified user.", response = Void.class, tags={ "users", })
+    @io.swagger.annotations.ApiOperation(value = "Delete an existing user.", notes = "Returns the specified user.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 404, message = "If the project with the given id does not exist.", response = Void.class) })
     public Response userIdDelete( @PathParam("id") Integer id,@Context SecurityContext securityContext)
@@ -43,7 +43,7 @@ public class UserApi  {
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Query an existing user.", notes = "Returns the specified user.", response = User.class, tags={ "users", })
+    @io.swagger.annotations.ApiOperation(value = "Query an existing user.", notes = "Returns the specified user.", response = User.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "User infos", response = User.class),
         
@@ -56,7 +56,7 @@ public class UserApi  {
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Update existing user.", notes = "Returns the specified user.", response = Void.class, tags={ "users", })
+    @io.swagger.annotations.ApiOperation(value = "Update existing user.", notes = "Returns the specified user.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "users", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 400, message = "User validation failed.", response = Void.class),
         

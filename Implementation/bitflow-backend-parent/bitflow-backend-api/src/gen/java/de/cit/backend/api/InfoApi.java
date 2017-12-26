@@ -32,7 +32,7 @@ public class InfoApi  {
     
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Query infos about the running process agents.", notes = "Returns information about the current backend infrastruccture: A list of available process agents and their current state.", response = Info.class, tags={ "infos", })
+    @io.swagger.annotations.ApiOperation(value = "Query infos about the running process agents.", notes = "Returns information about the current backend infrastruccture: A list of available process agents and their current state.", response = Info.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "infos", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 200, message = "Common infos", response = Info.class) })
     public Response infoGet(@Context SecurityContext securityContext)
