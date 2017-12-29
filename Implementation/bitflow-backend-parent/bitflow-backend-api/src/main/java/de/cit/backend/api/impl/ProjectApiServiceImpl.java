@@ -13,11 +13,13 @@ import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.ProjectConverter;
+import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
@@ -105,8 +107,14 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		pipe.setProject(pro);
 		pipe.setSript("Bitflow-script");
 		pipe.setPipelineSteps(Arrays.asList(step1, step2, step3, step4));
+		
+		PipelineDTO line = projectService.loadProjectPipelines(id);
+		if (line == null) {
+			return Response.status(404).build();
+		}
 
-		return Response.ok().entity(pipe).build();
+		return Response.ok().entity(new PipelineConverter().convertToFrontend(line)).build();
+		//return Response.ok().entity(pipe).build();
 	}
 
 	@Override
