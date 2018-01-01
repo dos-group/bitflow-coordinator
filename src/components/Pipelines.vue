@@ -12,7 +12,7 @@
       </div>
     </div>
     <ul class="list-items list-group">
-      <li v-for="item in pipelines">
+      <li v-for="item in pipelines" :key="item.id">
         <div class="list-item list-group-item">
           <b-btn v-b-modal.delete-pipeline-modal
 						type="button" 
