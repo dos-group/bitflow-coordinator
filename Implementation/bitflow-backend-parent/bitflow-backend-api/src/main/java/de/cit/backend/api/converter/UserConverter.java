@@ -1,5 +1,8 @@
 package de.cit.backend.api.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 
@@ -33,5 +36,12 @@ public class UserConverter implements Converter<UserDTO, User>{
 		return user;
 	}
 
-
+	public List<User> convertToFrontend(List<UserDTO> userDto) {
+			List<User> user = new ArrayList<User>();
+			for (UserDTO userDTO : userDto) {
+				user.add(this.convertToFrontend(userDTO));
+			}
+			return user;
+	}
+	
 }

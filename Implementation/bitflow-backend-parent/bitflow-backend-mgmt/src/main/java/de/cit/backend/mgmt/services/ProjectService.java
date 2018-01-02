@@ -36,19 +36,13 @@ public class ProjectService implements IProjectService {
 		ProjectDTO pro = persistence.findProject(projectId);
 		if(pro == null) return null;//TODO remove later
 		Hibernate.initialize(pro.getUserdata());
-		return pro;
-	}
-
-	@Override
-	public PipelineDTO loadProjectPipelines(int projectId) {
-		ProjectDTO pro = persistence.findProject(projectId);
-		if(pro == null) return null;//TODO remove later
+		Hibernate.initialize(pro.getProjectMembers());
 		Hibernate.initialize(pro.getPipelines());
-		Hibernate.initialize(pro.getUserdata());
 		List<PipelineDTO> lines = pro.getPipelines();
 		for (PipelineDTO pipelineDTO : lines) {
 			Hibernate.initialize(pipelineDTO.getPipelineSteps());
 		}
-		return lines.get(0);
+		return pro;
 	}
+
 }

@@ -25,10 +25,10 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 		if(in == null){
 			return null;
 		}
-		//FIXME move the conerters into an EJB, so we can LazyLoad some properties
+		//FIXME move the converters into an EJB, so we can LazyLoad some properties
 		Pipeline out = new Pipeline();
 		out.setID(in.getId());
-		out.setName(in.getProject().getName());
+		out.setName(String.format("Pipeline %d", in.getProject().getPipelines().indexOf(in)));
 		out.setProject(new ProjectConverter().convertToFrontend(in.getProject())); 
 		out.setSript(in.getScript());
 		out.setLastChanged(in.getLastChanged());

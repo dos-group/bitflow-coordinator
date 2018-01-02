@@ -108,12 +108,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		pipe.setSript("Bitflow-script");
 		pipe.setPipelineSteps(Arrays.asList(step1, step2, step3, step4));
 		
-		PipelineDTO line = projectService.loadProjectPipelines(id);
-		if (line == null) {
+		ProjectDTO project = projectService.loadProject(id);
+		if (project == null) {
 			return Response.status(404).build();
 		}
 
-		return Response.ok().entity(new PipelineConverter().convertToFrontend(line)).build();
+		return Response.ok().entity(new PipelineConverter().convertToFrontend(project.getPipelines().get(0))).build();
 		//return Response.ok().entity(pipe).build();
 	}
 
@@ -126,7 +126,25 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectIdUsersGet(Integer id, SecurityContext securityContext) throws NotFoundException {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		User user1 = new User();
+		user1.setEmail("cit1@test.de");
+		user1.setID(1);
+		user1.setName("TestUser1");
+		user1.setRegisteredSince(new Date());
+
+		User user2 = new User();
+		user2.setEmail("cit2@test.de");
+		user2.setID(2);
+		user2.setName("TestUser2");
+		user2.setRegisteredSince(new Date());
+		
+		ProjectDTO pro = projectService.loadProject(id);
+		if (pro == null) {
+			return Response.status(404).build();
+		}
+		
+		return Response.ok().entity(new ProjectConverter().convertToFrontend(pro).getUsers()).build();
+		//return Response.ok().entity(Arrays.asList(user1,user2)).build();
 	}
 
 	@Override
