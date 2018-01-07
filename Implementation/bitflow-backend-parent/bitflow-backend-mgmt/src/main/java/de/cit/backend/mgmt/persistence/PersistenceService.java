@@ -27,9 +27,17 @@ public class PersistenceService {
 	public void init(){
 		log.info("EJB initialized");
 	}
-	
+
 	public UserDTO findUser(int userId){
 		return entityManager.find(UserDTO.class, userId);
+	}
+
+	public UserDTO findUser(String username){
+		String sqlQuery = "SELECT * FROM USERDATA WHERE name=\""+username.replaceAll("\"","\\\"")+"\"";
+		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+		List<UserDTO> results = query.getResultList();
+		UserDTO user = results.size() != 1 ? null : results.get(0);
+		return user;
 	}
 	
 	public List<AgentDTO> findAgents(){

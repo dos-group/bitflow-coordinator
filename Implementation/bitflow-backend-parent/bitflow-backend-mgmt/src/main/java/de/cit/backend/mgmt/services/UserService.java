@@ -24,10 +24,15 @@ public class UserService implements IUserService {
 	public void init(){
 		log.info("EJB initialized");
 	}
-	
+
 	@Override
 	public UserDTO loadUser(int userId) {
 		return persistence.findUser(userId);
+	}
+
+	@Override
+	public UserDTO loadUser(String username) {
+		return persistence.findUser(username);
 	}
 
 	@Override

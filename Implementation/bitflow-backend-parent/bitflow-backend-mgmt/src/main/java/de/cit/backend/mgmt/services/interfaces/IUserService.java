@@ -9,6 +9,8 @@ import de.cit.backend.mgmt.persistence.model.UserDTO;
 public interface IUserService {
 
 	UserDTO loadUser(int userId);
+
+	UserDTO loadUser(String username);
 	
 	void createUser(UserDTO user);
 	
