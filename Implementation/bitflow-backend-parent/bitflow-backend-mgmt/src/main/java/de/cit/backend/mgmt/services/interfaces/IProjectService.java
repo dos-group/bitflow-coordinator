@@ -8,4 +8,5 @@ import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 public interface IProjectService {
 
 	ProjectDTO loadProject(int projectId);
+
 }

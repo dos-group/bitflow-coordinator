@@ -13,11 +13,13 @@ import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.ProjectConverter;
+import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
@@ -105,8 +107,14 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		pipe.setProject(pro);
 		pipe.setSript("Bitflow-script");
 		pipe.setPipelineSteps(Arrays.asList(step1, step2, step3, step4));
+		
+		ProjectDTO project = projectService.loadProject(id);
+		if (project == null) {
+			return Response.status(404).build();
+		}
 
-		return Response.ok().entity(pipe).build();
+		return Response.ok().entity(new PipelineConverter().convertToFrontend(project.getPipelines().get(0))).build();
+		//return Response.ok().entity(pipe).build();
 	}
 
 	@Override
@@ -118,7 +126,25 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectIdUsersGet(Integer id, SecurityContext securityContext) throws NotFoundException {
 		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		User user1 = new User();
+		user1.setEmail("cit1@test.de");
+		user1.setID(1);
+		user1.setName("TestUser1");
+		user1.setRegisteredSince(new Date());
+
+		User user2 = new User();
+		user2.setEmail("cit2@test.de");
+		user2.setID(2);
+		user2.setName("TestUser2");
+		user2.setRegisteredSince(new Date());
+		
+		ProjectDTO pro = projectService.loadProject(id);
+		if (pro == null) {
+			return Response.status(404).build();
+		}
+		
+		return Response.ok().entity(new ProjectConverter().convertToFrontend(pro).getUsers()).build();
+		//return Response.ok().entity(Arrays.asList(user1,user2)).build();
 	}
 
 	@Override
