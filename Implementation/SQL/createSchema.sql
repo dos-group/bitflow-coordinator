@@ -42,15 +42,14 @@ Create Table USER_PROJECT(
 );
 
 -- Status as described in bitflow-process-agent REST-API - GET /pipeline/:id
+-- PROJECT_ID INT UNSIGNED NOT NULL, -- OneToMany
 Create Table PIPELINE(
 	ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PROJECT_ID INT UNSIGNED NOT NULL, -- OneToMany
 	NAME VARCHAR(256),
 	STATUS VARCHAR(32),
 	SCRIPT VARCHAR(256) NOT NULL, -- the actual script, defining this pipeline
 	LAST_CHANGED DATETIME,
 	PRIMARY KEY (ID),
-	FOREIGN KEY (PROJECT_ID) REFERENCES PROJECT(ID),
 	UNIQUE (Name)
 );
 
