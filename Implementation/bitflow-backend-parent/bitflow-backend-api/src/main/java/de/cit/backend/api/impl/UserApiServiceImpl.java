@@ -45,7 +45,7 @@ public class UserApiServiceImpl extends UserApiService {
     	  return Response.ok().entity(new UserConverter().convertToFrontend(userDB)).build();
   }
       @Override
-      public Response userIdPost(User body,SecurityContext securityContext)
+      public Response userIdPost(User body, Integer id, SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
       return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
