@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,6 +35,8 @@ public class UserDTO implements java.io.Serializable {
 	private String password;
 	private String name;
 	private Date registeredSince;
+	private UserRoleEnum role;
+	
 	private List<ProjectDTO> joinedProjects = new ArrayList<>();
 	private List<ProjectDTO> createdProjects = new ArrayList<>();
 
@@ -126,4 +130,13 @@ public class UserDTO implements java.io.Serializable {
 		this.createdProjects = projects;
 	}
 
+	@Column(name = "ROLE")
+	@Enumerated(EnumType.ORDINAL)
+	public UserRoleEnum getRole() {
+		return this.role;
+	}
+	
+	public void setRole(UserRoleEnum role) {
+		this.role = role;
+	}
 }

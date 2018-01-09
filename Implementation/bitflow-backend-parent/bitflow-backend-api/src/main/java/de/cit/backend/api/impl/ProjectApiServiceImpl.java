@@ -12,14 +12,13 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
-import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.converter.PipelineConverter;
+import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
-import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
@@ -118,7 +117,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	}
 
 	@Override
-	public Response projectIdPipelinePost(Pipeline body, SecurityContext securityContext) throws NotFoundException {
+	public Response projectIdPipelinePost(Pipeline body, Integer id, SecurityContext securityContext) throws NotFoundException {
 		// do some magic!
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}

@@ -1,26 +1,21 @@
 package de.cit.backend.api;
 
-import de.cit.backend.api.model.*;
-import de.cit.backend.api.ProjectApiService;
-import de.cit.backend.api.factories.ProjectApiServiceFactory;
-
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
-import de.cit.backend.api.model.Pipeline;
-import de.cit.backend.api.model.Project;
-import de.cit.backend.api.model.User;
-
-import java.util.List;
-import de.cit.backend.api.NotFoundException;
-
-import java.io.InputStream;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
+
+import de.cit.backend.api.factories.ProjectApiServiceFactory;
+import de.cit.backend.api.model.Pipeline;
+import de.cit.backend.api.model.Project;
+import de.cit.backend.api.model.User;
+import io.swagger.annotations.ApiParam;
 
 @Path("/project")
 
@@ -75,14 +70,16 @@ public class ProjectApi  {
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Create new pipeline.", notes = "Creates new Pipeline as specified.", response = Void.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "pipeline", })
+    @io.swagger.annotations.ApiOperation(value = "Create new pipeline.", notes = "Creates new Pipeline as specified.", response = Void.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "BasicAuth")
+    }, tags={ "pipeline", })
     @io.swagger.annotations.ApiResponses(value = { 
         @io.swagger.annotations.ApiResponse(code = 400, message = "If pipeline validation failed.", response = Void.class),
         
         @io.swagger.annotations.ApiResponse(code = 404, message = "If the project with the given id does not exist.", response = Void.class) })
-    public Response projectIdPipelinePost(@ApiParam(value = "" ,required=true) Pipeline body,@Context SecurityContext securityContext)
+    public Response projectIdPipelinePost(@ApiParam(value = "" ,required=true) Pipeline body, @PathParam("id") Integer id,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.projectIdPipelinePost(body,securityContext);
+        return delegate.projectIdPipelinePost(body,id,securityContext);
     }
     @GET
     @Path("/{id}/users")

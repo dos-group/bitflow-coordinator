@@ -12,8 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,22 +26,21 @@ import javax.persistence.TemporalType;
 public class PipelineDTO implements java.io.Serializable {
 
 	private Integer id;
-	private ProjectDTO project;
+	private String name;
 	private String status;
 	private String script;
 	private Date lastChanged;
+	private List<ProjectDTO> projects = new ArrayList<>();
 	private List<PipelineStepDTO> pipelineSteps = new ArrayList();
 
 	public PipelineDTO() {
 	}
 
-	public PipelineDTO(ProjectDTO project, String script) {
-		this.project = project;
+	public PipelineDTO(String script) {
 		this.script = script;
 	}
 
-	public PipelineDTO(ProjectDTO project, String status, String script, Date lastChanged, List<PipelineStepDTO> pipelineSteps) {
-		this.project = project;
+	public PipelineDTO(String status, String script, Date lastChanged, List<PipelineStepDTO> pipelineSteps) {
 		this.status = status;
 		this.script = script;
 		this.lastChanged = lastChanged;
@@ -59,16 +57,6 @@ public class PipelineDTO implements java.io.Serializable {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PROJECT_ID", nullable = false)
-	public ProjectDTO getProject() {
-		return this.project;
-	}
-
-	public void setProject(ProjectDTO project) {
-		this.project = project;
 	}
 
 	@Column(name = "STATUS", length = 32)
@@ -108,4 +96,21 @@ public class PipelineDTO implements java.io.Serializable {
 		this.pipelineSteps = pipelineSteps;
 	}
 
+	@ManyToMany(mappedBy="pipelines")
+	public List<ProjectDTO> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<ProjectDTO> projects) {
+		this.projects = projects;
+	}
+
+	@Column(name = "NAME") 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

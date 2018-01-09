@@ -13,7 +13,8 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 		PipelineDTO out = new PipelineDTO();
 		out.setId(in.getID());
 		out.setStatus("unknown"); // representation in Frontend missing
-		out.setProject(new ProjectConverter().convertToBackend(in.getProject()));
+		//FIXME
+//		out.setProject(new ProjectConverter().convertToBackend(in.getProject()));
 		out.setScript(in.getSript());
 		out.setLastChanged(in.getLastChanged());
 		out.setPipelineSteps(new PipelineStepConverter().convertToBackend(in.getPipelineSteps()));
@@ -28,8 +29,8 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 		//FIXME move the converters into an EJB, so we can LazyLoad some properties
 		Pipeline out = new Pipeline();
 		out.setID(in.getId());
-		out.setName(String.format("Pipeline %d", in.getProject().getPipelines().indexOf(in)));
-		out.setProject(new ProjectConverter().convertToFrontend(in.getProject())); 
+		out.setName(in.getName());
+		//FIXME projects 
 		out.setSript(in.getScript());
 		out.setLastChanged(in.getLastChanged());
 		out.setPipelineSteps(new PipelineStepConverter().convertToFrontend(in.getPipelineSteps()));
