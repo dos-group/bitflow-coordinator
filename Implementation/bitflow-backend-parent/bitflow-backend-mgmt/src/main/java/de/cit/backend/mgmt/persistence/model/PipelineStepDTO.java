@@ -1,13 +1,15 @@
 package de.cit.backend.mgmt.persistence.model;
 // Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,6 +28,7 @@ public class PipelineStepDTO implements java.io.Serializable {
 	private PipelineDTO pipeline;
 	private int stepNumber;
 	private String script;
+	private String status;
 	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId = new HashSet<PipelineStepSuccessors>(0);
 	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId = new HashSet<PipelineStepSuccessors>(0);
 
@@ -98,6 +101,14 @@ public class PipelineStepDTO implements java.io.Serializable {
 
 	public void setScript(String script) {
 		this.script = script;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pipelineStepByStepId")
