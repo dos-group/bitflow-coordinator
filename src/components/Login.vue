@@ -1,5 +1,5 @@
 <template>
-    <div class="container row">
+    <div class="container">
         <b-card>
             <b-form @submit="onSubmit" v-if="show">
                 <b-form-group id="emailaddress" label="Email address:" label-for="emailaddress" >
@@ -36,8 +36,10 @@
 </script>
 <style>
     .container {
-        width: 2000px;
-        margin: 50px;
-        margin-left: 750px;
+        width: 50%;
+        float: none;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 50px;
     }
 </style>
