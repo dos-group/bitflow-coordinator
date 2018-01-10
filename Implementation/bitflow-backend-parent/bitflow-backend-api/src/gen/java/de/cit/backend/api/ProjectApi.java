@@ -15,6 +15,7 @@ import de.cit.backend.api.factories.ProjectApiServiceFactory;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.AuthLevel;
 import io.swagger.annotations.ApiParam;
 
 @Path("/project")
@@ -26,6 +27,7 @@ public class ProjectApi  {
    private final ProjectApiService delegate = ProjectApiServiceFactory.getProjectApi();
 
     @GET
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -41,6 +43,7 @@ public class ProjectApi  {
         return delegate.projectIdGet(id,securityContext);
     }
     @DELETE
+    @AuthLevel(AuthLevel.Level.ADMIN)
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -52,6 +55,7 @@ public class ProjectApi  {
         return delegate.projectIdPipelineDelete(id,securityContext);
     }
     @GET
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -67,6 +71,7 @@ public class ProjectApi  {
         return delegate.projectIdPipelineGet(id,securityContext);
     }
     @POST
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}/pipeline")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -82,6 +87,7 @@ public class ProjectApi  {
         return delegate.projectIdPipelinePost(body,id,securityContext);
     }
     @GET
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}/users")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -97,6 +103,7 @@ public class ProjectApi  {
         return delegate.projectIdUsersGet(id,securityContext);
     }
     @DELETE
+    @AuthLevel(AuthLevel.Level.ADMIN)
     @Path("/{projectId}/users/{userId}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -108,6 +115,7 @@ public class ProjectApi  {
         return delegate.projectProjectIdUsersUserIdDelete(projectId,userId,securityContext);
     }
     @POST
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{projectId}/users/{userId}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })

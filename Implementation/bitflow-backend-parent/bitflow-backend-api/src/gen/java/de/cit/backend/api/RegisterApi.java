@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.api.factories.RegisterApiServiceFactory;
+import de.cit.backend.mgmt.AuthLevel;
 
 @Path("/register")
 
@@ -20,7 +21,7 @@ public class RegisterApi  {
    private final RegisterApiService delegate = RegisterApiServiceFactory.getRegisterApi();
 
     @GET
-    
+    @AuthLevel(AuthLevel.Level.USER)
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Register a new agent to the system.", notes = "Register a new agent to the system.", response = Void.class, authorizations = {

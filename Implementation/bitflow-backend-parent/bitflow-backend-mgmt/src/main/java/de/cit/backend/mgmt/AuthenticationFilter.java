@@ -2,6 +2,7 @@ package de.cit.backend.mgmt;
 
 import de.cit.backend.mgmt.AuthLevel.Level;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 import javax.naming.InitialContext;
@@ -21,6 +22,8 @@ import java.util.*;
 @Provider
 public class AuthenticationFilter implements ContainerRequestFilter
 {
+
+    // TODO: use a logger instance
 
     private static final String AUTHORIZATION_PROPERTY = "Authorization";
     private static final String AUTHENTICATION_SCHEME = "Basic";
@@ -92,16 +95,6 @@ public class AuthenticationFilter implements ContainerRequestFilter
             return;
         }
 
-        //Verifying Username and password
-
-        /*
-        if("test".equals(username) && "test".equals(password)) {
-            if(Level.ADMIN.equals(authLevel.value())) {
-                requestContext.abortWith(ACCESS_FORBIDDEN);
-            }
-            return;
-        }*/
-
         final UserDTO user = userService.loadUser(username);
         if(user==null) {
             System.out.println("No user found for username "+username);
@@ -113,15 +106,10 @@ public class AuthenticationFilter implements ContainerRequestFilter
             requestContext.abortWith(ACCESS_INVALID_CREDENTIALS);
             return;
         }
-        if(Level.ADMIN.equals(authLevel.value())) {
-            // TODO: add admin flag to model
-            /*
-            if(!user.isAdmin()) {
-                System.out.println("User has no permissions for the requested resource");
-                requestContext.abortWith(ACCESS_FORBIDDEN);
-                return;
-            }
-            */
+        if(Level.ADMIN.equals(authLevel.value()) && !UserRoleEnum.ADMIN.equals(user.getRole())) {
+            System.out.println("User has no permissions for the requested resource");
+            requestContext.abortWith(ACCESS_FORBIDDEN);
+            return;
         }
     }
 

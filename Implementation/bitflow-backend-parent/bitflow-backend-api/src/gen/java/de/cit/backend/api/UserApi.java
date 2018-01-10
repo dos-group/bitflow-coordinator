@@ -13,6 +13,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.api.factories.UserApiServiceFactory;
 import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.AuthLevel;
 import io.swagger.annotations.ApiParam;
 
 @Path("/user")
@@ -24,6 +25,7 @@ public class UserApi  {
    private final UserApiService delegate = UserApiServiceFactory.getUserApi();
 
     @DELETE
+    @AuthLevel(AuthLevel.Level.ADMIN)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -35,6 +37,7 @@ public class UserApi  {
         return delegate.userIdDelete(id,securityContext);
     }
     @GET
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -48,6 +51,7 @@ public class UserApi  {
         return delegate.userIdGet(id,securityContext);
     }
     @POST
+    @AuthLevel(AuthLevel.Level.USER)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -63,7 +67,7 @@ public class UserApi  {
         return delegate.userIdPost(body,id,securityContext);
     }
     @POST
-    
+    @AuthLevel(AuthLevel.Level.USER)
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create new user.", notes = "Returns the specified user.", response = Void.class, tags={ "users", })
