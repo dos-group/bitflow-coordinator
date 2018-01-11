@@ -77,11 +77,6 @@
 					</div>
 		    </div>
 		    </b-row>
-
-		<div class="top-content">
-			
-			
-		</div>
 		
   </div>
 </template>
