@@ -1,7 +1,6 @@
 <template>
   <div class="page-content">
 		<h1>{{ title }}</h1>
-		<b-container class="bv-example-row">
 			 <b-row>
 		        <b-col cols="3">
 						<b-card :title="numberOfAgents">
@@ -78,8 +77,6 @@
 					</div>
 		    </div>
 		    </b-row>
-
-		</b-container>
 
 		<div class="top-content">
 			
