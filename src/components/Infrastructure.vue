@@ -14,32 +14,32 @@
 		        <b-col cols="9">
 		        	<b-tabs>
 						<b-tab title=" Active Agents" active>
-							<b-table striped responsive :items="agents" :fields="agentFields">
+							<b-table striped responsive :items="agents" :fields="ListFields" table-layout: fixed hover="hover">
 								<template slot="tags" slot-scope="row">
 									<b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
 									{{ row.detailsShowing ? 'Hide' : 'Show'}} Tags
 									</b-button>
 								</template>
+								<template slot="show_details" scope="row">
+								      <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+								       {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
+								      </b-button>
+								 </template>
 								<template slot="row-details" slot-scope="row">
-									<b-card>
-										<b-row v-for="tag in row.item.tags" :key="tag.slots" class="mb-2">
-											<b-col sm="2" class="text-sm-right"><b>Resources:</b></b-col>
-											<b-col>{{ tag.resources }}</b-col>
-											<b-col sm="2" class="text-sm-right"><b>Slots:</b></b-col>
-											<b-col>{{ tag.slots }}</b-col>
-										</b-row>
-									</b-card>
+									<b-card-group columns>
+										<b-card v-for="(value, Key) in row.item" class="mb-2">
+											<b-row sm="2" class="text-sm-right"><b>{{ Key }}</b></b-row><b-row>{{ value }}</b-row>
+										</b-card>
+									</b-card-group>
 								</template>
-								<template slot="usedCpuCores" slot-scope="data">
-									{{ data.item.usedCpuCores.join(', ') }}
-								</template>
+								
 							</b-table>
 						</b-tab>
 						<b-tab title="Pipelines">
 							<ul class="pipeline-list list-group">
 								<b-card-group columns>
 								<li v-for="item in pipelines" :key="item.id">
-									<b-card>
+									<b-card v-b-popover.hover="'I am popover content!'">
 										<p>{{ item.name }}</p>
 										<b-btn class="btn btn-outline-success float-left action-button">
 											Start 
@@ -58,7 +58,23 @@
 		    <b-row>
 		    <div>
 		    		<div class="pipeline-box">
-						<h5>testing</h5>
+						<h5>Workers Available</h5>
+							<ul class="pipeline-list list-group">
+							<b-card-group columns>
+								<li v-for="(item, index) in NewAgents" >
+									<b-card v-b-popover.hover="'Available'">
+										<p>{{item}}</p>
+										<b-btn class="btn btn-outline-success float-left action-button">
+											Deploy 
+										</b-btn>
+										<b-btn class="btn btn-outline-success action-button">
+											Details
+										</b-btn>
+									</b-card>
+								</li>
+							</b-card-group>
+							</ul>
+
 					</div>
 		    </div>
 		    </b-row>
@@ -84,11 +100,21 @@ export default {
       numberOfAgents: null,
       numberOfIdleAgents: null,
       agents: [],
-      agentFields: [
-        { key: "hostName", label: "Host Name" },
+      NewAgents:[
+      				"Worker 1",
+      				"Worker 2",
+      				"Worker 3"
+
+      				],
+      ListFields: [
+      	{ key: "hostName", label: "Host Name" },
         { key: "apiPort", label: "API Port" },
         { key: "tags", label: "Tags" },
+        { key: "hostName", label: "Host Name" },
         { key: "usedMem", label: "Used Memory" },
+        'show_details'
+      ],
+      agentFields: [
         { key: "totalMem", label: "Total Memory" },
         { key: "usedCpu", label: "Used CPU" },
         { key: "usedCpuCores", label: "Used CPU Cores" },
@@ -108,6 +134,8 @@ export default {
 			this.agents = info.agents;
 			const pipResponse = await axios.get(this.$baseUrl + "/pipelines");
 			this.pipelines = pipResponse.data;
+
+	console.log(this.agents[0]);
     } catch (e) {
       alert(e);
     }
@@ -128,5 +156,9 @@ export default {
 }
 .pipeline-box {
 	padding: 15px 0px 15px 0px;
+}
+.bv-example-row{
+	padding-top:20px;
+	padding-bottom:20px;
 }
 </style>
