@@ -1,9 +1,11 @@
 <template>
+
   <div class="container">
     <b-card>
-      <b-form @submit="onSubmit" v-if="show">
+      <b-form @submit="onSubmit">
         <b-form-group id="emailaddress" label="Email address:" label-for="emailaddress">
-          <b-form-input id="emailaddress" type="email" v-model="form.email" required placeholder="Enter email">
+          <b-form-input id="emailaddress" type="email" v-model="form.email" required
+                        placeholder="Enter email">
           </b-form-input>
         </b-form-group>
         <b-form-group id="password" label="Your Name:" label-for="password">
@@ -24,14 +26,20 @@
           email: '',
           password: '',
         },
-        show: true
+        methods: {
+          onSubmit (evt) {
+            evt.preventDefault();
+            this.$backendCli.login(this.form.email, this.form.password)
+            this.$router.push('projects');
+          },
+        },
+        beforeMount(){
+          if (this.$backendCli.isLoggedIn()) {
+            // TODO: uncomment when logout available
+            // this.$router.push('projects');
+          }
+        },
       }
-    },
-    methods: {
-      onSubmit (evt) {
-        evt.preventDefault();
-        this.$router.push('projects');
-      },
     }
   }
 </script>
