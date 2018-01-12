@@ -24,6 +24,18 @@
         },
         mounted: function () {
 
+            var nodes = [];
+
+            var dummyNode = {
+                "ID": "1",
+                "PipelineId": "1",
+                "Algorithm": "Forward only a percentage of samples, parameter is in the range 0..1. Required parameters: [percent]",
+                "Successors": [
+                    1, 2, 3,
+                ],
+                "Source": "file.csv"
+            };
+
 
             var Editor = function () {
 
