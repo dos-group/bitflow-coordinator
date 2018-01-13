@@ -1,25 +1,51 @@
 <template>
   <div id="app">
     <header class="header">
-      <nav class="inner">
+      <nav class="inner"  v-if="loggedInUser">
         <router-link to="/projects">Projects</router-link>
         <router-link to="/infrastructure">Infrastructure</router-link>
+        <transition name="fade" mode="out-in">
+          <div class="navbar-top-right" v-on:click="logout">logout <i class="navbar-top-right material-icons">exit_to_app</i>
+          </div>
+        </transition>
       </nav>
     </header>
-    <transition name="fade" mode="out-in">
+    <transition v-if="loggedInUser" name="fade" mode="out-in">
       <router-view class="view"></router-view>
+    </transition>
+    <transition v-if="!loggedInUser" name="fade" mode="out-in">
+      <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
     </transition>
   </div>
 </template>
 
 <script>
+  import Login from "./components/Login.vue"
+
   export default {
-    name: 'app'
+    name: 'app',
+    data(){
+      return {
+        originRoute: this.$router.currentRoute,
+        loggedInUser: this.$backendCli.getLoggedInUser()
+      }
+    },
+    methods: {
+      updateLoggedInUser: function (user) {
+        this.loggedInUser = user;
+      },
+      logout: function () {
+        this.$backendCli.logout();
+        this.loggedInUser = null;
+      }
+    },
+    components: {Login},
   }
 </script>
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+  @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
   body {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
@@ -81,6 +107,15 @@
   .view {
     margin: 0px 50px;
     position: relative;
+  }
+
+  .navbar-top-right {
+    color: white;
+    display: inline-block;
+    vertical-align: middle;
+    float: right;
+    padding-left: 0.2em;
+    cursor: pointer;
   }
 
   .fade-enter-active, .fade-leave-active {

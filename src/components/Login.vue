@@ -1,5 +1,4 @@
 <template>
-
   <div class="container">
     <b-card>
       <b-form @submit="onSubmit">
@@ -12,6 +11,9 @@
           <b-form-input id="password" type="password" v-model="form.password" required
                         placeholder="Enter password"></b-form-input>
         </b-form-group>
+        <p class="error-message" v-if="message">
+          {{message}}
+        </p>
         <b-button type="submit" variant="primary">Login</b-button>
       </b-form>
     </b-card>
@@ -22,28 +24,32 @@
   export default {
     data () {
       return {
+        message: null,
         form: {
           email: '',
           password: '',
         },
-        methods: {
-          onSubmit (evt) {
-            evt.preventDefault();
-            this.$backendCli.login(this.form.email, this.form.password)
-            this.$router.push('projects');
-          },
-        },
-        beforeMount(){
-          if (this.$backendCli.isLoggedIn()) {
-            // TODO: uncomment when logout available
-            // this.$router.push('projects');
-          }
-        },
       }
+    },
+    methods: {
+      async onSubmit (evt) {
+        evt.preventDefault();
+
+        let result = await this.$backendCli.login(this.form.email, this.form.password);
+        if (result.user) {
+          this.$emit('userHasLoggedIn', result.user);
+        } else {
+          this.message = "Please check your username and password.";
+        }
+      },
     }
   }
 </script>
 <style>
+  .error-message {
+    color: red;
+  }
+
   .container {
     width: 50%;
     float: none;
