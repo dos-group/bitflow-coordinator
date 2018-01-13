@@ -8,7 +8,7 @@ function storeSession(session) {
   window.sessionStorage.setItem("session", JSON.stringify(session))
 }
 
-export function Initialize(baseUrl) {
+export function initialize(baseUrl) {
   axios.defaults.baseURL = baseUrl;
   let session = getSession();
   if (session) {
