@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Login from "@/components/Login";
 import Projects from "@/components/Projects";
 import Infrastructure from "@/components/Infrastructure";
 import Pipelines from "@/components/Pipelines";
@@ -12,8 +11,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login
+      name: 'Home',
+      component: Projects
     },
     {
       path: '/projects',

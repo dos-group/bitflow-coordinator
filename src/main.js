@@ -6,6 +6,11 @@ import router from "./router";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+import * as backendCli from "./utils/backend-client";
+
+backendCli.initialize('http://35.227.97.73:4000')
+
+Vue.prototype.$backendCli = backendCli;
 
 Vue.config.productionTip = false;
 //Vue.prototype.$baseUrl = "http://localhost:4000";

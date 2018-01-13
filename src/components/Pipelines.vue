@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import createCurrentTimeFormatted from '../utils';
 
 export default {
@@ -81,7 +80,7 @@ export default {
   },
   async created() {
     try {
-			const response = await axios.get(this.$baseUrl + "/pipelines");
+			const response = await this.$backendCli.getPipelines();
 			const pid = this.$router.history.current.fullPath.split('/')[2];
 			this.pipelines = response.data.filter(pip => pip.projectId == pid);
     } catch (e) {
@@ -103,7 +102,7 @@ export default {
 					lastChanged: createCurrentTimeFormatted()
 				};
 				try {
-					const resp = await axios.post(this.$baseUrl + "/pipelines", pipeline);
+					const resp = await this.$backendCli.createPipeline(pipeline);
 					this.pipelines.push(resp.data);
 					this.clearName;
 					this.$refs.createModal.hide();
@@ -123,7 +122,7 @@ export default {
 					projectId: template.projectId,
 					lastChanged: createCurrentTimeFormatted()
 				}
-				const resp = await axios.post(this.$baseUrl + "/pipelines", clone);
+				const resp = await this.$backendCli.createPipeline(clone);
 				this.pipelines.push(resp.data);
 				this.clearName;
 				this.$refs.cloneModal.hide();
@@ -134,7 +133,7 @@ export default {
 		},
 		async deletePipeline(id) {
 			try {
-				await axios.delete(this.$baseUrl + "/pipeline/" + id);
+				await this.$backendCli.deletePipeline(id);
 				this.pipelines = this.pipelines.filter(pip => pip.id !== id);
 				this.$refs.deleteModal.hide();
 			} catch (e) {
