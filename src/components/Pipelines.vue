@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import createCurrentTimeFormatted from '../utils';
 
 export default {

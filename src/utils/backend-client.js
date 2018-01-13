@@ -31,7 +31,7 @@ export function isUserLoggedIn() {
 
 export function login(username, password) {
   // TODO: make backend call to verify user credentials or get token (later)
-  if (username !== "admin@gmail.com") {
+  if (username === "invalid@gmail.com") {
     return {error: "invalid password"};
   }
   
