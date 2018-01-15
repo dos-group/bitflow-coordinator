@@ -10,8 +10,8 @@
     <div class="page-content">
         <h1>Editor</h1>
         <div class="row" style="max-height: 750px">
-            <div class="svg-container col-lg-2 col-md-2" style="border: 1px solid #42b983;padding-top:15px">
-                <div v-on:click="createNode('start')" class="card step start" >
+            <div class="list-group col-lg-2 col-md-2">
+                <div v-on:click="createNode('start')" class="list-group-item card step start" >
                     <div class="card-block">
                         <h5 class="card-title">Start of the pipeline </h5>
                         <p class="card-text">Source : </p>
@@ -84,14 +84,7 @@
       v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
       var blobs = true;
 
-      var allNodes = [/*{
-        "ID": 1,
-        "Number": 1,
-        "Typ": "source",
-        "Content": "127.0.0.1:5555",
-        "Params": [],
-        "Successors": []
-      }*/];
+      var allNodes = [];
 
       var allSteps = [{
         "ID": 1,
@@ -118,7 +111,35 @@
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
-      }];
+      },{"ID": 3,
+        "Number": 1,
+        "Typ": "source",
+        "Content": "127.0.0.1:5555",
+        "Params": [],
+        "Successors": []
+      }
+        ,{"ID": 3,
+          "Number": 1,
+          "Typ": "source",
+          "Content": "127.0.0.1:5555",
+          "Params": [],
+          "Successors": []
+        }
+        ,{"ID": 3,
+          "Number": 1,
+          "Typ": "source",
+          "Content": "127.0.0.1:5555",
+          "Params": [],
+          "Successors": []
+        }
+        ,{"ID": 3,
+          "Number": 1,
+          "Typ": "source",
+          "Content": "127.0.0.1:5555",
+          "Params": [],
+          "Successors": []
+        }
+        ];
 
       return {allSteps,allNodes,blobs}
     },
@@ -297,6 +318,17 @@
         stroke: #000;
         stroke-width: 1px;
         cursor: default;
+    }
+
+    .list-group {
+        padding: 15px;
+        display: inline-block;
+        position: relative;
+        max-height: 750px;
+        overflow: scroll;
+
+    // Again, this is where the magic happens
+        -webkit-overflow-scrolling: touch;
     }
 
 </style>
