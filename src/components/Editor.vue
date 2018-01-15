@@ -31,7 +31,17 @@
             <div class="svg-container col-lg-10 col-md-10">
                 <svg preserveAspectRatio="xMidYMid meet" class="svg-content" viewBox="0 0 200 100"
                      style="border: 1px solid #42b983">
+
+                    <defs>
+                        <marker id="Triangle" viewBox="0 0 10 10" refX="1" refY="5"
+                                markerWidth="4" markerHeight="4" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" ></path>
+                        </marker>
+                    </defs>
+
                     <g class="wholeGraph">
+                        <path hidden d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
+                        <g class="lines"></g>
                         <g class="recs">
                             <g id="node" v-for="node in allNodes">
                                 <rect width="20" height="15"  rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
@@ -48,6 +58,7 @@
                                 <text dx="1" dy="12" font-size="1.5px">
                                     <tspan>Content : {{node.Content}}</tspan>
                                 </text>
+                                <circle r="1" cx="21" cy="7.5"></circle>
                             </g>
                         </g>
                     </g>
@@ -70,7 +81,7 @@
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
-        "Successors": [2]
+        "Successors": []
       }];
 
       var allSteps = [{
@@ -79,25 +90,25 @@
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
-        "Successors": [2]
+        "Successors": []
       },{"ID": 2,
           "Number": 1,
           "Typ": "source",
           "Content": "127.0.0.1:5555",
           "Params": [],
-          "Successors": [2]
+          "Successors": []
       },{"ID": 3,
         "Number": 1,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
-        "Successors": [2]
+        "Successors": []
       },{"ID": 4,
         "Number": 1,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
-        "Successors": [2]
+        "Successors": []
       }];
 
       return {allSteps,allNodes}
@@ -118,10 +129,38 @@
         }
 
         function dragged(d) {
+          //console.log( d3.event.x + ',' + d3.event.y)
           d3.select(this).attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
         }
 
         function dragended(d) {
+          d3.select(this).classed("active", false);
+        }
+      },
+      updateLines : function () {
+        var svg = d3.select("svg");
+
+        svg.select(".recs").selectAll("circle")
+          .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+
+
+        function dragstarted(d) {
+          d3.select(".dragline").attr('hidden', null);
+          d3.select(this).raise().classed("active", true);
+        }
+
+        function dragged(d) {
+
+          var str = d3.select(this.parentNode).attr('transform')
+          d3.select(".dragline").attr('d', 'm' + str.slice(10,str.length-1) + 'l' + d3.event.x + ',' + d3.event.y);
+        }
+
+        function dragended(d) {
+          console.log("hdu")
+          d3.select(".dragline").attr('hidden','hidden');
           d3.select(this).classed("active", false);
         }
       },
@@ -167,111 +206,24 @@
           }
 
         setTimeout(this.updateNodes, 100)
+        setTimeout(this.updateLines, 100)
 
         function findElement(node) {
           return node.ID === nodeId;
         }
 
-
-
-
       }
     }
     ,
     mounted: function () {
-//      Events.on('yourClickHandler', this.yourClickHandler);
-
-
-      var Editor = function () {
-
-        var editor = this;
-
-        editor.start = function () {
-
 
           var svg = d3.select("svg");
 
-/*
-          var width = 20;
-          var height = 15;
-*/
-
-/*
-          var rectangles = d3.range(4).map(function () {
-            return {
-              data: {
-                "ID": 10012,
-                "Number": 1,
-                "Typ": "source",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": [
-                  2
-                ]
-              },
-              width: Math.round(width),
-              height: Math.round(height)
-            };
-          });
-*/
-
-
-/*          var color = d3.scaleOrdinal()
-            .range(d3.schemeCategory20);*/
-
-
-          //svg.append("g").attr("class", "wholeGraph");
-
-          //editor.nodes = svg.selectAll("g").append("g").attr("class", "recs").selectAll("g");
-          //editor.lines = svg.selectAll("g").append("g").selectAll("g");
-
-          svg.select(".recs").selectAll("g")
-            .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
-
-
-/*          var number = 0;
-
-          editor.nodes
-            .data(rectangles)
-            .enter()
-            .append("g")
-            .attr("id", function () {
-              number += 1;
-              return "node" + number
-            })
-            .call(d3.drag()
-              .on("start", dragstarted)
-              .on("drag", dragged)
-              .on("end", dragended))
-            .append("rect")
-            .attr("width", function (d) {
-              return d.width;
-            })
-            .attr("height", function (d) {
-              return d.height;
-            })
-            .style("fill", function (d, i) {
-              return color(i);
-            });*/
-
-
-/*          editor.recs = d3.select(".recs").selectAll("g");
-
-          fillRecs(editor.recs, rectangles);
-
-          editor.deleteNode = function (id) {
-            svg.select("#" + id).remove();
-          };*/
-
-
           var zoomed = function () {
-            //this.state.justScaleTransGraph = true;
             d3.select(".wholeGraph")
               .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
           };
+
 
           var dragSvg = d3.zoom()
             .on("zoom", function () {
@@ -286,84 +238,9 @@
 
           svg.call(dragSvg).on("dblclick.zoom", null);
 
-          function dragstarted(d) {
-            d3.select(this).raise().classed("active", true);
-          }
+          this.updateNodes;
+          this.updateLines;
 
-          function dragged(d) {
-            d3.select(this).attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
-          }
-
-          function dragended(d) {
-            d3.select(this).classed("active", false);
-          }
-        };
-
-
-/*        var fillRecs = function (editorRecs, rectangles) {
-          var pos = -1;
-
-          editorRecs.append("text")
-            .attr('font-family', 'FontAwesome')
-            .attr('font-size', "0.25em")
-            .attr("dx", "16")
-            .attr("v-on:click", "yourClickHandler()")
-            .attr("dy", "4")
-            .text(function () {
-              return '\uf118'
-            })
-
-          editorRecs.append("text")
-            .attr("dx", "1")
-            .attr("dy", "2")
-            .attr("font-size", "1.5px")
-            .append("tspan")
-            .text(function () {
-              pos = pos + 1;
-              return "ID : " + rectangles[pos].data.ID;
-            })
-
-          pos = -1;
-
-          editorRecs.append("text")
-            .attr("dx", "1")
-            .attr("dy", "5")
-            .attr("font-size", "1.5px")
-            .append("tspan")
-            .text(function () {
-              pos = pos + 1;
-              return "Number : " + rectangles[pos].data.Number;
-            })
-
-          pos = -1;
-
-          editorRecs.append("text")
-            .attr("dx", "1")
-            .attr("dy", "8")
-            .attr("font-size", "1.5px")
-            .append("tspan")
-            .text(function () {
-              pos = pos + 1;
-              return "Typ : " + rectangles[pos].data.Typ;
-            })
-
-
-          pos = -1;
-
-          editorRecs.append("text")
-            .attr("dx", "1")
-            .attr("dy", "11")
-            .attr("font-size", "1.5px")
-            .append("tspan")
-            .text(function () {
-              pos = pos + 1;
-              return "Content : " + rectangles[pos].data.Content;
-            })
-
-        }*/
-      };
-      var graph = new Editor();
-      graph.start();
     }
   }
 </script>
@@ -404,6 +281,11 @@
 
     .card-text {
         margin-bottom: 0 ;
+    }
+    path.dragline {
+        stroke: #000;
+        stroke-width: 1px;
+        cursor: default;
     }
 
 </style>
