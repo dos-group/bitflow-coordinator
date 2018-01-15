@@ -1,7 +1,8 @@
 <!--suppress VueDuplicateTag -->
 
 <!--TODO: The first rec has to transform at the beginning so no line can be drawn
-    TODO:
+    TODO: Color themes for single steps (randomized or so)
+    TODO: Size of text in recs might be too big (line breaks!)
 -->
 <script type="text/x-template" id="axis-label-template">
   <text :x="point.x" :y="point.y">{{stat.label}}</text>
@@ -45,7 +46,9 @@
 
                     <g class="wholeGraph">
                         <path hidden d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
-                        <g class="lines"></g>
+                        <g class="lines">
+                            <path v-for="line in allLines" d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
+                        </g>
                         <g class="recs">
                             <g id="node" transform="translate(10,10)" v-for="node in allNodes">
                                 <rect width="20" height="15"  rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
@@ -141,7 +144,9 @@
         }
         ];
 
-      return {allSteps,allNodes,blobs}
+      var allLines = [];
+
+      return {allSteps,allNodes,blobs,allLines}
     },
     methods: {
       updateNodes : function () {
