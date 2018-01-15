@@ -43,7 +43,7 @@
                         <path hidden d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
                         <g class="lines"></g>
                         <g class="recs">
-                            <g id="node" v-for="node in allNodes">
+                            <g id="node"  v-for="node in allNodes">
                                 <rect width="20" height="15"  rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
                                 <text font-family="FontAwesome" font-size="0.25em" dx="16"  v-on:click="deleteMe(node)" dy="4">X</text>
                                 <text dx="1" dy="3" font-size="1.5px">
@@ -58,7 +58,7 @@
                                 <text dx="1" dy="12" font-size="1.5px">
                                     <tspan>Content : {{node.Content}}</tspan>
                                 </text>
-                                <circle r="1" cx="21" cy="7.5"></circle>
+                                <circle v-if="blobs" r="1" cx="21" cy="7.5"></circle>
                             </g>
                         </g>
                     </g>
@@ -75,6 +75,11 @@
 
     name: 'Editor',
     data() {
+
+/*    TODO : let the blobs disappear when not needed
+      v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
+      var blobs = true;
+
       var allNodes = [{
         "ID": 1,
         "Number": 1,
@@ -111,7 +116,7 @@
         "Successors": []
       }];
 
-      return {allSteps,allNodes}
+      return {allSteps,allNodes,blobs}
     },
     methods: {
       updateNodes : function () {
@@ -149,28 +154,23 @@
 
         function dragstarted(d) {
           d3.select(".dragline").attr('hidden', null);
+          var str = d3.select(this.parentNode).attr('transform')
+          d3.select(".dragline").attr('d', 'm' + str.slice(10,str.length-1) + 'l' + d3.event.x + ',' + d3.event.y);
           d3.select(this).raise().classed("active", true);
         }
 
         function dragged(d) {
-
           var str = d3.select(this.parentNode).attr('transform')
           d3.select(".dragline").attr('d', 'm' + str.slice(10,str.length-1) + 'l' + d3.event.x + ',' + d3.event.y);
         }
 
         function dragended(d) {
-          console.log("hdu")
           d3.select(".dragline").attr('hidden','hidden');
           d3.select(this).classed("active", false);
         }
       },
       deleteMe: function(node){
-
-        console.log(this.allNodes)
-
         this.allNodes.splice(this.allNodes.indexOf(node), 1)
-
-        console.log(this.allNodes)
       },
 
       createNode: function (nodeId) {
