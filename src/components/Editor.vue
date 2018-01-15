@@ -332,7 +332,6 @@
         max-height: 750px;
         overflow: scroll;
 
-    // Again, this is where the magic happens
         -webkit-overflow-scrolling: touch;
     }
 
