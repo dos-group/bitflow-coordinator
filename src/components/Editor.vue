@@ -1,4 +1,8 @@
 <!--suppress VueDuplicateTag -->
+
+<!--TODO: The first rec has to transform at the beginning so no line can be drawn
+    TODO:
+-->
 <script type="text/x-template" id="axis-label-template">
   <text :x="point.x" :y="point.y">{{stat.label}}</text>
 </script>
@@ -43,7 +47,7 @@
                         <path hidden d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
                         <g class="lines"></g>
                         <g class="recs">
-                            <g id="node"  v-for="node in allNodes">
+                            <g id="node" transform="translate(10,10)" v-for="node in allNodes">
                                 <rect width="20" height="15"  rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
                                 <text font-family="FontAwesome" font-size="0.25em" dx="16"  v-on:click="deleteMe(node)" dy="4">X</text>
                                 <text dx="1" dy="3" font-size="1.5px">
@@ -80,14 +84,14 @@
       v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
       var blobs = true;
 
-      var allNodes = [{
+      var allNodes = [/*{
         "ID": 1,
         "Number": 1,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
-      }];
+      }*/];
 
       var allSteps = [{
         "ID": 1,
@@ -134,7 +138,6 @@
         }
 
         function dragged(d) {
-          //console.log( d3.event.x + ',' + d3.event.y)
           d3.select(this).attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
         }
 
@@ -142,6 +145,7 @@
           d3.select(this).classed("active", false);
         }
       },
+
       updateLines : function () {
         var svg = d3.select("svg");
 
@@ -155,13 +159,19 @@
         function dragstarted(d) {
           d3.select(".dragline").attr('hidden', null);
           var str = d3.select(this.parentNode).attr('transform')
-          d3.select(".dragline").attr('d', 'm' + str.slice(10,str.length-1) + 'l' + d3.event.x + ',' + d3.event.y);
+          var res = str.split("(")[1].split(",");
+          var start = parseInt(res[0])+10;
+          var end = parseInt(res[1].split(")")[0])+7.5
+          d3.select(".dragline").attr('d', 'm' + start +","+ end + 'l' + d3.event.x + ',' + d3.event.y);
           d3.select(this).raise().classed("active", true);
         }
 
         function dragged(d) {
           var str = d3.select(this.parentNode).attr('transform')
-          d3.select(".dragline").attr('d', 'm' + str.slice(10,str.length-1) + 'l' + d3.event.x + ',' + d3.event.y);
+          var res = str.split("(")[1].split(",");
+          var start = parseInt(res[0])+10;
+          var end = parseInt(res[1].split(")")[0])+7.5
+          d3.select(".dragline").attr('d', 'm' + start +","+ end + 'l' + d3.event.x + ',' + d3.event.y);
         }
 
         function dragended(d) {
@@ -169,6 +179,7 @@
           d3.select(this).classed("active", false);
         }
       },
+
       deleteMe: function(node){
         this.allNodes.splice(this.allNodes.indexOf(node), 1)
       },
