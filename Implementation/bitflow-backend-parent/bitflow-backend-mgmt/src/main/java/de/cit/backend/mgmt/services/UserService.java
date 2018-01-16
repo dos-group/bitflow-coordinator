@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 @Stateless
@@ -40,16 +41,17 @@ public class UserService implements IUserService {
 		persistence.createUser(user);
 	}
 
-	
 	@Override
 	public void updateUser(int userId, UserDTO user) {
-		// TODO Auto-generated method stub
-		
+		if (this.loadUser(userId) == null)
+		{
+			return;
+		}
+			persistence.updateUser(user);
 	}
 
 	@Override
 	public void deleteUser(int userId) {
-		// TODO Auto-generated method stub
-		
+		persistence.deleteUser(userId);
 	}
 }

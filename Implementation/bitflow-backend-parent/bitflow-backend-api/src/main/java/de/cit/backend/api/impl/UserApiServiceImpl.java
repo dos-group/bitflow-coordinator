@@ -33,7 +33,14 @@ public class UserApiServiceImpl extends UserApiService {
       public Response userIdDelete(Integer id,SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+          try {
+        	  userService.deleteUser(id);
+          }catch(Exception e)
+          {
+        	  return Response.status(400).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, e.getMessage())).build();
+          }
+          return Response.ok().build();
+          //return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "deleted")).build();
   }
       @Override
       public Response userIdGet(Integer id,SecurityContext securityContext)
@@ -48,7 +55,15 @@ public class UserApiServiceImpl extends UserApiService {
       public Response userIdPost(User body, Integer id, SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+      	 //FIXME response 404 if the user with given id does not exist
+      	try {
+      		 userService.updateUser(body.getID(), new UserConverter().convertToBackend(body));
+      	}catch(Exception e)
+      	{
+      		 return Response.status(400).build();
+      	}
+        return Response.ok().build();
+      //return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
   }
       @Override
       public Response userPost(User body,SecurityContext securityContext)

@@ -50,6 +50,14 @@ public class PersistenceService {
 	public void createUser(UserDTO user) {
 		entityManager.persist(user);
 	}
+	
+	public void updateUser(UserDTO user) {
+		entityManager.merge(user);
+	}
+	
+	public void deleteUser(int userId) {
+		entityManager.remove(this.findUser(userId));	
+	}
 
 	public ProjectDTO findProject(int projectId) {
 		return entityManager.find(ProjectDTO.class, projectId);
