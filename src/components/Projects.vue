@@ -5,8 +5,8 @@
 				<h1>{{ title }}</h1>
 			</div>
 			<div class="col-sm-4">
-				<b-btn v-b-modal.add-project-modal 
-					type="button" 
+				<b-btn v-b-modal.add-project-modal
+					type="button"
 					class="btn btn-success btn-lg float-right add-button"
 				>Create new project</b-btn>
 			</div>
@@ -14,13 +14,13 @@
 		<ul class="list-items list-group">
 			<li v-for="item in projects" :key="item.id">
 				<div class="list-item list-group-item">
-					<b-btn v-b-modal.delete-project-modal 
-						type="button" 
-						class="btn btn-danger btn-md float-right action-button" 
+					<b-btn v-b-modal.delete-project-modal
+						type="button"
+						class="btn btn-danger btn-md float-right action-button"
 						@click="selectedId = item.id"
 					>Delete</b-btn>
-					<b-btn v-b-modal.edit-project-modal 
-						type="button" 
+					<b-btn v-b-modal.edit-project-modal
+						type="button"
 						class="btn btn-secondary btn-md float-right action-button"
 						@click="selectedId = item.id"
 					>Edit</b-btn>
@@ -36,11 +36,11 @@
 
 		<!-- modals -->
 
-		<b-modal 
-			id="add-project-modal" 
-			ref="createModal" 
-			title="New Project" 
-			@ok="createProject" 
+		<b-modal
+			id="add-project-modal"
+			ref="createModal"
+			title="New Project"
+			@ok="createProject"
 			@shown="clearName"
 		>
     	<form @submit.stop.prevent="handleSubmit">
@@ -48,11 +48,11 @@
       </form>
   	</b-modal>
 
-		<b-modal 
-			id="edit-project-modal" 
-			ref="updateModal" 
-			title="Edit Project" 
-			@ok="updateProject(selectedId)" 
+		<b-modal
+			id="edit-project-modal"
+			ref="updateModal"
+			title="Edit Project"
+			@ok="updateProject(selectedId)"
 			@shown="clearName"
 		>
     	<form @submit.stop.prevent="handleSubmit">
@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import createCurrentTimeFormatted from '../utils';
 
 export default {
@@ -80,7 +79,7 @@ export default {
   },
   async created() {
     try {
-      const response = await axios.get(this.$baseUrl + "/projects");
+      const response = await this.$backendCli.getProjects();
       this.projects = response.data;
     } catch (e) {
       alert(e);
@@ -101,7 +100,7 @@ export default {
           createdAt: createCurrentTimeFormatted()
         };
         try {
-          const resp = await axios.post(this.$baseUrl + "/projects", project);
+          const resp = await this.$backendCli.createProject();
           this.projects.push(resp.data);
           this.clearName();
           this.$refs.createModal.hide();
@@ -117,7 +116,7 @@ export default {
         try {
           let updatedProject = this.projects.find(pr => pr.id === id);
           updatedProject.name = this.name;
-          await axios.put(this.$baseUrl + "/project/" + id, updatedProject);
+          await this.$backendCli.updateProject(id,updatedProject);
         } catch (e) {
           alert(e);
         }
@@ -125,7 +124,7 @@ export default {
     },
     async deleteProject(id) {
       try {
-        await axios.delete(this.$baseUrl + "/project/" + id);
+        await this.$backendCli.deleteProject(id);
         this.projects = this.projects.filter(pr => pr.id !== id);
         this.$refs.deleteModal.hide();
       } catch (e) {

@@ -82,8 +82,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "Infrastructure",
   data() {
@@ -119,12 +117,12 @@ export default {
   },
   async created() {
     try {
-      const infoResponse = await axios.get(this.$baseUrl + "/info");
+      const infoResponse = await this.$backendCli.getInfo();
       const info = infoResponse.data[0];
       this.numberOfAgents = String(info.numberOfAgents);
       this.numberOfIdleAgents = String(info.numberOfIdleAgents);
 			this.agents = info.agents;
-			const pipResponse = await axios.get(this.$baseUrl + "/pipelines");
+            const pipResponse = await this.$backendCli.getPipelines();
 			this.pipelines = pipResponse.data;
 
 	console.log(this.agents[0]);

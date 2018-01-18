@@ -19,7 +19,7 @@ tags:
 - name: "infos"
   description: "Common operations"
 - name: "users"
-  description: "Operations regarding user managment"
+  description: "Operations regarding user managment"  
 schemes:
 - "http"
 securityDefinitions:
@@ -30,7 +30,7 @@ security:
 paths:
   /project/{id}:
     get:
-      tags:
+      tags: 
       - "project"
       summary: "Query information about the specified project."
       consumes:
@@ -56,7 +56,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{id}/users:
     get:
-      tags:
+      tags: 
       - "project"
       summary: "Query all users with access to the specified project."
       consumes:
@@ -84,7 +84,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{projectId}/users/{userId}:
     delete:
-      tags:
+      tags: 
       - "project"
       summary: "Removing a user from the specified project."
       consumes:
@@ -108,7 +108,7 @@ paths:
         404:
           description: "If the project or the user with the given id does not exist."
     post:
-      tags:
+      tags: 
       - "project"
       summary: "Adding a user to the specified project."
       consumes:
@@ -135,7 +135,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{id}/pipeline:
     get:
-      tags:
+      tags: 
       - "pipeline"
       summary: "Query the specified pipeline."
       consumes:
@@ -160,7 +160,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags:
+      tags: 
       - "pipeline"
       summary: "Create new pipeline."
       consumes:
@@ -186,7 +186,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags:
+      tags: 
       - "pipeline"
       summary: "Delete the specified pipeline."
       consumes:
@@ -206,7 +206,7 @@ paths:
           description: "If the project with the given id does not exist."
   /user/{id}:
     get:
-      tags:
+      tags: 
       - "users"
       summary: "Query an existing user."
       consumes:
@@ -229,7 +229,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags:
+      tags: 
       - "users"
       summary: "Delete an existing user."
       consumes:
@@ -248,7 +248,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags:
+      tags: 
       - "users"
       summary: "Update existing user."
       consumes:
@@ -275,7 +275,7 @@ paths:
           description: "If the project with the given id does not exist."
   /user:
     post:
-      tags:
+      tags: 
       - "users"
       summary: "Create new user."
       consumes:
@@ -296,7 +296,7 @@ paths:
           description: "User validation failed."
   /info:
     get:
-      tags:
+      tags: 
       - "infos"
       summary: "Query infos about the running process agents."
       consumes:
@@ -310,6 +310,56 @@ paths:
           description: "Common infos"
           schema:
             $ref: "#/definitions/Info"
+  /capabilities/{id}:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query capabilities of a specific agents"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      description: 'Returns information about the specified agent and its capabilities.'
+      responses:
+        200:
+          description: "Common infos"
+          schema:
+            $ref: "#/definitions/Capabilities"
+        404:
+          description: "If the agent with the specified id does not exist."
+  /register:
+    get:
+      tags: 
+      - "infos"
+      summary: "Register a new agent to the system."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+      - name: "ip"
+        in: "path"
+        required: true
+        type: string
+      - name: "port"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      description: 'Register a new agent to the system.'
+      responses:
+        200:
+          description: "If registration succeeds, no further pay load."
+        400:
+          description: "If registration failed."
 definitions:
   PipelineStep:
     type: object
@@ -440,6 +490,39 @@ definitions:
         type: integer
         format: int32
         example: 6
+  Capabilities:
+    type: object
+    properties:
+      AgentId:
+        type: integer
+        format: int64
+        example: 1
+      Capabilities:
+        type: array
+        items:
+          $ref: "#/definitions/Capability"
+  Capability:
+    type: object
+    properties:
+      Name:
+        type: string
+        example: "avg"
+      IsFork:
+        type: boolean
+        example: false
+      Description:
+        type: string
+        example: "Add an average metric for every incoming metric. Optional parameter: duration or number of samples. Optional parameters: [window]"
+      RequiredParams:
+        type: array
+        items:
+          type: string
+        example: []
+      OptionalParams:
+        type: array
+        items:
+          type: string
+        example: ["window"]
   Tag:
     type: object
     properties:
