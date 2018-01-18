@@ -12,6 +12,7 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.factories.CapabilitiesApiServiceFactory;
 import de.cit.backend.api.model.Capabilities;
 import de.cit.backend.mgmt.AuthLevel;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 
 @Path("/capabilities")
 
@@ -22,7 +23,7 @@ public class CapabilitiesApi  {
    private final CapabilitiesApiService delegate = CapabilitiesApiServiceFactory.getCapabilitiesApi();
 
     @GET
-    @AuthLevel(AuthLevel.Level.USER)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })

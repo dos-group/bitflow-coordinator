@@ -12,6 +12,7 @@ import de.cit.backend.api.UserApiService;
 import de.cit.backend.api.converter.UserConverter;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
@@ -56,6 +57,9 @@ public class UserApiServiceImpl extends UserApiService {
       throws NotFoundException {
       // do some magic!
       	 //FIXME response 404 if the user with given id does not exist
+		  if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name()) && !body.getName().equals(securityContext.getUserPrincipal().getName())) {
+			  return Response.status(403).build();
+		  }
       	try {
       		 userService.updateUser(body.getID(), new UserConverter().convertToBackend(body));
       	}catch(Exception e)

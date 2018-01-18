@@ -1,6 +1,5 @@
 package de.cit.backend.mgmt;
 
-import de.cit.backend.mgmt.AuthLevel.Level;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
@@ -14,8 +13,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
+import java.security.Principal;
 import java.util.*;
 
 
@@ -33,6 +34,28 @@ public class AuthenticationFilter implements ContainerRequestFilter
             .entity("Invalid Credentials").build();
     private static final Response ACCESS_FORBIDDEN = Response.status(Status.FORBIDDEN)
             .entity("Access forbidden for this user").build();
+
+    private static final SecurityContext GUEST_SECURITY_CONTEXT = new SecurityContext() {
+        @Override
+        public Principal getUserPrincipal() {
+            return null;
+        }
+
+        @Override
+        public boolean isUserInRole(String s) {
+            return false;
+        }
+
+        @Override
+        public boolean isSecure() {
+            return false;
+        }
+
+        @Override
+        public String getAuthenticationScheme() {
+            return AUTHENTICATION_SCHEME;
+        }
+    };
 
     @Context
     private ResourceInfo resourceInfo;
@@ -59,8 +82,9 @@ public class AuthenticationFilter implements ContainerRequestFilter
         // return if no authorization required
         if(authLevel == null) {
             System.out.println("No authentication required!");
+            requestContext.setSecurityContext(GUEST_SECURITY_CONTEXT);
             return;
-        } else if (Level.USER.equals(authLevel.value())) {
+        } else if (UserRoleEnum.STANDARD.equals(authLevel.value())) {
             System.out.println("User authentication required!");
         } else {
             System.out.println("Admin authentication required!");
@@ -106,11 +130,46 @@ public class AuthenticationFilter implements ContainerRequestFilter
             requestContext.abortWith(ACCESS_INVALID_CREDENTIALS);
             return;
         }
-        if(Level.ADMIN.equals(authLevel.value()) && !UserRoleEnum.ADMIN.equals(user.getRole())) {
+        if(UserRoleEnum.ADMIN.equals(authLevel.value()) && !UserRoleEnum.ADMIN.equals(user.getRole())) {
             System.out.println("User has no permissions for the requested resource");
             requestContext.abortWith(ACCESS_FORBIDDEN);
             return;
         }
+
+        final SecurityContext securityContext = new SecurityContext() {
+
+            private final Principal principal = () -> user.getName();
+
+            @Override
+            public Principal getUserPrincipal() {
+                return principal;
+            }
+
+            @Override
+            public boolean isUserInRole(String role) {
+                try {
+                    final UserRoleEnum requestedRole = UserRoleEnum.valueOf(role);
+                    if(UserRoleEnum.ADMIN.equals(requestedRole) && !UserRoleEnum.ADMIN.equals(user.getRole())) {
+                        return false;
+                    }
+                } catch (IllegalArgumentException e) {
+                    // Unknown role
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean isSecure() {
+                return true;
+            }
+
+            @Override
+            public String getAuthenticationScheme() {
+                return AUTHENTICATION_SCHEME;
+            }
+        };
+        requestContext.setSecurityContext(securityContext);
     }
 
 }

@@ -5,6 +5,7 @@ import de.cit.backend.api.InfoApiService;
 import de.cit.backend.api.factories.InfoApiServiceFactory;
 
 import de.cit.backend.mgmt.AuthLevel;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
@@ -30,7 +31,7 @@ public class InfoApi  {
    private final InfoApiService delegate = InfoApiServiceFactory.getInfoApi();
 
     @GET
-    @AuthLevel(AuthLevel.Level.USER)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Query infos about the running process agents.", notes = "Returns information about the current backend infrastruccture: A list of available process agents and their current state.", response = Info.class, authorizations = {@io.swagger.annotations.Authorization(value = "BasicAuth")}, tags={ "infos", })

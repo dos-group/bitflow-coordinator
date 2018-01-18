@@ -14,6 +14,7 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.factories.UserApiServiceFactory;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.AuthLevel;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import io.swagger.annotations.ApiParam;
 
 @Path("/user")
@@ -25,7 +26,7 @@ public class UserApi  {
    private final UserApiService delegate = UserApiServiceFactory.getUserApi();
 
     @DELETE
-    @AuthLevel(AuthLevel.Level.ADMIN)
+    @AuthLevel(UserRoleEnum.ADMIN)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -37,7 +38,7 @@ public class UserApi  {
         return delegate.userIdDelete(id,securityContext);
     }
     @GET
-    @AuthLevel(AuthLevel.Level.USER)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -51,7 +52,7 @@ public class UserApi  {
         return delegate.userIdGet(id,securityContext);
     }
     @POST
-    @AuthLevel(AuthLevel.Level.USER)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
@@ -67,7 +68,7 @@ public class UserApi  {
         return delegate.userIdPost(body,id,securityContext);
     }
     @POST
-    @AuthLevel(AuthLevel.Level.USER)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Create new user.", notes = "Returns the specified user.", response = Void.class, tags={ "users", })
