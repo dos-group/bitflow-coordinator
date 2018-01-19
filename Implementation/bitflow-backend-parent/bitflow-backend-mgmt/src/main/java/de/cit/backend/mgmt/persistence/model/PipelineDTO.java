@@ -28,21 +28,15 @@ public class PipelineDTO implements java.io.Serializable {
 	private Integer id;
 	private String name;
 	private String status;
-	private String script;
 	private Date lastChanged;
 	private List<ProjectDTO> projects = new ArrayList<>();
-	private List<PipelineStepDTO> pipelineSteps = new ArrayList();
+	private List<PipelineStepDTO> pipelineSteps = new ArrayList<>();
 
 	public PipelineDTO() {
 	}
 
-	public PipelineDTO(String script) {
-		this.script = script;
-	}
-
-	public PipelineDTO(String status, String script, Date lastChanged, List<PipelineStepDTO> pipelineSteps) {
+	public PipelineDTO(String status, Date lastChanged, List<PipelineStepDTO> pipelineSteps) {
 		this.status = status;
-		this.script = script;
 		this.lastChanged = lastChanged;
 		this.pipelineSteps = pipelineSteps;
 	}
@@ -66,15 +60,6 @@ public class PipelineDTO implements java.io.Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	@Column(name = "SCRIPT", nullable = false, length = 256)
-	public String getScript() {
-		return this.script;
-	}
-
-	public void setScript(String script) {
-		this.script = script;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)

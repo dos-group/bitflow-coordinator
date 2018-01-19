@@ -9,9 +9,12 @@ import javax.persistence.Query;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.cit.backend.mgmt.helper.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.persistence.model.ConfigurationDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 
@@ -39,6 +42,21 @@ public class PersistenceAccessTest {
 		System.out.println(pro.getName());
 		System.out.println(pro.getUserdata().getName());
 		System.out.println(pro.getProjectMembers().size());
+	}
+	
+	@Test
+	public void findPipelineTest(){
+		PipelineDTO pipe = em.find(PipelineDTO.class, 1);
+		System.out.println("Pipeline:");
+		System.out.println(ScriptGenerator.generateScriptForPipeline(pipe));
+		for(PipelineStepDTO step : pipe.getPipelineSteps()){
+			String stepStr = step.getStepNumber() + ": ";
+			for(PipelineStepDTO succ : step.getSuccessors()){
+				stepStr += succ.getStepNumber();
+			}
+			System.out.println(stepStr);
+		}
+		
 	}
 	
 	@Test

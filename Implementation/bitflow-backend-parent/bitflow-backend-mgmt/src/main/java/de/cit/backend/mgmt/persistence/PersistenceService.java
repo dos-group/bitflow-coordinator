@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.AgentState;
+import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 
@@ -61,6 +62,10 @@ public class PersistenceService {
 
 	public ProjectDTO findProject(int projectId) {
 		return entityManager.find(ProjectDTO.class, projectId);
+	}
+	
+	public PipelineDTO findPipeline(int pipelineId) {
+		return entityManager.find(PipelineDTO.class, pipelineId);
 	}
 
 	public List<AgentDTO> findAgentsByState(AgentState state) {

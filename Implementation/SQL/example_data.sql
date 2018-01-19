@@ -26,8 +26,8 @@ INSERT INTO `USER_PROJECT` (`user_id`,`project_id`) VALUES (2,3);
 INSERT INTO `USER_PROJECT` (`user_id`,`project_id`) VALUES (3,3);
 
 -- Example Pipelines
-INSERT INTO `PIPELINE` (`name`, `status`, `script`) VALUES ("Pipe_1", "failed", "Test0");
-INSERT INTO `PIPELINE` (`name`, `status`, `script`) VALUES ("Pipe_2", "finished", "Test1");
+INSERT INTO `PIPELINE` (`name`, `status`) VALUES ("Pipe_1", "failed");
+INSERT INTO `PIPELINE` (`name`, `status`) VALUES ("Pipe_2", "finished");
 
 -- Pipeline to projects
 INSERT INTO `PIPELINE_PROJECT` (`pipeline_id`, `project_id`) VALUES (1, 1);
@@ -35,13 +35,15 @@ INSERT INTO `PIPELINE_PROJECT` (`pipeline_id`, `project_id`) VALUES (2, 3);
 
 
 -- Example pipeline steps
-INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `script`) VALUES (1, 0, 1, "input.csv -> avg() -> out.csv\r");
-INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `script`) VALUES (1, 1, 1, "input.csv -> avg() -> out.csv\r");
-INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `script`) VALUES (1, 2, 1, "in.csv -> avg() -> out.csv\r");
-INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `script`) VALUES (1, 3, 2, "in.csv -> avg() -> out.csv\r");
+INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `step_type`, `content`) VALUES (1, 0, 1, 0, "input.csv");
+INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `step_type`, `content`) VALUES (1, 1, 1, 2, "avg");
+INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `step_type`, `content`) VALUES (1, 2, 1, 1, "out.csv");
+
+
 
 -- Example Pipeline Succession
-INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (1, 2);
+INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (2, 1);
+INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (3, 2);
 
 -- Configuration
 INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the agents availability (in seconds)", "BITFLOW_MONITOR_INTERVAL", "30");

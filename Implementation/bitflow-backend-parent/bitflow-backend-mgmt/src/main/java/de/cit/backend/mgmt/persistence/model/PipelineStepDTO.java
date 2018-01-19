@@ -3,15 +3,20 @@ package de.cit.backend.mgmt.persistence.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,30 +32,20 @@ public class PipelineStepDTO implements java.io.Serializable {
 	private AgentDTO agent;
 	private PipelineDTO pipeline;
 	private int stepNumber;
-	private String script;
 	private String status;
-	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId = new HashSet<PipelineStepSuccessors>(0);
-	private Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId = new HashSet<PipelineStepSuccessors>(0);
-
+	private String content;
+	private StepTypeEnum type;
+	
+	private List<PipelineParameterDTO> params = new ArrayList<>();
+	private List<PipelineStepDTO> successors = new ArrayList<>();
+	
 	public PipelineStepDTO() {
 	}
 
-	public PipelineStepDTO(AgentDTO agent, PipelineDTO pipeline, int stepNumber, String script) {
+	public PipelineStepDTO(AgentDTO agent, PipelineDTO pipeline, int stepNumber) {
 		this.agent = agent;
 		this.pipeline = pipeline;
 		this.stepNumber = stepNumber;
-		this.script = script;
-	}
-
-	public PipelineStepDTO(AgentDTO agent, PipelineDTO pipeline, int stepNumber, String script,
-			Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId,
-			Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId) {
-		this.agent = agent;
-		this.pipeline = pipeline;
-		this.stepNumber = stepNumber;
-		this.script = script;
-		this.pipelineStepSuccessorsesForStepId = pipelineStepSuccessorsesForStepId;
-		this.pipelineStepSuccessorsesForSuccessorId = pipelineStepSuccessorsesForSuccessorId;
 	}
 
 	@Id
@@ -94,15 +89,6 @@ public class PipelineStepDTO implements java.io.Serializable {
 		this.stepNumber = stepNumber;
 	}
 
-	@Column(name = "SCRIPT", nullable = false, length = 256)
-	public String getScript() {
-		return this.script;
-	}
-
-	public void setScript(String script) {
-		this.script = script;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -111,23 +97,47 @@ public class PipelineStepDTO implements java.io.Serializable {
 		this.status = status;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pipelineStepByStepId")
-	public Set<PipelineStepSuccessors> getPipelineStepSuccessorsesForStepId() {
-		return this.pipelineStepSuccessorsesForStepId;
+	@Column(name = "CONTENT", nullable = false, length = 256)
+	public String getContent() {
+		return content;
 	}
 
-	public void setPipelineStepSuccessorsesForStepId(Set<PipelineStepSuccessors> pipelineStepSuccessorsesForStepId) {
-		this.pipelineStepSuccessorsesForStepId = pipelineStepSuccessorsesForStepId;
+	public void setContent(String content) {
+		this.content = content;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pipelineStepBySuccessorId")
-	public Set<PipelineStepSuccessors> getPipelineStepSuccessorsesForSuccessorId() {
-		return this.pipelineStepSuccessorsesForSuccessorId;
+	@Column(name = "STEP_TYPE", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	public StepTypeEnum getType() {
+		return type;
 	}
 
-	public void setPipelineStepSuccessorsesForSuccessorId(
-			Set<PipelineStepSuccessors> pipelineStepSuccessorsesForSuccessorId) {
-		this.pipelineStepSuccessorsesForSuccessorId = pipelineStepSuccessorsesForSuccessorId;
+	public void setType(StepTypeEnum type) {
+		this.type = type;
 	}
 
+	@OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name="PIPELINE_STEP_ID")
+	public List<PipelineParameterDTO> getParams() {
+		return params;
+	}
+
+	public void setParams(List<PipelineParameterDTO> params) {
+		this.params = params;
+	}
+
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="PIPELINE_STEP_SUCCESSORS",
+    joinColumns=
+        @JoinColumn(name="STEP_ID", referencedColumnName="ID"),
+    inverseJoinColumns=
+        @JoinColumn(name="SUCCESSOR_ID", referencedColumnName="ID")
+    )
+	public List<PipelineStepDTO> getSuccessors() {
+		return successors;
+	}
+
+	public void setSuccessors(List<PipelineStepDTO> successors) {
+		this.successors = successors;
+	}
 }
