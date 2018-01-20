@@ -1,83 +1,56 @@
 <template>
   <div class="page-content">
 		<h1>{{ title }}</h1>
-			 <b-row>
-		        <b-col cols="3">
-						<b-card :title="numberOfAgents">
-							<p class="card-text">Active Agents</p>
+		<div class="top-content">
+			<b-card-group deck>
+				<b-card :title="numberOfAgents">
+					<p class="card-text">Active Agents</p>
+				</b-card>
+				<b-card :title="numberOfIdleAgents">
+					<p class="card-text">Idle Agents</p>
+				</b-card>
+				<b-card :title="runningPipelinesCount">
+					<p class="card-text">Running Pipelines</p>
+				</b-card>
+			</b-card-group>
+		</div>
+		<b-tabs>
+			<b-tab title="Agents" active>
+				<b-table striped responsive :items="agents" :fields="agentFields">
+					<template slot="tags" slot-scope="row">
+						<b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
+						{{ row.detailsShowing ? 'Hide' : 'Show'}} Tags
+						</b-button>
+					</template>
+					<template slot="row-details" slot-scope="row">
+						<b-card>
+							<b-row v-for="tag in row.item.tags" :key="tag.slots" class="mb-2">
+								<b-col sm="2" class="text-sm-right"><b>Resources:</b></b-col>
+								<b-col>{{ tag.resources }}</b-col>
+								<b-col sm="2" class="text-sm-right"><b>Slots:</b></b-col>
+								<b-col>{{ tag.slots }}</b-col>
+							</b-row>
 						</b-card>
-						<b-card :title="numberOfIdleAgents">
-							<p class="card-text">Idle Agents</p>
-						</b-card>	
-				</b-col>
-		        <b-col cols="9">
-		        	<b-tabs>
-						<b-tab title=" Active Agents" active>
-							<b-table striped responsive :items="agents" :fields="ListFields" table-layout: fixed hover="hover">
-								<template slot="tags" slot-scope="row">
-									<b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
-									{{ row.detailsShowing ? 'Hide' : 'Show'}} Tags
-									</b-button>
-								</template>
-								<template slot="show_details" scope="row">
-								      <b-button size="sm" @click="row.toggleDetails" class="mr-2">
-								       {{ row.detailsShowing ? 'Hide' : 'Show'}} Details
-								      </b-button>
-								 </template>
-								<template slot="row-details" slot-scope="row">
-									<b-card-group columns>
-										<b-card v-for="(value, Key) in row.item" class="mb-2">
-											<b-row sm="2" class="text-sm-right"><b>{{ Key }}</b></b-row><b-row>{{ value }}</b-row>
-										</b-card>
-									</b-card-group>
-								</template>
-								
-							</b-table>
-						</b-tab>
-						<b-tab title="Pipelines">
-							<ul class="pipeline-list list-group">
-								<b-card-group columns>
-								<li v-for="item in pipelines" :key="item.id">
-									<b-card v-b-popover.hover="'I am popover content!'">
-										<p>{{ item.name }}</p>
-										<b-btn class="btn btn-outline-success float-left action-button">
-											Start 
-										</b-btn>
-										<b-btn class="btn btn-outline-success action-button">
-											Details
-										</b-btn>
-									</b-card>
-								</li>
-								</b-card-group columns>
-							</ul>
-						</b-tab>
-					</b-tabs>
-		        </b-col>
-		    </b-row>
-		    <b-row>
-		    <div>
-		    		<div class="pipeline-box">
-						<h5>Workers Available</h5>
-							<ul class="pipeline-list list-group">
-							<b-card-group columns>
-								<li v-for="(item, index) in NewAgents" >
-									<b-card v-b-popover.hover="'Available'">
-										<p>{{item}}</p>
-										<b-btn class="btn btn-outline-success float-left action-button">
-											Deploy 
-										</b-btn>
-										<b-btn class="btn btn-outline-success action-button">
-											Details
-										</b-btn>
-									</b-card>
-								</li>
-							</b-card-group>
-							</ul>
-
-					</div>
-		    </div>
-		    </b-row>
-		
+					</template>
+					<template slot="usedCpuCores" slot-scope="data">
+						{{ data.item.usedCpuCores.join(', ') }}
+					</template>
+				</b-table>
+			</b-tab>
+			<b-tab title="Running Pipelines">
+				<ul class="pipeline-list list-group">
+					<li v-for="item in runningPipelines" :key="item.id">
+						<div class="list-item list-group-item">
+							<div class="pipeline-box">
+								<router-link :to="{path: '/projects/' + item.projectId + '/pipelines/' + item.id + '/editor'}"
+									class="list-item-link"
+								>{{ item.name }}</router-link>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</b-tab>
+		</b-tabs>
   </div>
 </template>
 
@@ -89,22 +62,13 @@ export default {
       title: "Infrastructure",
       numberOfAgents: null,
       numberOfIdleAgents: null,
+			runningPipelinesCount: null,
       agents: [],
-      NewAgents:[
-      				"Worker 1",
-      				"Worker 2",
-      				"Worker 3"
-
-      				],
-      ListFields: [
-      	{ key: "hostName", label: "Host Name" },
-        { key: "apiPort", label: "API Port" },
-        { key: "tags", label: "Tags" },
-        { key: "hostName", label: "Host Name" },
-        { key: "usedMem", label: "Used Memory" },
-        'show_details'
-      ],
       agentFields: [
+        { key: "hostName", label: "Host Name" },
+        { key: "apiPort", label: "API Port" }, //TODO: Will we keep that? Depends on API
+        { key: "tags", label: "Tags" },
+        { key: "usedMem", label: "Used Memory" },
         { key: "totalMem", label: "Total Memory" },
         { key: "usedCpu", label: "Used CPU" },
         { key: "usedCpuCores", label: "Used CPU Cores" },
@@ -112,7 +76,7 @@ export default {
         { key: "numProcs", label: "Procedures" },
         { key: "goroutines", label: "Goroutines" }
 			],
-			pipelines: []
+			runningPipelines: []
     };
   },
   async created() {
@@ -121,11 +85,10 @@ export default {
       const info = infoResponse.data[0];
       this.numberOfAgents = String(info.numberOfAgents);
       this.numberOfIdleAgents = String(info.numberOfIdleAgents);
+			this.runningPipelinesCount = "?"; //TODO: can't read from API yet
 			this.agents = info.agents;
             const pipResponse = await this.$backendCli.getPipelines();
-			this.pipelines = pipResponse.data;
-
-	console.log(this.agents[0]);
+			this.runningPipelines = pipResponse.data; //TODO: only get running ones, API not ready
     } catch (e) {
       alert(e);
     }
@@ -146,9 +109,5 @@ export default {
 }
 .pipeline-box {
 	padding: 15px 0px 15px 0px;
-}
-.bv-example-row{
-	padding-top:20px;
-	padding-bottom:20px;
 }
 </style>

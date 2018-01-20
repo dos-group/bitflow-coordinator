@@ -18,12 +18,17 @@
 						type="button" 
 						class="btn btn-danger btn-md float-right action-button"
 						@click="selectedId = item.id"
-					>Delete</b-btn>
+					><icon name="trash" class="inline"/></b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
 						type="button" 
 						class="btn btn-secondary btn-md float-right action-button"
 						@click="selectedId = item.id"
-					>Clone</b-btn>
+					><icon name="copy" class="inline"/></b-btn>
+					<b-btn
+						type="button" 
+						class="btn btn-secondary btn-md float-right action-button"
+					><icon name="play" class="inline"/></b-btn>
+					<!-- TODO: API call for starting the pipeline -->
           <div>
 						<router-link :to="{path: '/projects/' + projectId + '/pipelines/' + item.id + '/editor'}" 
 							class="list-item-link"

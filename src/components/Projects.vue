@@ -18,12 +18,12 @@
 						type="button"
 						class="btn btn-danger btn-md float-right action-button"
 						@click="selectedId = item.id"
-					>Delete</b-btn>
+					><icon name="trash" class="inline"/></b-btn>
 					<b-btn v-b-modal.edit-project-modal
 						type="button"
 						class="btn btn-secondary btn-md float-right action-button"
 						@click="selectedId = item.id"
-					>Edit</b-btn>
+					><icon name="edit" class="inline"/></b-btn>
 					<div>
 						<router-link :to="{path: '/projects/' + item.id + '/pipelines'}" class="list-item-link">
 							{{ item.name }}
