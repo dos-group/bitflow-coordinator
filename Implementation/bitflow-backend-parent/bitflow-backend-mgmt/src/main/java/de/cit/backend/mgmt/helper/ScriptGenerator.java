@@ -1,5 +1,12 @@
 package de.cit.backend.mgmt.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jms.IllegalStateException;
+
+import org.jboss.logging.Logger;
+
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
@@ -7,6 +14,8 @@ import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
 
 public class ScriptGenerator {
 
+	private static final Logger log = Logger.getLogger(ScriptGenerator.class);
+	
 	public static String generateScriptForPipelineStep(PipelineStepDTO pipelineStep){
 		StringBuilder sb = new StringBuilder();
 		
@@ -28,21 +37,61 @@ public class ScriptGenerator {
 		return sb.toString();
 	}
 	
-	public static String generateScriptForPipeline(PipelineDTO pipeline){
+	public static String generateScriptForPipeline(PipelineDTO pipeline) {
 		StringBuilder sb = new StringBuilder();
-		boolean parallelMode = false;
 		
-		//TODO Sortierung ist hier wichtig
-		for(PipelineStepDTO step : pipeline.getPipelineSteps()){
-			sb.append(generateScriptForPipelineStep(step));
-			sb.append(" -> ");
-			
-			if(step.getSuccessors().size() > 1){
-				//handle parallel steps
+		try {
+			PipelineSort.sortPipeline(pipeline);
+			List<Integer> visited = new ArrayList<>();
+			List<PipelineStepDTO> steps = pipeline.getPipelineSteps();
+			generateScriptRecursive(steps, 0, sb, new ForkStorage(), visited);
+		} catch (IllegalStateException e) {
+			log.error("Error while generating the pipeline script!",e);
+			return null;
+		}
+		return sb.toString();
+	}
+
+	private static void generateScriptRecursive(List<PipelineStepDTO> steps, int index, StringBuilder sb,
+			ForkStorage forkStorage, List<Integer> visitedIndexes) throws IllegalStateException {
+		if(visitedIndexes.contains(index)){
+			generateScriptRecursive(steps, index + 1, sb, forkStorage, visitedIndexes);
+			return;
+		}else{
+			visitedIndexes.add(index);
+		}
+		if(index >= steps.size()){
+			return;
+		}
+		
+		sb.append(generateScriptForPipelineStep(steps.get(index)));
+		
+		List<Integer> succIndexes = SuccessorTracker.findSuccessorIndexes(steps, index);
+		
+		if(succIndexes.size() > 1){
+			forkStorage.addNewFork(succIndexes.size(), ForkJoinTracker.findForkJoinStepNumber(steps, index, succIndexes));
+			sb.append(" -> { ");
+		}else if(succIndexes.size() == 0){
+			return;
+		}else {
+			if(forkStorage.isForkBranchClosed(steps.get(succIndexes.get(0)).getStepNumber())){
+				forkStorage.closeForkBranch();
+				sb.append(" ; ");
+				return;
+			}else if(forkStorage.isForkClosed(steps.get(succIndexes.get(0)).getStepNumber())){
+				forkStorage.closeFork();
+				sb.append(" } -> ");
+			}else{
+				sb.append(" -> ");
 			}
 		}
-		sb.delete(sb.length() - 4, sb.length());
 		
-		return sb.toString();
+		if(succIndexes.size() == 1){
+			generateScriptRecursive(steps, index + 1, sb, forkStorage, visitedIndexes);
+		}else{
+			for (int i = 0; i < succIndexes.size(); i++) {//i, succIndexes.size() - 1, forkJoinStepNumber
+				generateScriptRecursive(steps, index + 1 + i, sb, forkStorage, visitedIndexes);
+			}
+		}
 	}
 }

@@ -140,4 +140,9 @@ public class PipelineStepDTO implements java.io.Serializable {
 	public void setSuccessors(List<PipelineStepDTO> successors) {
 		this.successors = successors;
 	}
+	
+	@Override
+	public String toString() {
+		return "Step " + stepNumber;
+	}
 }

@@ -45,7 +45,7 @@ public class PersistenceAccessTest {
 	}
 	
 	@Test
-	public void findPipelineTest(){
+	public void findPipelineTest() {
 		PipelineDTO pipe = em.find(PipelineDTO.class, 1);
 		System.out.println("Pipeline:");
 		System.out.println(ScriptGenerator.generateScriptForPipeline(pipe));

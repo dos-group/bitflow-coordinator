@@ -1,18 +1,15 @@
 package de.cit.backend.mgmt.helper;
 
+import javax.jms.IllegalStateException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
-import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
 
-public class ScriptGeneratorTest {
-
-	public static final String LOCAL_PORT_SOURCE = "127.0.0.1";
-	public static final String FILE_SINK = "output.csv";
-	public static final String AVG_OPERATION = "avg";
+public class ScriptGeneratorTest extends AbstractPipelineTest{
 	
 	@Test
 	public void testPipelineStepGeneration(){
@@ -27,35 +24,70 @@ public class ScriptGeneratorTest {
 	}
 
 	@Test
-	public void testPipelineSequenceGeneration(){
-		PipelineStepDTO testSource = createTestPipelineStep(LOCAL_PORT_SOURCE, StepTypeEnum.SOURCE);
+	public void testPipelineGenerationLinear() {
+		PipelineDTO testObj = createTestPipelineLinear();
 		
-		PipelineStepDTO testSink = createTestPipelineStep(FILE_SINK, StepTypeEnum.SINK);
-		
-		PipelineStepDTO testOp = createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION);
-		
-		PipelineDTO pipe = new PipelineDTO();
-		pipe.getPipelineSteps().add(testSource);
-		pipe.getPipelineSteps().add(testOp);
-		pipe.getPipelineSteps().add(testSink);
-		
-		Assert.assertEquals(LOCAL_PORT_SOURCE + " -> " + AVG_OPERATION + "(param1=value1, param2=value2)" + " -> " + FILE_SINK,
-				ScriptGenerator.generateScriptForPipeline(pipe));
+		String expected = LOCAL_PORT_SOURCE + " -> " 
+				+ AVG_OPERATION + "(param1=value1, param2=value2) -> "
+				+ AVG_OPERATION + "(param1=value1, param2=value2) -> "
+				+ FILE_SINK;
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
+//		System.out.println(expected);
+//		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
 	}
 	
-	private PipelineStepDTO createTestPipelineStep(String content, StepTypeEnum type) {
-		PipelineStepDTO testStep = new PipelineStepDTO();
-		testStep.setType(type);
-		testStep.setContent(content);
-		testStep.getParams().add(createTestPipelineParam("param1", "value1"));
-		testStep.getParams().add(createTestPipelineParam("param2", "value2"));
-		return testStep;
+	@Test
+	public void testPipelineGenerationForkOnce() {
+		PipelineDTO testObj = createTestPipelineForkedOnce();
+		
+		String expected = LOCAL_PORT_SOURCE + " -> "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ FILE_SINK;
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
+//		System.out.println(expected);
+//		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
 	}
-
-	private PipelineParameterDTO createTestPipelineParam(String name, String value) {
-		PipelineParameterDTO param = new PipelineParameterDTO();
-		param.setParamName(name);
-		param.setParamValue(value);
-		return param;
+	
+	@Test
+	public void testPipelineGenerationForkOnce2() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipelineForkedOnce2();
+		
+		String expected = LOCAL_PORT_SOURCE + " -> "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ FILE_SINK;
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
+//		System.out.println(expected);
+//		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testPipelineGenerationForkMultiple() {
+		PipelineDTO testObj = createTestPipelineForkedMultiple();
+		
+		String expected = LOCAL_PORT_SOURCE + " -> "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ FILE_SINK;
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
+//		System.out.println(expected);
+//		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
 	}
 }
