@@ -1,6 +1,6 @@
 <!--suppress VueDuplicateTag -->
 
-<!--TODO: The first rec has to transform at the beginning so no line can be drawn
+<!--
     TODO: Color themes for single steps (randomized or so)
     TODO: Size of text in recs might be too big (line breaks!)
 -->
@@ -24,7 +24,7 @@
                 <div v-on:click="createNode(step.ID)" class="card step" v-for="step in allSteps">
                     <div class="card-block">
                         <h5 class="card-title">Step Id : {{step.ID}}</h5>
-                        <p class="card-text">Number : {{step.Number}}</p>
+                        <p class="card-text">Step Number : {{step.Number}}</p>
                         <p class="card-text">Content : {{step.Content}}</p>
                         <p class="card-text">Typ : {{step.Typ}}</p>
                     </div>
@@ -42,28 +42,27 @@
                     </defs>
 
                     <g class="wholeGraph">
-                        <path hidden d="m0,0l0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
+                        <path hidden d="m0,0 l 0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
                         <g class="lines">
-                            <path v-for="line in allLines" d="m0,0l0,0" class="dragline"
-                                  style="marker-end: url(#Triangle)"></path>
                         </g>
+                        <g class="markers"></g>
                         <g class="recs">
-                            <g id="node" transform="translate(10,10)" v-for="node in allNodes">
+                            <g class="square" transform="translate(10,10)" v-for="node in allNodes">
                                 <rect width="20" height="15" rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
                                 <text font-family="FontAwesome" font-size="0.25em" dx="16" v-on:click="deleteMe(node)"
                                       dy="4">X
                                 </text>
-                                <text dx="1" dy="3" font-size="1.5px">
-                                    <tspan>ID : {{node.ID}}</tspan>
+                                <text class="IDField" dx="1" dy="3" font-size="1.5px">
+                                    ID : {{node.ID}}
                                 </text>
                                 <text dx="1" dy="6" font-size="1.5px">
-                                    <tspan>Number : {{node.Number}}</tspan>
+                                    Number : {{node.Number}}
                                 </text>
                                 <text dx="1" dy="9" font-size="1.5px">
-                                    <tspan>Typ : {{node.Typ}}</tspan>
+                                    Typ : {{node.Typ}}
                                 </text>
                                 <text dx="1" dy="12" font-size="1.5px">
-                                    <tspan>Content : {{node.Content}}</tspan>
+                                    Content : {{node.Content}}
                                 </text>
                                 <circle v-if="blobs" r="1" cx="21" cy="7.5"></circle>
                             </g>
@@ -85,34 +84,36 @@
 
       /*    TODO : let the blobs disappear when not needed
             v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
-      var blobs = true;
+      const blobs = true;
 
-      var allNodes = [];
+      const allNodes = [];
 
-      var allSteps = [{
+      const coordinatesOfNodes = [];
+
+      const allSteps = [{
         "ID": 1,
-        "Number": 1,
+        "Number": 0,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 2,
-        "Number": 1,
+        "Number": 2,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 3,
-        "Number": 1,
+        "Number": 3,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 4,
-        "Number": 1,
+        "Number": null,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
@@ -151,13 +152,108 @@
         }
       ];
 
-      var allLines = [];
+      const allLines = [];
 
-      return {allSteps, allNodes, blobs, allLines}
+      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes}
     },
     methods: {
+      checkPos: function () {
+        const vm = this;
+        const squares = document.getElementsByClassName('square');
+        Array.from(squares).forEach(function (n) {
+
+          const str = d3.select(n).attr('transform')
+          const res = str.split("(")[1].split(",");
+          const posX = parseInt(res[0]) + 10;
+          const posY = parseInt(res[1].split(")")[0]) + 7.5
+
+          /*const posX = n.getBoundingClientRect().x;
+          const posY = n.getBoundingClientRect().y;*/
+          let node = false;
+          const Number = n.childNodes[6].textContent.match(/\d+/)[0];
+          vm.coordinatesOfNodes.forEach(function (c) {
+            if (c.Number == Number) {
+              node = true;
+              vm.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].coords = [posX, posY];
+            }
+          })
+          if (!node) {
+            vm.coordinatesOfNodes.push({"Number": Number, "coords": [posX, posY]});
+          }
+        })
+      },
+      drawLine: function (start, end) {
+        const here = this;
+        const svg = d3.select("svg");
+        var startNode = "empty";
+        var endNode = "empty";
+        here.coordinatesOfNodes.forEach(function (node) {
+          if (node.Number == start) {
+            startNode = node.coords
+          }
+          if (node.Number == end) {
+            endNode = node.coords
+          }
+        })
+        if (startNode !== "empty" && endNode !== "empty") {
+          //TODO let the marker be on the right position
+          svg.select(".lines").append("path")
+            .attr('d', 'M' + startNode[0] + ' , ' + startNode[1] + ' L ' + endNode[0] + ' , ' + endNode[1])
+            .attr('class', 'normalLine')
+            .attr('marker-mid', 'url(#Triangle)')
+            // .attr('style', 'marker-end: url(#Triangle);marker-mid: url(#Triangle)')
+            .attr('id', 'line' + start + end)
+
+          for (let i = 0; i <= 10; i++) {
+            svg.select(".markers").append("text").append("textPath")
+              .attr('xlink:href', '#line' + start + end)
+              .attr('startOffset', (i * 10) + '%')
+              .text("➤")
+          }
+        }
+      }
+      ,
+      changeLine: function (number) {
+        const here = this;
+        const svg = d3.select("svg");
+
+        let changedCoords = [];
+
+        here.coordinatesOfNodes.forEach(function (node) {
+          if (node.Number == number) {
+            changedCoords = node.coords
+          }
+        })
+
+        this.allLines.forEach(function (line) {
+
+            if (number == line.start) {
+              let coorse = 0;
+              //get the other node
+              here.coordinatesOfNodes.forEach(function (node) {
+                if (node.Number == line.end) {
+                  coorse = node.coords
+                }
+              })
+              svg.select("#line" + line.start + line.end).attr('d', 'M' + changedCoords[0] + ' , ' + changedCoords[1] + ' L ' + coorse[0] + ' , ' + coorse[1])
+            } else if (number == line.end) {
+              let coors = 0;
+              //get the other node
+              here.coordinatesOfNodes.forEach(function (node) {
+                if (node.Number == line.start) {
+                  coors = node.coords
+                }
+              })
+              svg.select("#line" + line.start + line.end).attr('d', 'M' + coors[0] + ' , ' + coors[1] + ' L ' + changedCoords[0] + ' , ' + changedCoords[1])
+            }
+
+
+          }
+        )
+      },
       updateNodes: function () {
-        var svg = d3.select("svg");
+        const here = this;
+        const svg = d3.select("svg");
 
         svg.select(".recs").selectAll("g")
           .call(d3.drag()
@@ -171,16 +267,27 @@
         }
 
         function dragged(d) {
+          const Number = d3.select(this).selectAll("text")._groups[0][2].innerHTML.match(/\d+/)[0];
+          here.checkPos();
+          setTimeout(here.changeLine(Number), 100)
           d3.select(this).attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
         }
 
         function dragended(d) {
+          const Number = d3.select(this).selectAll("text")._groups[0][2].innerHTML.match(/\d+/)[0];
+          here.checkPos();
+          setTimeout(here.changeLine(Number), 100)
           d3.select(this).classed("active", false);
         }
-      },
+
+
+      }
+
+      ,
 
       updateLines: function () {
-        var svg = d3.select("svg");
+        let here = this;
+        const svg = d3.select("svg");
 
         svg.select(".recs").selectAll("circle")
           .call(d3.drag()
@@ -191,37 +298,68 @@
 
         function dragstarted(d) {
           d3.select(".dragline").attr('hidden', null);
-          var str = d3.select(this.parentNode).attr('transform')
-          var res = str.split("(")[1].split(",");
-          var start = parseInt(res[0]) + 10;
-          var end = parseInt(res[1].split(")")[0]) + 7.5
+          const str = d3.select(this.parentNode).attr('transform')
+          const res = str.split("(")[1].split(",");
+          const start = parseInt(res[0]) + 10;
+          const end = parseInt(res[1].split(")")[0]) + 7.5
           d3.select(".dragline").attr('d', 'm' + start + "," + end + 'l' + d3.event.x + ',' + d3.event.y);
           d3.select(this).raise().classed("active", true);
         }
 
         function dragged(d) {
-          var str = d3.select(this.parentNode).attr('transform')
-          var res = str.split("(")[1].split(",");
-          var start = parseInt(res[0]) + 10;
-          var end = parseInt(res[1].split(")")[0]) + 7.5
+          const str = d3.select(this.parentNode).attr('transform')
+          const res = str.split("(")[1].split(",");
+          const start = parseInt(res[0]) + 10;
+          const end = parseInt(res[1].split(")")[0]) + 7.5
           d3.select(".dragline").attr('d', 'm' + start + "," + end + 'l' + d3.event.x + ',' + d3.event.y);
         }
 
         function dragended(d) {
+          const numberOfNode = d3.select(this.parentNode).selectAll("text")._groups[0][2].innerHTML.match(/\d+/)[0];
+          const str = d3.select(this.parentNode).attr('transform')
+          const res = str.split("(")[1].split(",");
+          const start = parseInt(res[0]);
+          const end = parseInt(res[1].split(")")[0])
+          here.coordinatesOfNodes.forEach(function (node) {
+            if ((d3.event.x + start <= (node.coords[0] + 15) && d3.event.x + start >= (node.coords[0] - 15)) && (d3.event.y + end <= (node.coords[1] + 15) && d3.event.y + end >= (node.coords[1] - 15))) {
+              const coor = {"start": numberOfNode, "end": node.Number}
+              var isIn = true;
+              here.allLines.forEach(function (line) {
+                if (line.start == numberOfNode && line.end == node.Number) {
+                  isIn = false;
+                }
+              })
+              if (isIn) {
+                here.allLines.push(coor)
+                setTimeout(here.drawLine(numberOfNode, node.Number), 100)
+                //here.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].start = [posX, posY];
+              }
+            }
+          })
           d3.select(".dragline").attr('hidden', 'hidden');
           d3.select(this).classed("active", false);
         }
-      },
+
+      }
+      ,
 
       deleteMe: function (node) {
+        let here = this;
+        this.coordinatesOfNodes.forEach(function (cnode) {
+          if (cnode.Number == node.Number) {
+            here.coordinatesOfNodes.splice(here.coordinatesOfNodes.indexOf(cnode), 1)
+            //TODO: maybe decrease all upper Numbers?
+          }
+        });
         this.allNodes.splice(this.allNodes.indexOf(node), 1)
-      },
+      }
+      ,
 
       createNode: function (nodeId) {
 
         if (nodeId === "start") {
 
-          var startNode = {
+          const startNode = {
             "ID": "START",
             "Number": null,
             "Typ": null,
@@ -234,7 +372,7 @@
 
         } else if (nodeId === "end") {
 
-          var endNode = {
+          const endNode = {
             "ID": "END",
             "Number": null,
             "Typ": null,
@@ -246,46 +384,48 @@
           this.allNodes.push(endNode);
 
         } else {
-          this.allNodes.push(this.allSteps.find(findElement));
+
+          const index = this.allSteps.findIndex(node => node.ID === nodeId);
+          const changingNode = this.allSteps.slice(index, index + 1)[0];
+          const newNode = Object.assign({}, changingNode);
+          newNode.Number = this.coordinatesOfNodes.length;
+          this.allNodes.push(newNode);
         }
 
         setTimeout(this.updateNodes, 100)
         setTimeout(this.updateLines, 100)
-
-        function findElement(node) {
-          return node.ID === nodeId;
-        }
+        setTimeout(this.checkPos, 100)
 
       }
     }
     ,
-    mounted: function () {
+    mounted:
 
-      var svg = d3.select("svg");
+      function () {
 
-      var zoomed = function () {
-        d3.select(".wholeGraph")
-          .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
-      };
+        const here = this;
+
+        const svg = d3.select("svg");
+
+        const zoomed = function () {
+          d3.select(".wholeGraph")
+            .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
+        };
 
 
-      var dragSvg = d3.zoom()
-        .on("zoom", function () {
-          if (d3.event.sourceEvent.shiftKey) {
-            // TODO  the internal d3 state is still changing
-            return false;
-          } else {
+        const dragSvg = d3.zoom()
+          .on("zoom", function () {
             zoomed.call(svg);
-          }
-          return true;
-        });
+            setTimeout(here.checkPos(), 100)
+            return true;
+          });
 
-      svg.call(dragSvg).on("dblclick.zoom", null);
+        svg.call(dragSvg).on("dblclick.zoom", null);
 
-      this.updateNodes;
-      this.updateLines;
+        this.updateNodes();
+        this.updateLines();
 
-    }
+      }
   }
 </script>
 <style>
@@ -335,6 +475,12 @@
         cursor: default;
     }
 
+    path.normalLine {
+        stroke: #000;
+        stroke-width: 0px;
+        cursor: default;
+    }
+
     .list-group {
         padding: 15px;
         display: inline-block;
@@ -343,6 +489,12 @@
         overflow: scroll;
 
         -webkit-overflow-scrolling: touch;
+    }
+
+    .markers {
+        font-size: 5px;
+        fill: black;
+        dominant-baseline: central
     }
 
 </style>
