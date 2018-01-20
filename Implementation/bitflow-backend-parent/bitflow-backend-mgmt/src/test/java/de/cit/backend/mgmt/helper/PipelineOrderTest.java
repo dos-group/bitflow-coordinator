@@ -1,7 +1,5 @@
 package de.cit.backend.mgmt.helper;
 
-import javax.jms.IllegalStateException;
-
 import org.junit.Assert;
 import org.junit.Test;
 

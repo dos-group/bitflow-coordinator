@@ -3,8 +3,6 @@ package de.cit.backend.mgmt.helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.IllegalStateException;
-
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
 class SuccessorTracker {

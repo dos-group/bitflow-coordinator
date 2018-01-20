@@ -1,11 +1,14 @@
 package de.cit.backend.mgmt.persistence;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,6 +19,7 @@ import de.cit.backend.mgmt.persistence.model.ConfigurationDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 
 public class PersistenceAccessTest {
@@ -73,11 +77,56 @@ public class PersistenceAccessTest {
 	}
 	
 	@Test
+	public void savePipelineTest(){
+		PipelineDTO pipeline = new PipelineDTO();
+		pipeline.setLastChanged(new Date());
+		pipeline.setName("TestPipe");
+		pipeline.setStatus("test");
+		
+		em.getTransaction().begin();
+		em.persist(pipeline);
+		
+		Assert.assertNotNull(pipeline.getId());
+		
+		em.getTransaction().rollback();
+	}
+	
+	@Test
+	public void savePipelineWithStepsTest(){
+		PipelineDTO pipeline = new PipelineDTO();
+		pipeline.setLastChanged(new Date());
+		pipeline.setName("TestPipe");
+		pipeline.setStatus("test");
+		
+		PipelineStepDTO step1 = createPipelineStep(0, StepTypeEnum.SOURCE, "127.0.01");
+		PipelineStepDTO step2 = createPipelineStep(1, StepTypeEnum.OPERATION, "avg");
+		PipelineStepDTO step3 = createPipelineStep(2, StepTypeEnum.SINK, "127.0.01");
+		
+		pipeline.getPipelineSteps().addAll(Arrays.asList(step1, step2, step3));
+		
+		em.getTransaction().begin();
+		em.persist(pipeline);
+		
+		Assert.assertNotNull(pipeline.getId());
+		Assert.assertNotNull(pipeline.getPipelineSteps().get(0).getId());
+		
+		em.getTransaction().rollback();
+	}
+	
+	@Test
 	public void getConfigTest(){
 		String hqlQuery = "SELECT conf FROM ConfigurationDTO conf WHERE conf.configKey = :key";
 		Query query = em.createQuery(hqlQuery);
 		query.setParameter("key", ConfigurationService.CONFIG_MONITOR_INTERVAL);
 		
 		System.out.println(((ConfigurationDTO)query.getSingleResult()).getConfigValue());
+	}
+	
+	private PipelineStepDTO createPipelineStep(int number, StepTypeEnum type, String content){
+		PipelineStepDTO step1 = new PipelineStepDTO();
+		step1.setContent(content);
+		step1.setStepNumber(number);
+		step1.setType(type);
+		return step1;
 	}
 }

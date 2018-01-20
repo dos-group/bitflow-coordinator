@@ -83,8 +83,13 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdPipelinePost(Pipeline body, Integer id, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		PipelineConverter converter = new PipelineConverter();
+		try{
+			PipelineDTO savedPipe = projectService.saveNewPipeline(converter.convertToBackend(body), id);
+			return Response.ok().entity(converter.convertToFrontend(savedPipe)).build();			
+		}catch (Exception e) {
+			return Response.status(400).build();
+		}
 	}
 	
 	@Override

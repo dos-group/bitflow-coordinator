@@ -76,4 +76,8 @@ public class PersistenceService {
 
 		return (List<AgentDTO>) query.getResultList();
 	}
+	
+	public void saveObject(Object object){
+		entityManager.persist(object);
+	}
 }

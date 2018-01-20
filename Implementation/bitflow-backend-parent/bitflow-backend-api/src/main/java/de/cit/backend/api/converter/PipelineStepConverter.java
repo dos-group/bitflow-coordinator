@@ -15,6 +15,17 @@ public class PipelineStepConverter implements Converter <PipelineStepDTO, Pipeli
 		// incomplete
 		PipelineStepDTO out = new PipelineStepDTO();
 		out.setId(in.getID());
+		out.setContent(in.getContent());
+		out.setParams(new PipelineParamConverter().convertToBackend(in.getParams()));
+		out.setStepNumber(in.getNumber());
+		if(in.getTyp() == TypEnum.OPERATION){
+			out.setType(StepTypeEnum.OPERATION);
+		}else if(in.getTyp() == TypEnum.SOURCE){
+			out.setType(StepTypeEnum.SOURCE);
+		}else if(in.getTyp() == TypEnum.SINK){
+			out.setType(StepTypeEnum.SINK);
+		}
+		out.setSuccessorsFlat(in.getSuccessors());
 		//out.setPipeline(pipeline);
 		return out;
 	}
@@ -41,7 +52,7 @@ public class PipelineStepConverter implements Converter <PipelineStepDTO, Pipeli
 			out.setTyp(TypEnum.OPERATION);
 		}
 		
-		out.setParams(null);
+		out.getParams().addAll(new PipelineParamConverter().convertToFrontend(in.getParams()));
 		List<Integer> succ = new ArrayList<Integer>();
 		for(PipelineStepDTO step : in.getSuccessors()){
 			succ.add(step.getStepNumber());

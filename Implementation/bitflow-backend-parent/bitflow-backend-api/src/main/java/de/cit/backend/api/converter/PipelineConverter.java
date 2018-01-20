@@ -18,6 +18,7 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 //		out.setProject(new ProjectConverter().convertToBackend(in.getProject()));
 		out.setLastChanged(in.getLastChanged());
 		out.setPipelineSteps(new PipelineStepConverter().convertToBackend(in.getPipelineSteps()));
+		out.setName(in.getName());
 		
 		return out;
 	}
