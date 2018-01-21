@@ -1,8 +1,13 @@
 package de.cit.backend.api.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.cit.backend.api.model.Pipeline;
+import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.mgmt.helper.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
 public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 	
@@ -35,6 +40,14 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 		out.setLastChanged(in.getLastChanged());
 		out.setSript(ScriptGenerator.generateScriptForPipeline(in));
 		out.setPipelineSteps(new PipelineStepConverter().convertToFrontend(in.getPipelineSteps()));
+		return out;
+	}
+	
+	public List<Pipeline> convertToFrontend(List<PipelineDTO> in) {
+		List<Pipeline> out = new ArrayList<Pipeline>();
+		for (PipelineDTO pipelineDTO : in) {
+			out.add(this.convertToFrontend(pipelineDTO));
+		}
 		return out;
 	}
 }

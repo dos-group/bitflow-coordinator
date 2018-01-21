@@ -15,6 +15,7 @@ import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
 @Stateless
@@ -80,6 +81,16 @@ public class ProjectService implements IProjectService {
 			}
 		}
 		throw new IllegalStateException("There is a stepnumber referenced, that is not assigned to any pipeline step!");
+	}
+
+	@Override
+	public List<ProjectDTO> loadProjects(String username) {
+		UserDTO user = persistence.findUser(username);
+		List<ProjectDTO> pros = user.getJoinedProjects();
+		for (ProjectDTO projectDTO : pros) {
+			this.loadProject(projectDTO.getId());
+		}
+		return user.getJoinedProjects();
 	}
 
 }

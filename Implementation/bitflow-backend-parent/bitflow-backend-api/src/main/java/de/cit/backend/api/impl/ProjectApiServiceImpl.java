@@ -1,6 +1,7 @@
 package de.cit.backend.api.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -145,8 +146,18 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdPipelinesGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-		// TODO return all pipelines of the project
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+
+		ProjectDTO pro = projectService.loadProject(id);
+		if (pro == null) {
+			return Response.status(404).build();
+		}
+		try {
+			List<PipelineDTO> pipes = pipelineService.loadPipelinesFromProject(id);
+			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes)).build();
+		} catch (Exception e) {
+			return Response.status(404).build();
+		}
+		//return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package de.cit.backend.mgmt.services;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -36,6 +38,10 @@ public class UserService implements IUserService {
 		return persistence.findUser(username);
 	}
 
+	public List<UserDTO> loadUsers() {
+		return persistence.findUsers();
+	}
+	
 	@Override
 	public void createUser(UserDTO user) {
 		persistence.createUser(user);

@@ -40,6 +40,13 @@ public class PersistenceService {
 		UserDTO user = results.size() != 1 ? null : results.get(0);
 		return user;
 	}
+
+	public List<UserDTO> findUsers(){
+		String sqlQuery = "SELECT * FROM USERDATA";
+		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+
+		return (List<UserDTO>) query.getResultList();
+	}	
 	
 	public List<AgentDTO> findAgents(){
 		String sqlQuery = "SELECT * FROM AGENT";

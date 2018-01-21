@@ -1,5 +1,8 @@
 package de.cit.backend.api.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 
@@ -34,4 +37,11 @@ public class ProjectConverter implements Converter<ProjectDTO, Project> {
 		return out;
 	}
 
+	public List<Project> convertToFrontend(List<ProjectDTO> in) {
+		List<Project> out = new ArrayList<Project>();
+		for (ProjectDTO projectDTO : in) {
+			out.add(this.convertToFrontend(projectDTO));
+		}
+		return out;
+	}
 }
