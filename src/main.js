@@ -6,6 +6,7 @@ import router from "./router";
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+import 'font-awesome/css/font-awesome.css';
 import * as backendCli from "./utils/backend-client";
 
 backendCli.initialize('http://35.227.97.73:4000')

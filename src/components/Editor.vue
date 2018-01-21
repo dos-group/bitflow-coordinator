@@ -6,7 +6,7 @@
 -->
 <template>
     <div class="page-content">
-        <h1>Editor</h1>
+        <h1 v-on:dblclick="runMe()">Editor</h1>
         <div class="row" style="max-height: 750px">
             <div class="list-group col-lg-2 col-md-2">
                 <div v-on:click="createNode('start')" class="list-group-item card step start">
@@ -45,12 +45,13 @@
                         <path hidden d="m0,0 l 0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
                         <g class="lines">
                         </g>
-                        <g class="markers"></g>
+                        <g id="markers" class="markers"></g>
                         <g class="recs">
                             <g class="square" transform="translate(10,10)" v-for="node in allNodes">
                                 <rect width="20" height="15" rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
-                                <text font-family="FontAwesome" font-size="0.25em" dx="16" v-on:click="deleteMe(node)"
-                                      dy="4">X
+                                <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteMe(node)"
+                                      dy="4">
+                                    &#xf1f8;
                                 </text>
                                 <text class="IDField" dx="1" dy="3" font-size="1.5px">
                                     ID : {{node.ID}}
@@ -75,7 +76,7 @@
 </template>
 <script>
   import * as d3 from "d3"
-  import Vue from 'vue'
+  import Vue from "vue"
 
   export default {
 
@@ -157,6 +158,10 @@
       return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes}
     },
     methods: {
+      deleteLine: function (start, end) {
+
+        console.log(start + " , " + end)
+      },
       checkPos: function () {
         const vm = this;
         const squares = document.getElementsByClassName('square');
@@ -200,16 +205,35 @@
           svg.select(".lines").append("path")
             .attr('d', 'M' + startNode[0] + ' , ' + startNode[1] + ' L ' + endNode[0] + ' , ' + endNode[1])
             .attr('class', 'normalLine')
-            .attr('marker-mid', 'url(#Triangle)')
+            //.attr('marker-mid', 'url(#Triangle)')
             // .attr('style', 'marker-end: url(#Triangle);marker-mid: url(#Triangle)')
             .attr('id', 'line' + start + end)
 
+
+          svg.select(".markers").append("text")
+            .append("textPath")
+            .attr('xlink:href', '#line' + start + end)
+            .attr('startOffset', '50%')
+            .attr('id', 'delete' + start + end)
+            .text("X")
+
+          var str = 'delete' + start + end
+          document.getElementById(str).onclick = function () {
+            here.deleteLine(start, end)
+          };
+
           for (let i = 0; i <= 10; i++) {
-            svg.select(".markers").append("text").append("textPath")
+            if (i == 5) {
+              continue
+            }
+            svg.select(".markers").append("text")
+              .append("textPath")
               .attr('xlink:href', '#line' + start + end)
               .attr('startOffset', (i * 10) + '%')
               .text("➤")
+
           }
+
         }
       }
       ,
@@ -246,8 +270,6 @@
               })
               svg.select("#line" + line.start + line.end).attr('d', 'M' + coors[0] + ' , ' + coors[1] + ' L ' + changedCoords[0] + ' , ' + changedCoords[1])
             }
-
-
           }
         )
       },
@@ -279,12 +301,7 @@
           setTimeout(here.changeLine(Number), 100)
           d3.select(this).classed("active", false);
         }
-
-
-      }
-
-      ,
-
+      },
       updateLines: function () {
         let here = this;
         const svg = d3.select("svg");
@@ -399,33 +416,31 @@
       }
     }
     ,
-    mounted:
+    mounted: function () {
 
-      function () {
+      const here = this;
 
-        const here = this;
+      const svg = d3.select("svg");
 
-        const svg = d3.select("svg");
-
-        const zoomed = function () {
-          d3.select(".wholeGraph")
-            .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
-        };
+      const zoomed = function () {
+        d3.select(".wholeGraph")
+          .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
+      };
 
 
-        const dragSvg = d3.zoom()
-          .on("zoom", function () {
-            zoomed.call(svg);
-            setTimeout(here.checkPos(), 100)
-            return true;
-          });
+      const dragSvg = d3.zoom()
+        .on("zoom", function () {
+          zoomed.call(svg);
+          setTimeout(here.checkPos(), 100)
+          return true;
+        });
 
-        svg.call(dragSvg).on("dblclick.zoom", null);
+      svg.call(dragSvg).on("dblclick.zoom", null);
 
-        this.updateNodes();
-        this.updateLines();
-
-      }
+      this.updateNodes();
+      this.updateLines();
+    },
+    components: {home: {template: '<div>Hello!</div>'}}
   }
 </script>
 <style>
@@ -495,6 +510,11 @@
         font-size: 5px;
         fill: black;
         dominant-baseline: central
+    }
+
+    .markers #delete {
+        font-size: 5px;
+        fill: red;
     }
 
 </style>
