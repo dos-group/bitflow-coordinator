@@ -360,7 +360,9 @@
                 }
               })
               if (isIn) {
+                console.log("new Line")
                 here.allLines.push(coor)
+                console.log(here.allLines)
                 setTimeout(here.drawLine(numberOfNode, node.Number), 100)
                 //here.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].start = [posX, posY];
               }
@@ -385,24 +387,27 @@
 
         var index = this.allNodes.indexOf(node);
         here.allNodes.splice(index, 1)
-        for (var i = index; i < here.allNodes.length; i++) {
-          here.allNodes[i].Number -= 1;
-        }
+        /*        for (var i = index; i < here.allNodes.length; i++) {
+                  here.allNodes[i].Number -= 1;
+                }*/
 
-        var start = 0;
-        var end = 0;
-
-        here.allLines.forEach(function (line) {
-          if (line.start == node.Number || line.end == node.Number) {
-            start = line.start;
-            end = line.end;
+        console.log(here.allLines)
+        var length = here.allLines.length;
+        for (var i = length - 1; i >= 0; i--) {
+          if (here.allLines[i] == node.Number) {
+            var line = here.allLines[i];
+            d3.select("#line" + line.start + line.end).remove();
+            d3.selectAll(".markerId" + line.start + line.end).remove();
+            d3.selectAll("#delete" + line.start + line.end).remove();
+            here.allLines.splice(here.allLines.indexOf(line), 1);
+          } else if (here.allLines[i].start == node.Number) {
+            var line = here.allLines[i];
+            d3.select("#line" + line.start + line.end).remove();
+            d3.selectAll(".markerId" + line.start + line.end).remove();
+            d3.selectAll("#delete" + line.start + line.end).remove();
             here.allLines.splice(here.allLines.indexOf(line), 1);
           }
-        });
-
-        d3.select("#line" + start + end).remove();
-        d3.selectAll(".markerId" + start + end).remove();
-        d3.selectAll("#delete" + start + end).remove();
+        }
       }
       ,
 
@@ -439,7 +444,6 @@
           const index = this.allSteps.findIndex(node => node.ID === nodeId);
           const changingNode = this.allSteps.slice(index, index + 1)[0];
           const newNode = Object.assign({}, changingNode);
-          console.log(this.coordinatesOfNodes);
           newNode.Number = this.coordinatesOfNodes.length;
           this.allNodes.push(newNode);
         }
