@@ -159,8 +159,16 @@
     },
     methods: {
       deleteLine: function (start, end) {
-
-        console.log(start + " , " + end)
+        //TODO delete successor in model!!
+        let here = this;
+        here.allLines.forEach(function (line) {
+          if (line.start == start && line.end == end) {
+            here.allLines.splice(here.allLines.indexOf(line), 1);
+          }
+        });
+        d3.select("#line" + start + end).remove();
+        d3.selectAll(".markerId" + start + end).remove();
+        d3.selectAll("#delete" + start + end).remove();
       },
       checkPos: function () {
         const vm = this;
@@ -186,7 +194,8 @@
             vm.coordinatesOfNodes.push({"Number": Number, "coords": [posX, posY]});
           }
         })
-      },
+      }
+      ,
       drawLine: function (start, end) {
         const here = this;
         const svg = d3.select("svg");
@@ -226,7 +235,9 @@
             if (i == 5) {
               continue
             }
-            svg.select(".markers").append("text")
+            svg.select(".markers")
+              .append("text")
+              .attr("class", "markerId" + start + end)
               .append("textPath")
               .attr('xlink:href', '#line' + start + end)
               .attr('startOffset', (i * 10) + '%')
@@ -272,7 +283,8 @@
             }
           }
         )
-      },
+      }
+      ,
       updateNodes: function () {
         const here = this;
         const svg = d3.select("svg");
@@ -301,7 +313,8 @@
           setTimeout(here.changeLine(Number), 100)
           d3.select(this).classed("active", false);
         }
-      },
+      }
+      ,
       updateLines: function () {
         let here = this;
         const svg = d3.select("svg");
@@ -369,6 +382,21 @@
           }
         });
         this.allNodes.splice(this.allNodes.indexOf(node), 1)
+
+        var start = 0;
+        var end = 0;
+
+        here.allLines.forEach(function (line) {
+          if (line.start == node.Number || line.end == node.Number) {
+            start = line.start;
+            end = line.end;
+            here.allLines.splice(here.allLines.indexOf(line), 1);
+          }
+        });
+
+        d3.select("#line" + start + end).remove();
+        d3.selectAll(".markerId" + start + end).remove();
+        d3.selectAll("#delete" + start + end).remove();
       }
       ,
 
@@ -439,8 +467,13 @@
 
       this.updateNodes();
       this.updateLines();
-    },
-    components: {home: {template: '<div>Hello!</div>'}}
+    }
+    ,
+    components: {
+      home: {
+        template: '<div>Hello!</div>'
+      }
+    }
   }
 </script>
 <style>
