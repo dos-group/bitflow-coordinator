@@ -28,9 +28,29 @@ securityDefinitions:
 security:
   - BasicAuth: []
 paths:
+  /projects:
+    get:
+      tags:
+      - "project"
+      summary: "Query all projects assigned to the requesting user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query all projects assigned to the requesting user.'
+      responses:
+        200:
+          description: "Projects"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+        400:
+          description: "If the user has no access to that project"
   /project/{id}:
     get:
-      tags: 
+      tags:
       - "project"
       summary: "Query information about the specified project."
       consumes:
@@ -54,9 +74,32 @@ paths:
           description: "If the user has no access to that projectt"
         404:
           description: "If the project with the given id does not exist."
+    delete:
+      tags:
+      - "project"
+      summary: "Delete specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Delete specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If project was deleted successfully"
+        400:
+          description: "If the user has no access to that project"
+        404:
+          description: "If the project with the given id does not exist."
   /project/{id}/users:
     get:
-      tags: 
+      tags:
       - "project"
       summary: "Query all users with access to the specified project."
       consumes:
@@ -84,7 +127,7 @@ paths:
           description: "If the project with the given id does not exist."
   /project/{projectId}/users/{userId}:
     delete:
-      tags: 
+      tags:
       - "project"
       summary: "Removing a user from the specified project."
       consumes:
@@ -105,10 +148,12 @@ paths:
         type: integer
         format: int32
       responses:
+        200:
+          description: "If user was removed successfully."
         404:
           description: "If the project or the user with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "project"
       summary: "Adding a user to the specified project."
       consumes:
@@ -133,9 +178,66 @@ paths:
           description: "User validation failed."
         404:
           description: "If the project with the given id does not exist."
-  /project/{id}/pipeline:
+  /project/{id}/pipelines:
     get:
-      tags: 
+      tags:
+      - "pipeline"
+      summary: "Query all pipeline of this project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns all pipelines of the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipelines"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pipeline"
+        400:
+          description: "If the user has no access to that project"
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{id}/pipeline:
+    post:
+      tags:
+      - "pipeline"
+      summary: "Create new pipeline for that project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Create new pipeline for that project.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Pipeline"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If successful."
+        400:
+          description: "If the user has no access to that project"
+        404:
+          description: "If the project with the given id does not exist."
+  /project/{projectId}/pipeline/{pipelineId}:
+    get:
+      tags:
       - "pipeline"
       summary: "Query the specified pipeline."
       consumes:
@@ -145,7 +247,12 @@ paths:
         - application/json
       description: 'Returns the pipeline from the specified project.'
       parameters:
-      - name: "id"
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
         in: "path"
         required: true
         type: integer
@@ -160,33 +267,40 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "pipeline"
-      summary: "Create new pipeline."
+      summary: "Update pipeline."
       consumes:
         - application/json
         - application/xml
       produces:
         - application/json
-      description: 'Creates new Pipeline as specified.'
+      description: 'Updates specified pipeline.'
       parameters:
       - in: "body"
         name: "body"
         required: true
         schema:
           $ref: "#/definitions/Pipeline"
-      - name: "id"
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
         in: "path"
         required: true
         type: integer
         format: int32
       responses:
+        200:
+          description: "If successful."
         400:
           description: "If pipeline validation failed."
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags: 
+      tags:
       - "pipeline"
       summary: "Delete the specified pipeline."
       consumes:
@@ -196,7 +310,12 @@ paths:
         - application/json
       description: 'Deletes the pipeline from the specified project.'
       parameters:
-      - name: "id"
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
         in: "path"
         required: true
         type: integer
@@ -204,9 +323,76 @@ paths:
       responses:
         404:
           description: "If the project with the given id does not exist."
+  /project/{projectId}/pipeline/{pipelineId}/start:
+    post:
+      tags:
+      - "pipeline"
+      summary: "Start executing the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Start executing the specified pipeline.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If pipeline started successfully"
+        400:
+          description: "If pipeline execution failed on startup"
+        404:
+          description: "If the project with the given id does not exist."
+  /login:
+    post:
+      tags:
+      - "users"
+      summary: "Verify the user, given by the auth header."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Verify the user, given by the auth header.'
+      responses:
+        200:
+          description: "logged in User"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "If login failed."
+  /users:
+    get:
+      tags:
+      - "users"
+      summary: "Query all existing users."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query all existing users.'
+      responses:
+        200:
+          description: "Users"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "If access was denied."
   /user/{id}:
     get:
-      tags: 
+      tags:
       - "users"
       summary: "Query an existing user."
       consumes:
@@ -229,7 +415,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     delete:
-      tags: 
+      tags:
       - "users"
       summary: "Delete an existing user."
       consumes:
@@ -248,7 +434,7 @@ paths:
         404:
           description: "If the project with the given id does not exist."
     post:
-      tags: 
+      tags:
       - "users"
       summary: "Update existing user."
       consumes:
@@ -275,7 +461,7 @@ paths:
           description: "If the project with the given id does not exist."
   /user:
     post:
-      tags: 
+      tags:
       - "users"
       summary: "Create new user."
       consumes:
@@ -296,7 +482,7 @@ paths:
           description: "User validation failed."
   /info:
     get:
-      tags: 
+      tags:
       - "infos"
       summary: "Query infos about the running process agents."
       consumes:
@@ -312,7 +498,7 @@ paths:
             $ref: "#/definitions/Info"
   /capabilities/{id}:
     get:
-      tags: 
+      tags:
       - "infos"
       summary: "Query capabilities of a specific agents"
       consumes:
@@ -336,7 +522,7 @@ paths:
           description: "If the agent with the specified id does not exist."
   /register:
     get:
-      tags: 
+      tags:
       - "infos"
       summary: "Register a new agent to the system."
       consumes:
@@ -346,11 +532,11 @@ paths:
         - application/json
       parameters:
       - name: "ip"
-        in: "path"
+        in: "query"
         required: true
         type: string
       - name: "port"
-        in: "path"
+        in: "query"
         required: true
         type: integer
         format: int32
@@ -367,19 +553,38 @@ definitions:
       ID:
         type: integer
         format: int32
-        example: 10
-      PipelineId:
+        description: 'ID from database'
+        example: 10012
+      Number:
         type: integer
         format: int32
-        example: 10
-      Algorithm:
+        description: 'pipeline-internal identifier. Must be unique only inside one pipeline'
+        example: 2
+      AgentId:
+        type: integer
+        format: int32
+        example: 15
+      Typ:
         type: string
-        example: "Avg"
+        enum: [source, sink, operation]
+        example: "operation"
+      Content:
+        type: string
+        description: 'actual operation to be executed by that pipeline step; or a source/sink definition'
+        example: "avg"
+      Params:
+        type: array
+        items:
+          type: object
+        description: 'list of key-value pairs, optional with ID'
+        example: [{'paramKey':'paramValue', 'ID':'104'}]
       Successors:
         type: array
         items:
-          $ref: "#/definitions/PipelineStep"
-        example: []
+          type: integer
+          format: int32
+        description: 'list of immediate successor steps, referencing the Number field, NOT the ID'
+        example: [3,4]
   Pipeline:
     type: object
     properties:
