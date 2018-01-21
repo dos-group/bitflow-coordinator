@@ -13,5 +13,7 @@ public interface IProjectService {
 	ProjectDTO loadProject(int projectId);
 	List<ProjectDTO> loadProjects(String username);
 	PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer id);
+	void assignUserToProject(Integer projectId, Integer userId);
+	void removeUserFromProject(Integer projectId, Integer userId);
 
 }

@@ -28,7 +28,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "USERDATA", catalog = "citBitDB", uniqueConstraints = @UniqueConstraint(columnNames = "NAME"))
-public class UserDTO implements java.io.Serializable {
+public class UserDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private String email;

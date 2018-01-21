@@ -21,7 +21,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "AGENT", catalog = "citBitDB")
-public class AgentDTO implements java.io.Serializable {
+public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private String ipAddress;

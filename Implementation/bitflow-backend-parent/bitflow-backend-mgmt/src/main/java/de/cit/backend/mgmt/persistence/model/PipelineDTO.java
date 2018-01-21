@@ -26,7 +26,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "PIPELINE", catalog = "citBitDB")
-public class PipelineDTO implements java.io.Serializable {
+public class PipelineDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private String name;
@@ -46,7 +46,6 @@ public class PipelineDTO implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-
 	@Column(name = "ID", unique = true, nullable = false)
 	public Integer getId() {
 		return this.id;

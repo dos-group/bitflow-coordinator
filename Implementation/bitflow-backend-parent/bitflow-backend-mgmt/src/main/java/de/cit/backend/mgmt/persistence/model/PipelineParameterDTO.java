@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "PIPELINE_STEP_PARAM", catalog = "citBitDB")
-public class PipelineParameterDTO {
+public class PipelineParameterDTO extends BaseIdEntity {
 
 	private Integer id;
 	private String paramName;

@@ -36,15 +36,12 @@ public class PipelineService implements IPipelineService {
 		ProjectDTO pro = persistence.findProject(projectId);
 
 		PipelineDTO pipe = persistence.findPipeline(pipelineId);
-		for(PipelineStepDTO step : pipe.getPipelineSteps()){
+		for (PipelineStepDTO step : pipe.getPipelineSteps()) {
 			Hibernate.initialize(step.getSuccessors());
 		}
-		if (pro.getPipelines().contains(pipe))
-		{
+		if (pro.getPipelines().contains(pipe)) {
 			return pipe;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}

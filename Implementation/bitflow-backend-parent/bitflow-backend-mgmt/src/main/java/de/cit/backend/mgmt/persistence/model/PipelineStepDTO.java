@@ -27,7 +27,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "PIPELINE_STEP", catalog = "citBitDB")
-public class PipelineStepDTO implements java.io.Serializable {
+public class PipelineStepDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private AgentDTO agent;

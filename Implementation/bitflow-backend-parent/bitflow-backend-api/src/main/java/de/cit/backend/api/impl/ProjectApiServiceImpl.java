@@ -1,6 +1,5 @@
 package de.cit.backend.api.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.naming.Context;
@@ -15,8 +14,6 @@ import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
-import de.cit.backend.api.model.Project;
-import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.services.interfaces.IPipelineService;
@@ -41,19 +38,6 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		User user = new User();
-		user.setEmail("cit@est.de");
-		user.setID(1);
-		user.setName("TestUser");
-		user.setRegisteredSince(new Date());
-
-		Project pro = new Project();
-		pro.setCreatedAt(new Date());
-		pro.setCreateUser(user);
-		pro.setID(1);
-		pro.setName("TestProject");
-
 		ProjectDTO project = projectService.loadProject(id);
 		if (project == null) {
 			return Response.status(404).build();
@@ -72,14 +56,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectProjectIdPipelinePipelineIdGet(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		//ProjectDTO project = projectService.loadProject(projectId);
 		PipelineDTO pipe = pipelineService.loadPipelineFromProject(projectId, pipelineId);
 		if (pipe == null) {
 			return Response.status(404).build();
 		}
 
 		return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe)).build();
-		//return Response.ok().entity(pipe).build();
 	}
 
 	@Override
@@ -102,40 +84,38 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdUsersGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		User user1 = new User();
-		user1.setEmail("cit1@test.de");
-		user1.setID(1);
-		user1.setName("TestUser1");
-		user1.setRegisteredSince(new Date());
-
-		User user2 = new User();
-		user2.setEmail("cit2@test.de");
-		user2.setID(2);
-		user2.setName("TestUser2");
-		user2.setRegisteredSince(new Date());
-		
 		ProjectDTO pro = projectService.loadProject(id);
 		if (pro == null) {
 			return Response.status(404).build();
 		}
 		
 		return Response.ok().entity(new ProjectConverter().convertToFrontend(pro).getUsers()).build();
-		//return Response.ok().entity(Arrays.asList(user1,user2)).build();
 	}
 
 	@Override
 	public Response projectProjectIdUsersUserIdDelete(Integer projectId, Integer userId,
 			SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try {
+			projectService.removeUserFromProject(projectId, userId);
+		} catch (IllegalArgumentException e) {
+			return Response.status(404).build();
+		} catch (Exception e){
+			return Response.status(400).build();
+		}
+		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectProjectIdUsersUserIdPost(Integer projectId, Integer userId, SecurityContext securityContext)
 			throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try {
+			projectService.assignUserToProject(projectId, userId);
+		} catch (IllegalArgumentException e) {
+			return Response.status(404).build();
+		} catch (Exception e){
+			return Response.status(400).build();
+		}
+		return Response.ok().build();
 	}
 
 	@Override
@@ -146,18 +126,17 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdPipelinesGet(Integer id, SecurityContext securityContext) throws NotFoundException {
+        ProjectDTO pro = projectService.loadProject(id);
+        if (pro == null) {
+            return Response.status(404).build();
+        }
 
-		ProjectDTO pro = projectService.loadProject(id);
-		if (pro == null) {
-			return Response.status(404).build();
-		}
 		try {
 			List<PipelineDTO> pipes = pipelineService.loadPipelinesFromProject(id);
 			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes)).build();
 		} catch (Exception e) {
 			return Response.status(404).build();
 		}
-		//return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
 	@Override

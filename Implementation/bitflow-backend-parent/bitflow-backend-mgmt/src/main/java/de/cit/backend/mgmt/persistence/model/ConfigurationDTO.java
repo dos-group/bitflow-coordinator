@@ -11,7 +11,7 @@ import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "CONFIGURATION", catalog = "citBitDB", uniqueConstraints = @UniqueConstraint(columnNames = "CONFIG_KEY"))
-public class ConfigurationDTO {
+public class ConfigurationDTO extends BaseIdEntity {
 	
 	private Integer id;
 	private String configKey;

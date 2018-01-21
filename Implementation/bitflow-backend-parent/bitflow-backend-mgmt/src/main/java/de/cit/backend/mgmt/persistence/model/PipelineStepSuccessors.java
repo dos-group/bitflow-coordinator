@@ -1,11 +1,12 @@
 package de.cit.backend.mgmt.persistence.model;
 // Generated 10.12.2017 16:49:45 by Hibernate Tools 5.2.3.Final
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -18,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "PIPELINE_STEP_SUCCESSORS", catalog = "citBitDB", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"STEP_ID", "SUCCESSOR_ID" }))
-public class PipelineStepSuccessors implements java.io.Serializable {
+public class PipelineStepSuccessors extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private PipelineStepDTO pipelineStepByStepId;

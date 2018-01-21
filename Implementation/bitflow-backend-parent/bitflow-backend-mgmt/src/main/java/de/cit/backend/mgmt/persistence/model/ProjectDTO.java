@@ -25,7 +25,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PROJECT", catalog = "citBitDB")
-public class ProjectDTO implements java.io.Serializable {
+public class ProjectDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private UserDTO userdata;

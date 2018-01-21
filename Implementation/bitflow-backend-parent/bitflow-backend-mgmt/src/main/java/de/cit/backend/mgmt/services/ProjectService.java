@@ -93,4 +93,30 @@ public class ProjectService implements IProjectService {
 		return user.getJoinedProjects();
 	}
 
+	@Override
+	public void assignUserToProject(Integer projectId, Integer userId) {
+		ProjectDTO project = persistence.findProject(projectId);
+		UserDTO user = persistence.findUser(userId);
+		if(project == null || user == null){
+			throw new IllegalArgumentException("Provided project or user id incorrect!");
+		}
+		if(!project.getProjectMembers().contains(user)){
+			project.getProjectMembers().add(user);
+			user.getJoinedProjects().add(project);
+		}
+	}
+
+	@Override
+	public void removeUserFromProject(Integer projectId, Integer userId) {
+		ProjectDTO project = persistence.findProject(projectId);
+		UserDTO user = persistence.findUser(userId);
+		if(project == null || user == null){
+			throw new IllegalArgumentException("Provided project or user id incorrect!");
+		}
+		if(project.getProjectMembers().contains(user)){
+			project.getProjectMembers().remove(user);
+			user.getJoinedProjects().remove(project);
+		}
+	}
+
 }

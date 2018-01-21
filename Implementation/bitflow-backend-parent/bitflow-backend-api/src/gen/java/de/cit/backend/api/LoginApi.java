@@ -1,24 +1,17 @@
 package de.cit.backend.api;
 
-import de.cit.backend.api.model.*;
-import de.cit.backend.api.LoginApiService;
-import de.cit.backend.api.factories.LoginApiServiceFactory;
-
-import io.swagger.annotations.ApiParam;
-import io.swagger.jaxrs.*;
-
-import de.cit.backend.api.model.User;
-
-import java.util.List;
-import de.cit.backend.api.NotFoundException;
-
-import java.io.InputStream;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.*;
-import javax.validation.constraints.*;
+
+import de.cit.backend.api.factories.LoginApiServiceFactory;
+import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.AuthLevel;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 
 @Path("/login")
 
@@ -29,7 +22,7 @@ public class LoginApi  {
    private final LoginApiService delegate = LoginApiServiceFactory.getLoginApi();
 
     @POST
-    
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })
     @io.swagger.annotations.ApiOperation(value = "Verify the user, given by the auth header.", notes = "Verify the user, given by the auth header.", response = User.class, authorizations = {
