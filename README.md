@@ -6,7 +6,7 @@
 * Hendrik Motza
 * Sven Carlin
 
-# Implemented API-Methods
+# Implemented API-Methods (basepath bitflow/ currently deployed on 10.200.1.139:8080)
 
 * GET projects
 * GET project/{id}
