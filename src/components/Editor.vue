@@ -375,13 +375,19 @@
 
       deleteMe: function (node) {
         let here = this;
-        this.coordinatesOfNodes.forEach(function (cnode) {
+        let found = false
+        here.coordinatesOfNodes.forEach(function (cnode) {
           if (cnode.Number == node.Number) {
             here.coordinatesOfNodes.splice(here.coordinatesOfNodes.indexOf(cnode), 1)
-            //TODO: maybe decrease all upper Numbers?
+            found = true;
           }
         });
-        this.allNodes.splice(this.allNodes.indexOf(node), 1)
+
+        var index = this.allNodes.indexOf(node);
+        here.allNodes.splice(index, 1)
+        for (var i = index; i < here.allNodes.length; i++) {
+          here.allNodes[i].Number -= 1;
+        }
 
         var start = 0;
         var end = 0;
@@ -433,6 +439,7 @@
           const index = this.allSteps.findIndex(node => node.ID === nodeId);
           const changingNode = this.allSteps.slice(index, index + 1)[0];
           const newNode = Object.assign({}, changingNode);
+          console.log(this.coordinatesOfNodes);
           newNode.Number = this.coordinatesOfNodes.length;
           this.allNodes.push(newNode);
         }
