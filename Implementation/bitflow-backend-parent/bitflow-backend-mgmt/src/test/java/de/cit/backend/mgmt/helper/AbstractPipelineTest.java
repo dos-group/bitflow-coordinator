@@ -15,6 +15,14 @@ public abstract class AbstractPipelineTest {
 	public static final String AVG_OPERATION = "avg";
 	public static final String AVG_OPERATION_PARAM = AVG_OPERATION + "(param1=value1, param2=value2)";
 
+	protected PipelineDTO createTestPipelineEmpty() {
+		PipelineDTO pipe = new PipelineDTO();
+		List<PipelineStepDTO> succ = new ArrayList<>();
+		
+		pipe.setPipelineSteps(succ);
+		return pipe;
+	}
+	
 	/**
 	 * 
 	 * o--o--o--o
@@ -115,7 +123,55 @@ public abstract class AbstractPipelineTest {
 		pipe.setPipelineSteps(succ);
 		return pipe;
 	}
+	
+	/**
+	 *      o      o
+	 *     / \    / \
+	 * o--o   o--o   o--o
+	 *     \ /    \ /
+	 *      o      o
+	 * @return
+	 */
+	protected PipelineDTO createTestPipelineForkedMultipleSeparat() {
+		PipelineDTO pipe = new PipelineDTO();
+		List<PipelineStepDTO> succ = new ArrayList<>();
+		
+		succ.add(createTestPipelineStep(FILE_SINK, StepTypeEnum.SINK, 9));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 8, succ.get(0)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 7, succ.get(1)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 6, succ.get(1)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 5, succ.get(2), succ.get(3)));
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 4, succ.get(4)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 3, succ.get(5)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 2, succ.get(5)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 1, succ.get(6), succ.get(7)));
+		succ.add(createTestPipelineStep(LOCAL_PORT_SOURCE, StepTypeEnum.SOURCE, 0, succ.get(8)));
+		
+		pipe.setPipelineSteps(succ);
+		return pipe;
+	}
 
+	/**
+	 *     /\
+	 * o--o--o
+	 *
+	 * @return
+	 */
+	protected PipelineDTO createTestPipelineWithCycle() {
+		PipelineDTO pipe = new PipelineDTO();
+		List<PipelineStepDTO> succ = new ArrayList<>();
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 2));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 1, succ.get(0)));
+		succ.add(createTestPipelineStep(LOCAL_PORT_SOURCE, StepTypeEnum.SOURCE, 0));
+		
+		succ.get(0).getSuccessors().add(succ.get(1));
+		
+		pipe.setPipelineSteps(succ);
+		return pipe;
+	}
+	
 	protected PipelineStepDTO createTestPipelineStep(String content, StepTypeEnum type, int stepNumber,
 			PipelineStepDTO... successors) {
 		PipelineStepDTO testStep = new PipelineStepDTO();

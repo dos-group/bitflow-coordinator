@@ -23,6 +23,17 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 	}
 
 	@Test
+	public void testPipelineGenerationEmpty() {
+		PipelineDTO testObj = createTestPipelineEmpty();
+		
+		String expected = "";
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
+//		System.out.println(expected);
+//		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
 	public void testPipelineGenerationLinear() {
 		PipelineDTO testObj = createTestPipelineLinear();
 		
@@ -87,6 +98,24 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
 //		System.out.println(expected);
 //		System.out.println(actual);
+		Assert.assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testPipelineGenerationForkMultipleSeparat() {
+		PipelineDTO testObj = createTestPipelineForkedMultipleSeparat();
+		
+		String expected = LOCAL_PORT_SOURCE + " -> "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ AVG_OPERATION_PARAM + " -> { "
+				+ AVG_OPERATION_PARAM + " ; "
+				+ AVG_OPERATION_PARAM + " } -> "
+				+ AVG_OPERATION_PARAM + " -> "
+				+ FILE_SINK;
+		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
 		Assert.assertEquals(expected, actual);
 	}
 }

@@ -31,15 +31,19 @@ public class PipelineStepDTO implements java.io.Serializable {
 
 	private Integer id;
 	private AgentDTO agent;
-//	private PipelineDTO pipeline;
 	private int stepNumber;
 	private String status;
 	private String content;
 	private StepTypeEnum type;
-	
 	private List<PipelineParameterDTO> params = new ArrayList<>();
 	private List<PipelineStepDTO> successors = new ArrayList<>();
+	
 	private List<Integer> successorsFlat = new ArrayList<>();
+	/**
+	 * This does not reference any actual agent ID. PipelineSteps with the same agentAdvise will be run on the
+	 * same agent. The assignment to an actual agent will be made else where.
+	 */
+	private int agentAdvice = 0;
 	
 	public PipelineStepDTO() {
 	}
@@ -144,6 +148,15 @@ public class PipelineStepDTO implements java.io.Serializable {
 
 	public void setSuccessorsFlat(List<Integer> successorsFlat) {
 		this.successorsFlat = successorsFlat;
+	}
+	
+	@Transient
+	public int getAgentAdvice() {
+		return agentAdvice;
+	}
+
+	public void setAgentAdvice(int agentAdvice) {
+		this.agentAdvice = agentAdvice;
 	}
 
 	@Override

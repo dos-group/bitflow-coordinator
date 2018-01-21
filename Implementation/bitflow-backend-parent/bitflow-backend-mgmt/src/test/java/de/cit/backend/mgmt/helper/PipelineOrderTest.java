@@ -88,4 +88,16 @@ public class PipelineOrderTest extends AbstractPipelineTest{
 	
 		Assert.assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testSortPipelineWithCycle() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipelineWithCycle();
+		
+		try {
+			CycleChecker.checkForCycles(testObj);
+			Assert.fail("Exception expected");
+		} catch (IllegalStateException e) {
+			Assert.assertTrue(e.getMessage().contains("cycles"));
+		}
+	}
 }

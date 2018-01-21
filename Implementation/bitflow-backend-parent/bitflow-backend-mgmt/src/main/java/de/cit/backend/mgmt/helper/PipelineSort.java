@@ -9,9 +9,13 @@ import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
 
 public class PipelineSort {
 
-	public static void sortPipeline(PipelineDTO pipeline) throws IllegalStateException {
+	public static void sortPipeline(PipelineDTO pipeline) {
+		CycleChecker.checkForCycles(pipeline);
 		List<PipelineStepDTO> steps = pipeline.getPipelineSteps();
 
+		if(steps.isEmpty()){
+			return;
+		}
 		handleSourceOnFirstPosition(steps);
 
 		List<Integer> visited = new ArrayList<>();

@@ -11,7 +11,6 @@ import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
-import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.services.interfaces.IInfoService;
 
 @Stateless
@@ -30,7 +29,7 @@ public class InfoService implements IInfoService {
 
 	@Override
 	public List<AgentDTO> loadInfos() {
-		List<AgentDTO> agents = persistence.findAgentsByState(AgentState.ONLINE);
+		List<AgentDTO> agents = persistence.findAgents();
 		
 		return agents;
 	}

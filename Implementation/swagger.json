@@ -230,7 +230,9 @@ paths:
         format: int32
       responses:
         200:
-          description: "If successful."
+          description: "If successful, the persisted Pipeline."
+          schema:
+            $ref: "#/definitions/Pipeline"
         400:
           description: "If the user has no access to that project"
         404:
@@ -478,6 +480,10 @@ paths:
         schema:
           $ref: "#/definitions/User"
       responses:
+        200:
+          description: "The newly persisted user."
+          schema:
+            $ref: "#/definitions/User"
         400:
           description: "User validation failed."
   /info:
