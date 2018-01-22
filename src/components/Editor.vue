@@ -87,6 +87,8 @@
             v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
       const blobs = true;
 
+      let countNumbers = 0;
+
       const allNodes = [];
 
       const coordinatesOfNodes = [];
@@ -155,7 +157,7 @@
 
       const allLines = [];
 
-      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes}
+      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers}
     },
     methods: {
       deleteLine: function (start, end) {
@@ -387,9 +389,15 @@
 
         var index = this.allNodes.indexOf(node);
         here.allNodes.splice(index, 1)
-        /*        for (var i = index; i < here.allNodes.length; i++) {
-                  here.allNodes[i].Number -= 1;
-                }*/
+
+        /*for (var i = index; i < here.allNodes.length; i++) {
+          here.allNodes[i].Number -= 1;
+          here.coordinatesOfNodes.forEach(function (coor) {
+            if(coor.Number == here.allNodes[i].Number){
+              here.allNodes[i].Number -= 1;
+            }
+          })
+        }*/
 
         var length = here.allLines.length;
         for (var i = length - 1; i >= 0; i--) {
@@ -437,7 +445,8 @@
           const index = this.allSteps.findIndex(node => node.ID === nodeId);
           const changingNode = this.allSteps.slice(index, index + 1)[0];
           const newNode = Object.assign({}, changingNode);
-          newNode.Number = this.coordinatesOfNodes.length;
+          newNode.Number = this.countNumbers;
+          this.countNumbers += 1;
           this.allNodes.push(newNode);
         }
 
