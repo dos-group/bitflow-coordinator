@@ -49,7 +49,7 @@
                         <g class="recs">
                             <g class="square" transform="translate(10,10)" v-for="node in allNodes">
                                 <rect width="20" height="15" rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
-                                <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteMe(node)"
+                                <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteNode(node)"
                                       dy="4">
                                     &#xf1f8;
                                 </text>
@@ -164,11 +164,11 @@
         here.allLines.forEach(function (line) {
           if (line.start == start && line.end == end) {
             here.allLines.splice(here.allLines.indexOf(line), 1);
+            d3.select("#line" + line.start + line.end).remove();
+            d3.selectAll(".markerId" + line.start + line.end).remove();
+            d3.selectAll("#delete" + line.start + line.end).remove();
           }
         });
-        d3.select("#line" + start + end).remove();
-        d3.selectAll(".markerId" + start + end).remove();
-        d3.selectAll("#delete" + start + end).remove();
       },
       checkPos: function () {
         const vm = this;
@@ -375,9 +375,10 @@
       }
       ,
 
-      deleteMe: function (node) {
+      deleteNode: function (node) {
         let here = this;
         let found = false
+
         here.coordinatesOfNodes.forEach(function (cnode) {
           if (cnode.Number == node.Number) {
             here.coordinatesOfNodes.splice(here.coordinatesOfNodes.indexOf(cnode), 1)
@@ -391,16 +392,9 @@
                   here.allNodes[i].Number -= 1;
                 }*/
 
-        console.log(here.allLines)
         var length = here.allLines.length;
         for (var i = length - 1; i >= 0; i--) {
-          if (here.allLines[i] == node.Number) {
-            var line = here.allLines[i];
-            d3.select("#line" + line.start + line.end).remove();
-            d3.selectAll(".markerId" + line.start + line.end).remove();
-            d3.selectAll("#delete" + line.start + line.end).remove();
-            here.allLines.splice(here.allLines.indexOf(line), 1);
-          } else if (here.allLines[i].start == node.Number) {
+          if (here.allLines[i].end == node.Number || here.allLines[i].start == node.Number) {
             var line = here.allLines[i];
             d3.select("#line" + line.start + line.end).remove();
             d3.selectAll(".markerId" + line.start + line.end).remove();
