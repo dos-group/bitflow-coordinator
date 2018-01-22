@@ -1,21 +1,20 @@
 <!--suppress VueDuplicateTag -->
 
 <!--
-    TODO: Color themes for single steps (randomized or so)
     TODO: Size of text in recs might be too big (line breaks!)
 -->
 <template>
     <div class="page-content">
         <h1 v-on:dblclick="runMe()">Editor</h1>
-        <div class="row" style="max-height: 750px">
-            <div class="list-group col-lg-2 col-md-2">
-                <div v-on:click="createNode('start')" class="list-group-item card step start">
+        <div class="row">
+            <div class="contain list-group col-lg-2 col-md-2">
+                <div v-on:click="createNode('start')" class="static step start">
                     <div class="card-block">
                         <h5 class="card-title">Start of the pipeline </h5>
                         <p class="card-text">Source : </p>
                     </div>
                 </div>
-                <div v-on:click="createNode('end')" class="card step end">
+                <div v-on:click="createNode('end')" class="static step end">
                     <div class="card-block">
                         <h5 class="card-title">End of the pipeline</h5>
                         <p class="card-text">Results :</p>
@@ -48,7 +47,7 @@
                         <g id="markers" class="markers"></g>
                         <g class="recs">
                             <g class="square" transform="translate(10,10)" v-for="node in allNodes" :key="node.Number">
-                                <rect width="20" height="15" rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
+                                <rect width="20" height="15" rx="1" ry="1" style="opacity: 1"></rect>
                                 <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteNode(node)"
                                       dy="4">
                                     &#xf1f8;
@@ -93,6 +92,8 @@
 
       const coordinatesOfNodes = [];
 
+      const colorsOfNodes = [];
+
       const allSteps = [{
         "ID": 1,
         "Number": 0,
@@ -102,62 +103,38 @@
         "Successors": []
       }, {
         "ID": 2,
+        "Number": 1,
+        "Typ": "source",
+        "Content": "127.0.0.1:5555",
+        "Params": [],
+        "Successors": []
+      }, {
+        "ID": 3,
         "Number": 2,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
-        "ID": 3,
+        "ID": 4,
         "Number": 3,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
-        "ID": 4,
-        "Number": null,
-        "Typ": "source",
-        "Content": "127.0.0.1:5555",
-        "Params": [],
-        "Successors": []
-      }, {
-        "ID": 3,
-        "Number": 1,
+        "ID": 5,
+        "Number": 4,
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }
-        , {
-          "ID": 3,
-          "Number": 1,
-          "Typ": "source",
-          "Content": "127.0.0.1:5555",
-          "Params": [],
-          "Successors": []
-        }
-        , {
-          "ID": 3,
-          "Number": 1,
-          "Typ": "source",
-          "Content": "127.0.0.1:5555",
-          "Params": [],
-          "Successors": []
-        }
-        , {
-          "ID": 3,
-          "Number": 1,
-          "Typ": "source",
-          "Content": "127.0.0.1:5555",
-          "Params": [],
-          "Successors": []
-        }
       ];
 
       const allLines = [];
 
-      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers}
+      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, colorsOfNodes}
     },
     methods: {
       deleteLine: function (start, end) {
@@ -390,15 +367,6 @@
         var index = this.allNodes.indexOf(node);
         here.allNodes.splice(index, 1)
 
-        /*for (var i = index; i < here.allNodes.length; i++) {
-          here.allNodes[i].Number -= 1;
-          here.coordinatesOfNodes.forEach(function (coor) {
-            if(coor.Number == here.allNodes[i].Number){
-              here.allNodes[i].Number -= 1;
-            }
-          })
-        }*/
-
         var length = here.allLines.length;
         for (var i = length - 1; i >= 0; i--) {
           if (here.allLines[i].end == node.Number || here.allLines[i].start == node.Number) {
@@ -414,29 +382,34 @@
 
       createNode: function (nodeId) {
 
+        const here = this;
+
         if (nodeId === "start") {
 
           const startNode = {
             "ID": "START",
-            "Number": null,
+            "Number": this.countNumbers,
             "Typ": null,
             "Content": null,
             "Params": [],
             "Successors": []
           };
 
+          this.countNumbers += 1;
           this.allNodes.push(startNode);
 
         } else if (nodeId === "end") {
 
           const endNode = {
             "ID": "END",
-            "Number": null,
+            "Number": this.countNumbers,
             "Typ": null,
             "Content": null,
             "Params": [],
             "Successors": null
           };
+
+          this.countNumbers += 1;
 
           this.allNodes.push(endNode);
 
@@ -450,16 +423,53 @@
           this.allNodes.push(newNode);
         }
 
+
         setTimeout(this.updateNodes, 100)
         setTimeout(this.updateLines, 100)
         setTimeout(this.checkPos, 100)
+        setTimeout(this.colorGraph, 10)
 
+      },
+      colorGraph: function () {
+        let here = this;
+
+        const nodes = document.getElementsByClassName('square');
+        Array.from(nodes).forEach(function (node) {
+          console.log()
+          if (node.childNodes[4].textContent.includes("END") || node.childNodes[4].textContent.includes("START")) {
+            node.childNodes[0].style.fill = "rgba(255,0,0,1)";
+          } else {
+            var nodeId = node.childNodes[4].textContent.match(/\d+/)[0];
+            here.colorsOfNodes.forEach(function (color) {
+              if (color.id == nodeId) {
+                node.childNodes[0].style.fill = color.color;
+              }
+            })
+          }
+        })
       }
     }
     ,
     mounted: function () {
 
       const here = this;
+
+
+      const steps = document.getElementsByClassName('card step');
+      Array.from(steps).forEach(function (step) {
+        var color = random_rgba();
+        step.style.backgroundColor = color;
+        let id = step.childNodes[0].textContent.match(/\d+/)[0];
+        here.colorsOfNodes.push({"id": id, "color": color})
+      })
+
+      function random_rgba() {
+        var o = Math.round, r = Math.random, s = 400;
+
+        //return 'rgba(' + o(r() * s) + ',0,0,1)';
+        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',1)';
+      }
+
 
       const svg = d3.select("svg");
 
@@ -481,15 +491,13 @@
       this.updateNodes();
       this.updateLines();
     }
-    ,
-    components: {
-      home: {
-        template: '<div>Hello!</div>'
-      }
-    }
   }
 </script>
 <style>
+
+    .contain {
+        max-height: 600px !important;
+    }
 
     .active rect {
         stroke: #000;
@@ -497,10 +505,10 @@
     }
 
     .svg-container {
+        max-height: 600px !important;
         display: inline-block;
         position: relative;
         width: 100%;
-        padding-bottom: 50%;
         vertical-align: top;
         overflow: hidden;
     }
@@ -513,16 +521,21 @@
     }
 
     .card.step {
-        background-color: #3c763d;
         margin-bottom: 5px;
         padding: 10px;
     }
 
-    .card.step.start {
+    .static.step.start {
+        border-radius: 0.2em;
+        margin-bottom: 5px;
+        padding: 10px;
         background-color: red;
     }
 
-    .card.step.end {
+    .static.step.end {
+        border-radius: 0.2em;
+        margin-bottom: 5px;
+        padding: 10px;
         background-color: red;
     }
 
