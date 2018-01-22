@@ -47,7 +47,7 @@
                         </g>
                         <g id="markers" class="markers"></g>
                         <g class="recs">
-                            <g class="square" transform="translate(10,10)" v-for="node in allNodes">
+                            <g class="square" transform="translate(10,10)" v-for="node in allNodes" :key="node.Number">
                                 <rect width="20" height="15" rx="1" ry="1" style="fill: rgb(31, 119, 180);"></rect>
                                 <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteNode(node)"
                                       dy="4">
@@ -189,7 +189,7 @@
               node = true;
               vm.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].coords = [posX, posY];
             }
-          })
+          });
           if (!node) {
             vm.coordinatesOfNodes.push({"Number": Number, "coords": [posX, posY]});
           }
@@ -220,6 +220,7 @@
 
 
           svg.select(".markers").append("text")
+            .attr("class", "markerId" + start + end)
             .append("textPath")
             .attr('xlink:href', '#line' + start + end)
             .attr('startOffset', '50%')
@@ -360,9 +361,7 @@
                 }
               })
               if (isIn) {
-                console.log("new Line")
                 here.allLines.push(coor)
-                console.log(here.allLines)
                 setTimeout(here.drawLine(numberOfNode, node.Number), 100)
                 //here.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].start = [posX, posY];
               }
