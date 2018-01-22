@@ -30,7 +30,7 @@ export function isUserLoggedIn() {
 }
 
 export function login(username, password) {
-  // TODO: make backend call to verify user credentials or get token (later)
+  //TODO: make backend call to verify user credentials or get token (later)
   if (username === "invalid@gmail.com") {
     return {error: "invalid password"};
   }
@@ -44,35 +44,68 @@ export function login(username, password) {
 }
 
 export function logout() {
-  window.sessionStorage.removeItem("session")
+  window.sessionStorage.removeItem("session");
 }
 
 export function getInfo() {
   return axios.get("/info");
 }
 
+export function getCapabilities() {
+  return axios.get("/capabilities");
+}
+
+// Users
+export function getUsers() {
+  return axios.get("/users");
+}
+export function getUser(userId) {
+  return axios.get("/user/" + userId);
+}
+export function getUsersInProject(projectId) {
+  return axios.get("/project/" + projectId + "/users");
+}
+export function addUserToProject(projectId, userId) {
+  return axios.post("/project/" + projectId + "/users/" + userId);
+}
+export function removeUserFromProject(projectId, userId) {
+  return axios.delete("/project/" + projectId + "/users/" + userId);
+}
+
 // Projects
 export function getProjects() {
   return axios.get("/projects");
 }
+export function getProject(projectId) {
+  return axios.get("/project/" + projectId);
+}
 export function createProject(project) {
-  return axios.post("/projects", project);
+  return axios.post("/projects", project); //TODO: missing in API
 }
 export function updateProject(projectId, updatedProject) {
-  return axios.put("/project/" + projectId, updatedProject);
+  return axios.put("/project/" + projectId, updatedProject); //TODO: missing in API
 }
 export function deleteProject(projectId) {
   return axios.delete("/project/" + projectId);
 }
 
-// Pipeline APIs
-export function getPipelines() {
-  return axios.get("/pipelines")
+// Pipelines
+export function getPipelines(projectId) {
+  return axios.get("/project/" + projectId + "/pipelines");
 }
-export function createPipeline(pipeline) {
-  return axios.post("/pipelines", pipeline)
+export function getPipeline(projectId, pipelineId) {
+  return axios.get("/project/" + projectId + "/pipeline/" + pipelineId);
 }
-export function deletePipeline(pipelineId) {
-  return axios.delete("/pipeline/" + pipelineId)
+export function createPipeline(projectId, pipeline) {
+  return axios.post("/project/" + projectId + "/pipeline", pipeline);
+}
+export function updatePipeline(projectId, pipeline) {
+  return axios.post("/project/" + projectId + "/pipeline/" + pipeline.id, pipeline);
+}
+export function startPipeline(projectId, pipelineId) {
+  return axios.post("/project/" + projectId + "/pipeline/" + pipeline.id + "/start", null);
+}
+export function deletePipeline(projectId, pipelineId) {
+  return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
 }
 
