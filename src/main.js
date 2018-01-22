@@ -4,18 +4,21 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 import BootstrapVue from "bootstrap-vue";
+import Icon from 'vue-awesome/components/Icon.vue';
+import 'vue-awesome/icons';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import * as backendCli from "./utils/backend-client";
 
-backendCli.initialize('http://35.227.97.73:4000')
+const url = 'http://35.227.97.73:4000';
 
+backendCli.initialize(url);
+
+Vue.prototype.$baseUrl = url;
 Vue.prototype.$backendCli = backendCli;
-
 Vue.config.productionTip = false;
-//Vue.prototype.$baseUrl = "http://localhost:4000";
-Vue.prototype.$baseUrl = 'http://35.227.97.73:4000';
 Vue.use(BootstrapVue);
+Vue.component('icon', Icon);
 
 /* eslint-disable no-new */
 new Vue({

@@ -9,6 +9,9 @@
 				<b-card :title="numberOfIdleAgents">
 					<p class="card-text">Idle Agents</p>
 				</b-card>
+				<b-card :title="runningPipelinesCount">
+					<p class="card-text">Running Pipelines</p>
+				</b-card>
 			</b-card-group>
 		</div>
 		<b-tabs>
@@ -34,15 +37,14 @@
 					</template>
 				</b-table>
 			</b-tab>
-			<b-tab title="Pipelines">
+			<b-tab title="Running Pipelines">
 				<ul class="pipeline-list list-group">
-					<li v-for="item in pipelines" :key="item.id">
+					<li v-for="item in runningPipelines" :key="item.id">
 						<div class="list-item list-group-item">
-							<b-btn class="btn btn-outline-success btn-md float-right action-button">
-								Start Pipeline
-							</b-btn>
 							<div class="pipeline-box">
-								<h5>{{ item.name }}</h5>
+								<router-link :to="{path: '/projects/' + item.projectId + '/pipelines/' + item.id + '/editor'}"
+									class="list-item-link"
+								>{{ item.name }}</router-link>
 							</div>
 						</div>
 					</li>
@@ -60,10 +62,11 @@ export default {
       title: "Infrastructure",
       numberOfAgents: null,
       numberOfIdleAgents: null,
+			runningPipelinesCount: null,
       agents: [],
       agentFields: [
         { key: "hostName", label: "Host Name" },
-        { key: "apiPort", label: "API Port" },
+        { key: "apiPort", label: "API Port" }, //TODO: Will we keep that? Depends on API
         { key: "tags", label: "Tags" },
         { key: "usedMem", label: "Used Memory" },
         { key: "totalMem", label: "Total Memory" },
@@ -73,7 +76,7 @@ export default {
         { key: "numProcs", label: "Procedures" },
         { key: "goroutines", label: "Goroutines" }
 			],
-			pipelines: []
+			runningPipelines: []
     };
   },
   async created() {
@@ -82,9 +85,10 @@ export default {
       const info = infoResponse.data[0];
       this.numberOfAgents = String(info.numberOfAgents);
       this.numberOfIdleAgents = String(info.numberOfIdleAgents);
+			this.runningPipelinesCount = "?"; //TODO: can't read from API yet
 			this.agents = info.agents;
             const pipResponse = await this.$backendCli.getPipelines();
-			this.pipelines = pipResponse.data;
+			this.runningPipelines = pipResponse.data; //TODO: only get running ones, API not ready
     } catch (e) {
       alert(e);
     }

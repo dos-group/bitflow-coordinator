@@ -5,7 +5,9 @@
         <router-link to="/projects">Projects</router-link>
         <router-link to="/infrastructure">Infrastructure</router-link>
         <transition name="fade" mode="out-in">
-          <div class="navbar-top-right" v-on:click="logout">logout <i class="navbar-top-right material-icons">exit_to_app</i>
+          <div class="navbar-top-right" v-on:click="logout">
+            Logout
+            <icon name="sign-out" class="inline"/>
           </div>
         </transition>
       </nav>
@@ -39,13 +41,12 @@
         this.loggedInUser = null;
       }
     },
-    components: {Login},
+    components: {Login}
   }
 </script>
 
 <style>
   @import url('https://fonts.googleapis.com/css?family=Open+Sans');
-  @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
   body {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
@@ -111,7 +112,6 @@
 
   .navbar-top-right {
     color: white;
-    display: inline-block;
     vertical-align: middle;
     float: right;
     padding-left: 0.2em;
@@ -141,11 +141,15 @@
   }
 
   .list-item-link {
-    color: #000;
+    color: #0d8e53;
     font-size: 1.25em;
   }
 
   .action-button {
-    margin: 10px 5px 10px 5px;
+    margin: 5px 5px 10px 5px;
+  }
+
+  .inline {
+    vertical-align: middle;
   }
 </style>
