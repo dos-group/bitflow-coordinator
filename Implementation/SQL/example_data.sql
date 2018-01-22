@@ -3,6 +3,10 @@ INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`)
 INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("10.200.2.231", "5555",NULL,0, NULL);
 INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("10.200.1.146", "8080",NULL,0, NULL);
 
+INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8082",NULL,0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8083",NULL,0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8084",NULL,0, NULL);
+
 -- Example Users
 INSERT INTO `USERDATA` (`email`,`password`,`name`,`registered_since`,`role`) VALUES ("john.doe@example.com", "john", "doe",CURDATE(), 1);
 INSERT INTO `USERDATA` (`email`,`password`,`name`,`registered_since`,`role`) VALUES ("j.d@example.com", "doe", "john",CURDATE(), 1);
@@ -46,4 +50,5 @@ INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (2, 1)
 INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (3, 2);
 
 -- Configuration
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Maximum number of agents, a pipeline can be distributed on", "BITFLOW_MAX_AGENT_DIST", "1");
 INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the agents availability (in seconds)", "BITFLOW_MONITOR_INTERVAL", "30");

@@ -13,6 +13,15 @@
 
 package de.cit.backend.agent.api;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.reflect.TypeToken;
+
 import de.cit.backend.agent.ApiCallback;
 import de.cit.backend.agent.ApiClient;
 import de.cit.backend.agent.ApiException;
@@ -21,19 +30,7 @@ import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.Pair;
 import de.cit.backend.agent.ProgressRequestBody;
 import de.cit.backend.agent.ProgressResponseBody;
-
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
-
-
-import io.swagger.client.model.PipelineResponse;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import de.cit.backend.agent.api.model.PipelineResponse;
 
 public class PipelineApi {
     private ApiClient apiClient;
@@ -125,11 +122,11 @@ public class PipelineApi {
      * 
      * Try to kill the given pipeline.
      * @param id  (required)
-     * @return List&lt;PipelineResponse&gt;
+     * @return PipelineResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<PipelineResponse> pipelineIdDelete(Integer id) throws ApiException {
-        ApiResponse<List<PipelineResponse>> resp = pipelineIdDeleteWithHttpInfo(id);
+    public PipelineResponse pipelineIdDelete(Integer id) throws ApiException {
+        ApiResponse<PipelineResponse> resp = pipelineIdDeleteWithHttpInfo(id);
         return resp.getData();
     }
 
@@ -137,12 +134,12 @@ public class PipelineApi {
      * 
      * Try to kill the given pipeline.
      * @param id  (required)
-     * @return ApiResponse&lt;List&lt;PipelineResponse&gt;&gt;
+     * @return ApiResponse&lt;PipelineResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<PipelineResponse>> pipelineIdDeleteWithHttpInfo(Integer id) throws ApiException {
+    public ApiResponse<PipelineResponse> pipelineIdDeleteWithHttpInfo(Integer id) throws ApiException {
         com.squareup.okhttp.Call call = pipelineIdDeleteValidateBeforeCall(id, null, null);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
@@ -154,7 +151,7 @@ public class PipelineApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call pipelineIdDeleteAsync(Integer id, final ApiCallback<List<PipelineResponse>> callback) throws ApiException {
+    public com.squareup.okhttp.Call pipelineIdDeleteAsync(Integer id, final ApiCallback<PipelineResponse> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -176,7 +173,7 @@ public class PipelineApi {
         }
 
         com.squareup.okhttp.Call call = pipelineIdDeleteValidateBeforeCall(id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
@@ -251,11 +248,11 @@ public class PipelineApi {
      * 
      * Return a JSON formatted view of the given pipeline. The Errors property can contain hints about how the current Status of the pipeline was reached, but usually the GET /pipeline/:id/out function provides more useful insights.
      * @param id  (required)
-     * @return List&lt;PipelineResponse&gt;
+     * @return PipelineResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<PipelineResponse> pipelineIdGet(Integer id) throws ApiException {
-        ApiResponse<List<PipelineResponse>> resp = pipelineIdGetWithHttpInfo(id);
+    public PipelineResponse pipelineIdGet(Integer id) throws ApiException {
+        ApiResponse<PipelineResponse> resp = pipelineIdGetWithHttpInfo(id);
         return resp.getData();
     }
 
@@ -263,12 +260,12 @@ public class PipelineApi {
      * 
      * Return a JSON formatted view of the given pipeline. The Errors property can contain hints about how the current Status of the pipeline was reached, but usually the GET /pipeline/:id/out function provides more useful insights.
      * @param id  (required)
-     * @return ApiResponse&lt;List&lt;PipelineResponse&gt;&gt;
+     * @return ApiResponse&lt;PipelineResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<PipelineResponse>> pipelineIdGetWithHttpInfo(Integer id) throws ApiException {
+    public ApiResponse<PipelineResponse> pipelineIdGetWithHttpInfo(Integer id) throws ApiException {
         com.squareup.okhttp.Call call = pipelineIdGetValidateBeforeCall(id, null, null);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
@@ -280,7 +277,7 @@ public class PipelineApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call pipelineIdGetAsync(Integer id, final ApiCallback<List<PipelineResponse>> callback) throws ApiException {
+    public com.squareup.okhttp.Call pipelineIdGetAsync(Integer id, final ApiCallback<PipelineResponse> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -302,7 +299,7 @@ public class PipelineApi {
         }
 
         com.squareup.okhttp.Call call = pipelineIdGetValidateBeforeCall(id, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }
@@ -328,7 +325,7 @@ public class PipelineApi {
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
 
         final String[] localVarAccepts = {
-            "application/json"
+            "text/plain"
         };
         final String localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
@@ -434,14 +431,16 @@ public class PipelineApi {
     }
     /**
      * Build call for pipelinePost
+     * @param script  (required)
      * @param delay  (optional, default to 200ms)
+     * @param params  (optional)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call pipelinePostCall(String delay, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
-        Object localVarPostBody = null;
+    public com.squareup.okhttp.Call pipelinePostCall(String script, String delay, String params, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        Object localVarPostBody = script;
         
         // create path and map variables
         String localVarPath = "/pipeline";
@@ -449,6 +448,8 @@ public class PipelineApi {
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         if (delay != null)
         localVarQueryParams.addAll(apiClient.parameterToPairs("", "delay", delay));
+        if (params != null)
+        localVarQueryParams.addAll(apiClient.parameterToPairs("", "params", params));
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
 
@@ -461,7 +462,7 @@ public class PipelineApi {
         if (localVarAccept != null) localVarHeaderParams.put("Accept", localVarAccept);
 
         final String[] localVarContentTypes = {
-            "application/json", "application/xml"
+                "text/plain"
         };
         final String localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -483,10 +484,15 @@ public class PipelineApi {
     }
     
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call pipelinePostValidateBeforeCall(String delay, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call pipelinePostValidateBeforeCall(String script, String delay, String params, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        
+        // verify the required parameter 'script' is set
+        if (script == null) {
+            throw new ApiException("Missing the required parameter 'script' when calling pipelinePost(Async)");
+        }
         
         
-        com.squareup.okhttp.Call call = pipelinePostCall(delay, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = pipelinePostCall(script, delay, params, progressListener, progressRequestListener);
         return call;
 
         
@@ -498,37 +504,43 @@ public class PipelineApi {
     /**
      * 
      * Return a list of IDs of all currently running pipelines.
+     * @param script  (required)
      * @param delay  (optional, default to 200ms)
-     * @return List&lt;PipelineResponse&gt;
+     * @param params  (optional)
+     * @return PipelineResponse
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<PipelineResponse> pipelinePost(String delay) throws ApiException {
-        ApiResponse<List<PipelineResponse>> resp = pipelinePostWithHttpInfo(delay);
+    public PipelineResponse pipelinePost(String script, String delay, String params) throws ApiException {
+        ApiResponse<PipelineResponse> resp = pipelinePostWithHttpInfo(script, delay, params);
         return resp.getData();
     }
 
     /**
      * 
      * Return a list of IDs of all currently running pipelines.
+     * @param script  (required)
      * @param delay  (optional, default to 200ms)
-     * @return ApiResponse&lt;List&lt;PipelineResponse&gt;&gt;
+     * @param params  (optional)
+     * @return ApiResponse&lt;PipelineResponse&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<PipelineResponse>> pipelinePostWithHttpInfo(String delay) throws ApiException {
-        com.squareup.okhttp.Call call = pipelinePostValidateBeforeCall(delay, null, null);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+    public ApiResponse<PipelineResponse> pipelinePostWithHttpInfo(String script, String delay, String params) throws ApiException {
+        com.squareup.okhttp.Call call = pipelinePostValidateBeforeCall(script, delay, params, null, null);
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
     /**
      *  (asynchronously)
      * Return a list of IDs of all currently running pipelines.
+     * @param script  (required)
      * @param delay  (optional, default to 200ms)
+     * @param params  (optional)
      * @param callback The callback to be executed when the API call finishes
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call pipelinePostAsync(String delay, final ApiCallback<List<PipelineResponse>> callback) throws ApiException {
+    public com.squareup.okhttp.Call pipelinePostAsync(String script, String delay, String params, final ApiCallback<PipelineResponse> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -549,8 +561,8 @@ public class PipelineApi {
             };
         }
 
-        com.squareup.okhttp.Call call = pipelinePostValidateBeforeCall(delay, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<PipelineResponse>>(){}.getType();
+        com.squareup.okhttp.Call call = pipelinePostValidateBeforeCall(script, delay, params, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<PipelineResponse>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }

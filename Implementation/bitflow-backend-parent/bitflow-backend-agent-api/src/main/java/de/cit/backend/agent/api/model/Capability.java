@@ -11,7 +11,7 @@
  */
 
 
-package io.swagger.client.model;
+package de.cit.backend.agent.api.model;
 
 import java.util.Objects;
 import com.google.gson.TypeAdapter;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Capability
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-11T18:05:32.736+01:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-01-22T23:30:39.496+01:00")
 public class Capability {
   @SerializedName("Name")
   private String name = null;

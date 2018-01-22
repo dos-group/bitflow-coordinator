@@ -18,7 +18,7 @@ import de.cit.backend.agent.Pair;
 import java.util.Map;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-11T18:05:32.736+01:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-01-22T23:30:39.496+01:00")
 public class OAuth implements Authentication {
   private String accessToken;
 

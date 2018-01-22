@@ -11,7 +11,7 @@
  */
 
 
-package io.swagger.client.model;
+package de.cit.backend.agent.api.model;
 
 import java.util.Objects;
 import com.google.gson.TypeAdapter;
@@ -19,9 +19,9 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import de.cit.backend.agent.api.model.Tag;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.client.model.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Info
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2017-11-11T18:05:32.736+01:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-01-22T23:30:39.496+01:00")
 public class Info {
   @SerializedName("Hostname")
   private String hostname = null;

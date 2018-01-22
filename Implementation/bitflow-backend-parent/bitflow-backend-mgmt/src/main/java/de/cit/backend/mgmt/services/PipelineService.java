@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
 
+import de.cit.backend.agent.api.model.PipelineResponse;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
@@ -22,6 +23,8 @@ public class PipelineService implements IPipelineService {
 
 	private static final Logger log = Logger.getLogger(PipelineService.class);
 	
+	@EJB
+	private PipelineDistributerService pipelineDistributer;
 	
 	@EJB
 	private PersistenceService persistence;
@@ -57,6 +60,17 @@ public class PipelineService implements IPipelineService {
 			}
 		}
 		return pro.getPipelines();
+	}
+
+	@Override
+	public PipelineResponse executePipeline(Integer projectId, Integer pipelineId) {
+		PipelineDTO pipeline = loadPipelineFromProject(projectId, pipelineId);	
+		if(pipeline == null){
+			throw new IllegalArgumentException("The pipeline or project id you provided is not valid!");
+		}
+		
+		pipelineDistributer.suggestPipelineDistribution(pipeline);
+		return pipelineDistributer.deployPipeline(pipeline);
 	}
 
 }

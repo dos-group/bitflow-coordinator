@@ -27,8 +27,8 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 
 
-import io.swagger.client.model.Capability;
-import io.swagger.client.model.Info;
+import de.cit.backend.agent.api.model.Capability;
+import de.cit.backend.agent.api.model.Info;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

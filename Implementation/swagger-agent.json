@@ -107,8 +107,7 @@ paths:
       tags: 
       - "pipeline"
       consumes:
-        - application/json
-        - application/xml
+        - text/plain
       produces:
         - application/json
       description: 'Return a list of IDs of all currently running pipelines.'
@@ -118,13 +117,20 @@ paths:
         required: false
         type: string
         default: "200ms"
+      - name: "params"
+        in: "query"
+        required: false
+        type: string
+      - in: "body"
+        name: "script"
+        required: true
+        schema:
+          type: string
       responses:
         201:
           description: "If the subprocess is spawned successfully and does not fail early."
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/PipelineResponse"
+            $ref: "#/definitions/PipelineResponse"
         400:
           description: "If the request body is empty or the delay parameter cannot be parsed"
         412:
@@ -151,9 +157,7 @@ paths:
         200:
           description: "Statte of the pipeline"
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/PipelineResponse"
+            $ref: "#/definitions/PipelineResponse"
         400:
           description: "If the :id part of the URL cannot be parsed to an integer."
         404:
@@ -177,9 +181,7 @@ paths:
         200:
           description: "If the pipeline was successfully killed. The response body will be the state of the pipeline, as returned by GET /pipeline/:id."
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/PipelineResponse"
+            $ref: "#/definitions/PipelineResponse"
         400:
           description: "If the :id part of the URL cannot be parsed to an integer."
         404:
@@ -194,7 +196,7 @@ paths:
         - application/json
         - application/xml
       produces:
-        - application/json
+        - text/plain
       description: 'Return the combined standard output and standard error of the given pipeline.'
       parameters:
       - name: "id"

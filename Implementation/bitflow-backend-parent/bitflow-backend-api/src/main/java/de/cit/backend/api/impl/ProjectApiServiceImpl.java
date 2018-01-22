@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import de.cit.backend.agent.api.model.PipelineResponse;
 import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
@@ -142,7 +143,11 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectProjectIdPipelinePipelineIdStartPost(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		// TODO execute pipeline
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try{
+			PipelineResponse resp = pipelineService.executePipeline(projectId, pipelineId);
+			return Response.ok().entity(resp).build();
+		}catch (Exception e) {
+			return Response.status(400).build();
+		}
 	}
 }

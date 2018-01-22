@@ -14,7 +14,7 @@
 package de.cit.backend.agent.api;
 
 import de.cit.backend.agent.ApiException;
-import io.swagger.client.model.PipelineResponse;
+import de.cit.backend.agent.api.model.PipelineResponse;
 import org.junit.Test;
 import org.junit.Ignore;
 
@@ -43,7 +43,7 @@ public class PipelineApiTest {
     @Test
     public void pipelineIdDeleteTest() throws ApiException {
         Integer id = null;
-        List<PipelineResponse> response = api.pipelineIdDelete(id);
+        PipelineResponse response = api.pipelineIdDelete(id);
 
         // TODO: test validations
     }
@@ -59,7 +59,7 @@ public class PipelineApiTest {
     @Test
     public void pipelineIdGetTest() throws ApiException {
         Integer id = null;
-        List<PipelineResponse> response = api.pipelineIdGet(id);
+        PipelineResponse response = api.pipelineIdGet(id);
 
         // TODO: test validations
     }
@@ -90,8 +90,10 @@ public class PipelineApiTest {
      */
     @Test
     public void pipelinePostTest() throws ApiException {
+        String script = null;
         String delay = null;
-        List<PipelineResponse> response = api.pipelinePost(delay);
+        String params = null;
+        PipelineResponse response = api.pipelinePost(script, delay, params);
 
         // TODO: test validations
     }

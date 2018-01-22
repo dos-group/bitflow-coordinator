@@ -67,7 +67,7 @@ public class PersistenceAccessTest {
 	public void findAgentTest(){
 		String hqlQuery = "SELECT agent FROM AgentDTO agent WHERE agent.status = :status";
 		Query query = em.createQuery(hqlQuery);
-		query.setParameter("status", AgentState.IDLE);
+		query.setParameter("status", AgentState.ONLINE);
 		
 		List<AgentDTO> agentList = (List<AgentDTO>) query.getResultList();
 		

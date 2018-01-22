@@ -15,6 +15,7 @@ public class ConfigurationService {
 	private static final Logger log = Logger.getLogger(ConfigurationService.class);
 
 	public static final String CONFIG_MONITOR_INTERVAL = "BITFLOW_MONITOR_INTERVAL";
+	public static final String CONFIG_MAX_DISTRIBUTION = "BITFLOW_MAX_AGENT_DIST";
 	
 	@PersistenceContext(unitName = "bitflow-backend-mgmt-server")
 	private EntityManager entityManager;

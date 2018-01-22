@@ -14,8 +14,8 @@
 package de.cit.backend.agent.api;
 
 import de.cit.backend.agent.ApiException;
-import io.swagger.client.model.Capability;
-import io.swagger.client.model.Info;
+import de.cit.backend.agent.api.model.Capability;
+import de.cit.backend.agent.api.model.Info;
 import org.junit.Test;
 import org.junit.Ignore;
 
