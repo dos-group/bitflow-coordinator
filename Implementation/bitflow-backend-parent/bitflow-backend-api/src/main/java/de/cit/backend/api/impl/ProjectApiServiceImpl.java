@@ -15,6 +15,8 @@ import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.services.interfaces.IPipelineService;
@@ -122,7 +124,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
 		// TODO Delete project
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
 	}
 
 	@Override
