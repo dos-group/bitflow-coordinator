@@ -60,6 +60,10 @@ public class PipelineApi {
      * @throws ApiException If fail to serialize the request body object
      */
     public com.squareup.okhttp.Call pipelineIdDeleteCall(Integer id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        if (id == null) {
+            throw new ApiException("Missing the required parameter 'id'");
+        }
+
         Object localVarPostBody = null;
         
         // create path and map variables
@@ -186,6 +190,10 @@ public class PipelineApi {
      * @throws ApiException If fail to serialize the request body object
      */
     public com.squareup.okhttp.Call pipelineIdGetCall(Integer id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        if (id == null) {
+            throw new ApiException("Missing the required parameter 'id'");
+        }
+
         Object localVarPostBody = null;
         
         // create path and map variables
@@ -312,6 +320,10 @@ public class PipelineApi {
      * @throws ApiException If fail to serialize the request body object
      */
     public com.squareup.okhttp.Call pipelineIdOutGetCall(Integer id, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        if (id == null) {
+            throw new ApiException("Missing the required parameter 'id'");
+        }
+
         Object localVarPostBody = null;
         
         // create path and map variables
@@ -440,6 +452,10 @@ public class PipelineApi {
      * @throws ApiException If fail to serialize the request body object
      */
     public com.squareup.okhttp.Call pipelinePostCall(String script, String delay, String params, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+        if (script == null) {
+            throw new ApiException("Missing the required parameter 'script'");
+        }
+
         Object localVarPostBody = script;
         
         // create path and map variables
