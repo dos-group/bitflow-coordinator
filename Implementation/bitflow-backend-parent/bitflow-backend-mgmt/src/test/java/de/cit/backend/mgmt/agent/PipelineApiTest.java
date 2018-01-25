@@ -22,7 +22,7 @@ public class PipelineApiTest {
 	private static final String test = "listen tcp %s: bind: Normalerweise";
 
 	@Test
-	//@Ignore("You have to have an agent running on localhost port 8082 for this test to succeed.")
+	@Ignore("You have to have an agent running on localhost port 8082 for this test to succeed.")
 	public void testPipelinePost(){
 		ApiClient conf = Configuration.getDefaultApiClient();
 		conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
@@ -116,7 +116,7 @@ public class PipelineApiTest {
 		deploy.appendToScript(script);
 		deploy.deployOnAgent(agent, 60000);
 		
-		Assert.assertEquals("127.0.0.1:60001 -> avg() -> proxyIP", deploy.getFormattedScript(1, "proxyIP"));
+		Assert.assertEquals("listen://127.0.0.1:60001 -> avg() -> proxyIP", deploy.getFormattedScript(1, "proxyIP"));
 	}
 	
 }
