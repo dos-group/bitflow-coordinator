@@ -119,4 +119,22 @@ public class ProjectService implements IProjectService {
 		}
 	}
 
+	@Override
+	public void deleteProject(Integer projectId) {
+		ProjectDTO project = persistence.findProject(projectId);
+		if(project == null){
+			throw new IllegalArgumentException("Provided project id incorrect!");
+		}
+		persistence.deleteProject(projectId);
+	}
+
+	@Override
+	public void deletePipeline(Integer pipelineId) {
+		PipelineDTO pipeline = persistence.findPipeline(pipelineId);
+		if(pipeline == null){
+			throw new IllegalArgumentException("Provided pipeline id incorrect!");
+		}
+		persistence.deletePipeline(pipelineId);
+	}
+
 }

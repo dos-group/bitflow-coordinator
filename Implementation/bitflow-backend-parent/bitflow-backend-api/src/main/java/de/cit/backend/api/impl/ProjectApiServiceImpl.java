@@ -1,5 +1,6 @@
 package de.cit.backend.api.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.Context;
@@ -52,8 +53,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectProjectIdPipelinePipelineIdDelete(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		projectService.deletePipeline(pipelineId);
+		return Response.ok().build();
 	}
 
 	@Override
@@ -82,6 +83,15 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectProjectIdPipelinePipelineIdPost(Pipeline body, Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
 		// TODO Auto-generated method stub
+		ProjectDTO pro = projectService.loadProject(projectId);
+		for(PipelineDTO pipeline : pro.getPipelines()) {
+			if(pipeline.getId().equals(pipelineId)) {
+				pipeline.setLastChanged(new Date());
+				pipeline.setName(body.getName());
+				// TODO set script? update pipeline steps?
+				break;
+			}
+		}
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
@@ -123,8 +133,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
-		// TODO Delete project
-		return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
+		projectService.deleteProject(id);
+		return Response.ok().build();
 	}
 
 	@Override

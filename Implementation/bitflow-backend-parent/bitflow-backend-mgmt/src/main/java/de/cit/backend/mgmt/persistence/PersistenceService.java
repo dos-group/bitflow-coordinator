@@ -75,6 +75,14 @@ public class PersistenceService {
 		return entityManager.find(PipelineDTO.class, pipelineId);
 	}
 
+	public void deleteProject(int projectId) {
+		entityManager.remove(this.findProject(projectId));
+	}
+
+	public void deletePipeline(int pipelineId) {
+		entityManager.remove(this.findPipeline(pipelineId));
+	}
+
 	public List<AgentDTO> findAgentsByState(AgentState state) {
 		String hqlQuery = "SELECT agent FROM AgentDTO agent WHERE agent.status = :status";
 		Query query = entityManager.createQuery(hqlQuery);

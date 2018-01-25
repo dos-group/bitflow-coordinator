@@ -9,6 +9,7 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import de.cit.backend.agent.api.model.Capability;
 import org.jboss.logging.Logger;
 
 import de.cit.backend.agent.ApiClient;
@@ -18,7 +19,6 @@ import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.AgentState;
-import io.swagger.client.model.Capability;
 
 @Singleton
 @Startup
@@ -80,7 +80,6 @@ public class AgentMonitoringService {
 		InfosApi agentApi = new InfosApi(conf);
 		try{
 			List<Capability> caps = agentApi.capabilitiesGet();
-			
 			agent.setCapabilities(caps.toString());
 		}catch (Exception e) {
 			log.error("GetCapabilities failed", e);

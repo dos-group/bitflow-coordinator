@@ -15,5 +15,7 @@ public interface IProjectService {
 	PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer id);
 	void assignUserToProject(Integer projectId, Integer userId);
 	void removeUserFromProject(Integer projectId, Integer userId);
+	void deleteProject(Integer projectId);
+	void deletePipeline(Integer projectId);
 
 }
