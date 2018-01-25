@@ -4,10 +4,12 @@
     TODO: Size of text in recs might be too big (line breaks!)
 -->
 <template>
-    <div class="page-content">
-        <h1 v-on:dblclick="runMe()">Editor</h1>
+    <div class="page-content" style="margin-bottom: 5px">
         <div class="row">
-            <div class="contain list-group col-lg-2 col-md-2">
+            <h4>Editor for pipeline: </h4>
+        </div>
+        <div class="row viewContainer">
+            <div class="contain list-group col-lg-2 col-md-auto col-sm-auto">
                 <div v-on:click="createNode('start')" class="static step start">
                     <div class="card-block">
                         <h5 class="card-title">Start of the pipeline </h5>
@@ -29,10 +31,8 @@
                     </div>
                 </div>
             </div>
-            <div class="svg-container col-lg-10 col-md-10">
-                <svg preserveAspectRatio="xMidYMid meet" class="svg-content" viewBox="0 0 200 100"
-                     style="border: 1px solid #42b983">
-
+            <div class="svg-container col-lg-10 col-md-auto col-sm-auto">
+                <svg preserveAspectRatio="xMidYMid meet" class="svg-content" viewBox="0 0 200 100">
                     <defs>
                         <marker id="Triangle" viewBox="0 0 10 10" refX="1" refY="5"
                                 markerWidth="4" markerHeight="4" orient="auto">
@@ -46,7 +46,7 @@
                         </g>
                         <g id="markers" class="markers"></g>
                         <g class="recs">
-                            <g class="square" transform="translate(10,10)" v-for="node in allNodes" :key="node.Number">
+                            <g class="square" transform="translate(70,50)" v-for="node in allNodes" :key="node.Number">
                                 <rect width="20" height="15" rx="1" ry="1" style="opacity: 1"></rect>
                                 <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteNode(node)"
                                       dy="4">
@@ -284,7 +284,7 @@
           const Number = d3.select(this).selectAll("text")._groups[0][2].innerHTML.match(/\d+/)[0];
           here.checkPos();
           setTimeout(here.changeLine(Number), 100)
-          d3.select(this).attr('transform', 'translate(' + d3.event.x + ',' + d3.event.y + ')');
+          d3.select(this).attr('transform', 'translate(' + (d3.event.x - 10) + ',' + (d3.event.y - 7) + ')');
         }
 
         function dragended(d) {
@@ -495,6 +495,12 @@
 </script>
 <style>
 
+    .row.viewContainer {
+        border: 2px solid rgb(66, 185, 131);
+        border-radius: 0.5em;
+        padding: 5px;
+    }
+
     .contain {
         max-height: 600px !important;
     }
@@ -518,6 +524,10 @@
         position: absolute;
         top: 0;
         left: 0;
+        border-left: 2px solid rgb(66, 185, 131);
+        margin-left: 15px;
+        padding-bottom: 25px;
+        padding-right: 30px;
     }
 
     .card.step {
