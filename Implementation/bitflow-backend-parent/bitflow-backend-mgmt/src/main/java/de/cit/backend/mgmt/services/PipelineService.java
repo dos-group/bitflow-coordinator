@@ -69,8 +69,10 @@ public class PipelineService implements IPipelineService {
 			throw new IllegalArgumentException("The pipeline or project id you provided is not valid!");
 		}
 		
-		pipelineDistributer.suggestPipelineDistribution(pipeline);
-		return pipelineDistributer.deployPipeline(pipeline);
+		//pipelineDistributer.suggestPipelineDistribution(pipeline);
+		//return pipelineDistributer.deployPipeline(pipeline);
+		pipelineDistributer.distributedDeployment(pipeline);//.get(0);
+		return null;
 	}
 
 }

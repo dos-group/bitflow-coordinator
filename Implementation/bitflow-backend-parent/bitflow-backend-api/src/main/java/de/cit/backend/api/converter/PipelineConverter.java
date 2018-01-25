@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.PipelineStep;
-import de.cit.backend.mgmt.helper.ScriptGenerator;
+import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 

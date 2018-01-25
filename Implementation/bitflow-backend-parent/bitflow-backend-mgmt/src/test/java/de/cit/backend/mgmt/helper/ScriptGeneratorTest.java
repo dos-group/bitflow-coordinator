@@ -4,6 +4,7 @@ package de.cit.backend.mgmt.helper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
@@ -26,11 +27,7 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 	public void testPipelineGenerationEmpty() {
 		PipelineDTO testObj = createTestPipelineEmpty();
 		
-		String expected = "";
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-//		System.out.println(expected);
-//		System.out.println(actual);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, "");
 	}
 	
 	@Test
@@ -41,10 +38,7 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 				+ AVG_OPERATION + "(param1=value1, param2=value2) -> "
 				+ AVG_OPERATION + "(param1=value1, param2=value2) -> "
 				+ FILE_SINK;
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-//		System.out.println(expected);
-//		System.out.println(actual);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, expected);
 	}
 	
 	@Test
@@ -57,10 +51,7 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 				+ AVG_OPERATION_PARAM + " } -> "
 				+ AVG_OPERATION_PARAM + " -> "
 				+ FILE_SINK;
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-//		System.out.println(expected);
-//		System.out.println(actual);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, expected);
 	}
 	
 	@Test
@@ -75,10 +66,7 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 				+ AVG_OPERATION_PARAM + " } -> "
 				+ AVG_OPERATION_PARAM + " -> "
 				+ FILE_SINK;
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-//		System.out.println(expected);
-//		System.out.println(actual);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, expected);
 	}
 	
 	@Test
@@ -95,10 +83,7 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 				+ AVG_OPERATION_PARAM + " } -> "
 				+ AVG_OPERATION_PARAM + " -> "
 				+ FILE_SINK;
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-//		System.out.println(expected);
-//		System.out.println(actual);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, expected);
 	}
 	
 	@Test
@@ -115,7 +100,39 @@ public class ScriptGeneratorTest extends AbstractPipelineTest{
 				+ AVG_OPERATION_PARAM + " } -> "
 				+ AVG_OPERATION_PARAM + " -> "
 				+ FILE_SINK;
-		String actual = ScriptGenerator.generateScriptForPipeline(testObj);
-		Assert.assertEquals(expected, actual);
+		checkScript(testObj, expected);
+	}
+	
+	@Test
+	public void testSortPipelineGeneration2Sinks() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipeline2SinksSimple();
+		String expected = "127.0.0.1 -> "
+				+ "avg(param1=value1, param2=value2) -> { "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "output.csv ; "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "output.csv } ";
+		checkScript(testObj, expected);
+	}
+	
+	@Test
+	public void testSortPipelineGeneration3Sinks() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipeline3Sinks();
+		String expected = "127.0.0.1 -> "
+				+ "avg(param1=value1, param2=value2) -> { "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "avg(param1=value1, param2=value2) -> { "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "output.csv ; "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "output.csv }; "
+				+ "avg(param1=value1, param2=value2) -> "
+				+ "output.csv } ";
+		checkScript(testObj, expected);
+	}
+	
+	private void checkScript(PipelineDTO pipeline, String expectedScript){
+		String actual = ScriptGenerator.generateScriptForPipeline(pipeline);
+		Assert.assertEquals(expectedScript, actual);
 	}
 }

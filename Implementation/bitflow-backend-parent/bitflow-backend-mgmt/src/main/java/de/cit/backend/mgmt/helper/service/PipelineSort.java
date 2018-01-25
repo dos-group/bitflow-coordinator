@@ -1,8 +1,11 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cit.backend.mgmt.helper.model.ForkJoinTracker;
+import de.cit.backend.mgmt.helper.model.ForkStorage;
+import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
@@ -49,11 +52,18 @@ public class PipelineSort {
 			}
 		}
 
-		SuccessorTracker succTracker = SuccessorTracker.findWrongSuccessorIndexes(steps, succIndexes, index, forkInfos);//forkCurrent, forkJoinStepNumber
+		SuccessorTracker succTracker;// = SuccessorTracker.findWrongSuccessorIndexes(steps, succIndexes, index, forkInfos);//forkCurrent, forkJoinStepNumber
 
-		for (int i = 0; i < succTracker.getWrongIndexes().size(); i++) {
-			rearangeList(steps, succTracker.getWrongIndexes().get(i), succTracker.getIndexToOverride(index + i + 1));
+		int j = 0;
+		while((succTracker = SuccessorTracker.findWrongSuccessorIndexes(steps, succIndexes, index, forkInfos)).getWrongIndexes().size() > 0){
+			for (int i = 0; i < succTracker.getWrongIndexes().size(); i++) {
+				rearangeList(steps, succTracker.getWrongIndexes().get(i), succTracker.getIndexToOverride(index + i + j + 1));
+			}
+			j += succTracker.getWrongIndexes().size();
+			succIndexes = SuccessorTracker.findSuccessorIndexes(steps, index);
 		}
+
+		
 		
 		if(succIndexes.size() == 1){
 			handleSuccessorsRecursive(steps, index + 1 , forkInfos, visitedIndexes);

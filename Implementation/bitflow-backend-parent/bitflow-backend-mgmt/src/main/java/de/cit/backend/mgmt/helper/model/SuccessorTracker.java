@@ -1,11 +1,11 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
-class SuccessorTracker {
+public class SuccessorTracker {
 
 	private List<Integer> wrongfullyPlacedSuccIndexes = new ArrayList<>();
 	private List<Integer> rightfullyPlacedSuccIndexes = new ArrayList<>();
@@ -53,9 +53,14 @@ class SuccessorTracker {
 				ret.addRightfullyPlacedSuccessorIndex(succIndexes.get(i));
 			}
 		}
+		ret.sort();
 		return ret;
 	}
 	
+	private void sort() {
+		this.wrongfullyPlacedSuccIndexes.sort(null);
+	}
+
 	public static List<Integer> findSuccessorIndexes(List<PipelineStepDTO> steps, int index)
 			throws IllegalStateException {
 		List<Integer> succIndexes = new ArrayList<>();
@@ -73,5 +78,13 @@ class SuccessorTracker {
 		}
 		throw new IllegalStateException(
 				"There is no pipeline step with the number " + stepNumber + ", fix the references!");
+	}
+
+	public static List<Integer> findSuccessorAgents(List<PipelineStepDTO> steps, List<Integer> succIndexes) {
+		List<Integer> succAgents = new ArrayList<>();
+		for(int succ : succIndexes){
+			succAgents.add(steps.get(succ).getAgentAdvice());
+		}
+		return succAgents;
 	}
 }

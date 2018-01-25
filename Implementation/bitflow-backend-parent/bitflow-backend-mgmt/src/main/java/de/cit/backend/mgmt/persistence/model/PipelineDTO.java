@@ -124,6 +124,17 @@ public class PipelineDTO extends BaseIdEntity implements java.io.Serializable {
 	}
 	
 	@Transient
+	public int countSinks(){
+		int count = 0;
+		for(PipelineStepDTO step : this.pipelineSteps){
+			if(step.getType() == StepTypeEnum.SINK){
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	@Transient
 	public int countAgents(){
 		List<Integer> agents = new ArrayList<>();
 		for(PipelineStepDTO step : this.pipelineSteps){

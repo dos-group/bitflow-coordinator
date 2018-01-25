@@ -1,10 +1,14 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
 
+import de.cit.backend.mgmt.helper.model.AgentInfo;
+import de.cit.backend.mgmt.helper.model.ForkJoinTracker;
+import de.cit.backend.mgmt.helper.model.ForkStorage;
+import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
@@ -24,7 +28,7 @@ public class PipelineDistributer {
 			PipelineSort.sortPipeline(pipeline);
 			List<Integer> visited = new ArrayList<>();
 			List<PipelineStepDTO> steps = pipeline.getPipelineSteps();
-			distributePipelineRecursive(steps, 0, new ForkStorage(), new AgentAssigner(numberOfAgents), visited);
+			distributePipelineRecursive(steps, 0, new ForkStorage(), new AgentInfo(numberOfAgents), visited);
 		} catch (IllegalStateException e) {
 			log.error("Error while distributing the pipeline!",e);
 			return;
@@ -36,7 +40,7 @@ public class PipelineDistributer {
 	}
 
 	private static void distributePipelineRecursive(List<PipelineStepDTO> steps, int index, ForkStorage forkStorage,
-			AgentAssigner agentInfo, List<Integer> visitedIndexes) {
+			AgentInfo agentInfo, List<Integer> visitedIndexes) {
 		if(visitedIndexes.contains(index)){
 			distributePipelineRecursive(steps, index + 1, forkStorage, agentInfo, visitedIndexes);
 			return;

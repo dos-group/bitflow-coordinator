@@ -3,6 +3,8 @@ package de.cit.backend.mgmt.helper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.cit.backend.mgmt.helper.service.CycleChecker;
+import de.cit.backend.mgmt.helper.service.PipelineSort;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
@@ -11,82 +13,37 @@ public class PipelineOrderTest extends AbstractPipelineTest{
 	@Test
 	public void testSortLinearPipeline() throws IllegalStateException{
 		PipelineDTO testObj = createTestPipelineLinear();
-		
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		
-		String expected = "";
-		String actual = "";
-		int i = 0;
-		for(PipelineStepDTO step : testObj.getPipelineSteps()){
-			actual += step.getStepNumber();
-			expected += i;
-			i++;
-		}
-
-		Assert.assertEquals(expected, actual);
+		checkOrder(testObj, "0123");
 	}
 	
 	@Test
 	public void testSortForkedOncePipeline() throws IllegalStateException{
 		PipelineDTO testObj = createTestPipelineForkedOnce();
-		
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		
-		String expected = "013245";
-		String actual = "";
-		for(PipelineStepDTO step : testObj.getPipelineSteps()){
-			actual += step.getStepNumber();
-		}
-		
-		Assert.assertEquals(expected, actual);
+		checkOrder(testObj, "013245");
 	}
 	
 	@Test
 	public void testSortForkedOnce2Pipeline() throws IllegalStateException{
 		PipelineDTO testObj = createTestPipelineForkedOnce2();
-		
-		String before = "";
-		for(int i=0; i< testObj.getPipelineSteps().size(); i++){
-			before += testObj.getPipelineSteps().get(i).getStepNumber();
-		}
-//		System.out.println(before);
-		
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		PipelineSort.sortPipeline(testObj);
-		
-		String expected = "01452367";
-		String actual = "";
-		for(PipelineStepDTO step : testObj.getPipelineSteps()){
-			actual += step.getStepNumber();
-		}
-	
-		Assert.assertEquals(expected, actual);
+		checkOrder(testObj, "01452367");
 	}
 	
 	@Test
 	public void testSortForkedMultiplePipeline() throws IllegalStateException{
 		PipelineDTO testObj = createTestPipelineForkedMultiple();
-		
-		String before = "";
-		for(int i=0; i< testObj.getPipelineSteps().size(); i++){
-			before += testObj.getPipelineSteps().get(i).getStepNumber();
-		}
-//		System.out.println(before);
-		
-		PipelineSort.sortPipeline(testObj);
-		
-		String expected = "0167243589";
-		String actual = "";
-		for(PipelineStepDTO step : testObj.getPipelineSteps()){
-			actual += step.getStepNumber();
-		}
+		checkOrder(testObj, "0167243589");
+	}
 	
-		Assert.assertEquals(expected, actual);
+	@Test
+	public void testSortPipeline2SinksSimple() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipeline2SinksSimple();
+		checkOrder(testObj, "012345");
+	}
+	
+	@Test
+	public void testSortPipeline3Sinks() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipeline3Sinks();
+		checkOrder(testObj, "0145896723");
 	}
 	
 	@Test
@@ -99,5 +56,16 @@ public class PipelineOrderTest extends AbstractPipelineTest{
 		} catch (IllegalStateException e) {
 			Assert.assertTrue(e.getMessage().contains("cycles"));
 		}
+	}
+	
+	private void checkOrder(PipelineDTO pipeline, String expected){
+		PipelineSort.sortPipeline(pipeline);
+		
+		String actual = "";
+		for(PipelineStepDTO step : pipeline.getPipelineSteps()){
+			actual += step.getStepNumber();
+		}
+	
+		Assert.assertEquals(expected, actual);
 	}
 }

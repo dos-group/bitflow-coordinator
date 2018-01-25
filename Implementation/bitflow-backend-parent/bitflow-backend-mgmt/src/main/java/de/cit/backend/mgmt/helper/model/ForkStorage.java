@@ -1,9 +1,9 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class ForkStorage {
+public class ForkStorage {
 
 	private List<Integer> currentForkList = new ArrayList<>();
 	private List<Integer> forkSizeList = new ArrayList<>();
@@ -42,6 +42,21 @@ class ForkStorage {
 		}
 		return isForkJoiner(stepnumber) && currentForkList.get(size - 1) != forkSizeList.get(size - 1);
 	}
+	
+	public boolean isForkBranchClosedAtSink(){
+		if(!isFork()){
+			return false;
+		}
+		return currentForkList.get(size - 1) != forkSizeList.get(size - 1);
+	}
+	
+	public boolean isForkClosedAtSink(){
+		if(!isFork()){
+			return false;
+		}
+		return currentForkList.get(size - 1) == forkSizeList.get(size - 1);
+	}
+	
 
 	private boolean isForkJoiner(int stepnumber){
 		if(!isFork()){

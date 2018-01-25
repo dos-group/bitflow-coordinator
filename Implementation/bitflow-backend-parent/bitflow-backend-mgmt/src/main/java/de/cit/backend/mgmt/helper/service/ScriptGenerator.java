@@ -1,10 +1,13 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
 
+import de.cit.backend.mgmt.helper.model.ForkJoinTracker;
+import de.cit.backend.mgmt.helper.model.ForkStorage;
+import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
@@ -50,7 +53,7 @@ public class ScriptGenerator {
 		return sb.toString();
 	}
 
-	private static void generateScriptRecursive(List<PipelineStepDTO> steps, int index, StringBuilder sb,
+	static void generateScriptRecursive(List<PipelineStepDTO> steps, int index, StringBuilder sb,
 			ForkStorage forkStorage, List<Integer> visitedIndexes) throws IllegalStateException {
 		if(visitedIndexes.contains(index)){
 			generateScriptRecursive(steps, index + 1, sb, forkStorage, visitedIndexes);
@@ -70,6 +73,18 @@ public class ScriptGenerator {
 			forkStorage.addNewFork(succIndexes.size(), ForkJoinTracker.findForkJoinStepNumber(steps, index, succIndexes));
 			sb.append(" -> { ");
 		}else if(succIndexes.size() == 0){
+			if(forkStorage.isForkBranchClosedAtSink()){
+				forkStorage.closeForkBranch();
+				sb.append(" ; ");
+			}else if(forkStorage.isForkClosedAtSink()){
+				forkStorage.closeFork();
+				if(index == steps.size() - 1){
+					sb.append(" } ");
+				}else{
+					forkStorage.closeForkBranch();
+					sb.append(" }; ");
+				}
+			}
 			return;
 		}else {
 			if(forkStorage.isForkBranchClosed(steps.get(succIndexes.get(0)).getStepNumber())){

@@ -1,8 +1,9 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 

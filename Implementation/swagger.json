@@ -350,6 +350,8 @@ paths:
       responses:
         200:
           description: "If pipeline started successfully"
+          schema:
+            type: object
         400:
           description: "If pipeline execution failed on startup"
         404:

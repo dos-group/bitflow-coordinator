@@ -1,4 +1,4 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
-class ForkJoinTracker {
+public class ForkJoinTracker {
 
 	public static int findForkJoinStepNumber(List<PipelineStepDTO> steps, int index, List<Integer> succIndexes) throws IllegalStateException {
 		

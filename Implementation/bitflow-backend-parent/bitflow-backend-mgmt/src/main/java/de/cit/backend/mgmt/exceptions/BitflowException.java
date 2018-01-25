@@ -9,12 +9,6 @@ public class BitflowException extends Exception{
 		this.errorCode = errorCode;
 	}
 	
-	@Deprecated
-	public BitflowException(int errorCode, String message) {
-		super(message);
-		this.errorCode = errorCode;
-	}
-	
 	public BitflowException(ExceptionConstants error) {
 		super(error.getMessage());
 		this.errorCode = error.getCode();

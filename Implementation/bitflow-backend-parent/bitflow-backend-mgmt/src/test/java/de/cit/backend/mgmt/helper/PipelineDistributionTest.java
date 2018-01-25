@@ -3,6 +3,7 @@ package de.cit.backend.mgmt.helper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.cit.backend.mgmt.helper.service.PipelineDistributer;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 
 public class PipelineDistributionTest extends AbstractPipelineTest{

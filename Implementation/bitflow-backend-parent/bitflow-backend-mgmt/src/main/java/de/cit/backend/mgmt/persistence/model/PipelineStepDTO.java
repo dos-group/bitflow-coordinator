@@ -146,6 +146,16 @@ public class PipelineStepDTO extends BaseIdEntity implements java.io.Serializabl
 		return successorsFlat;
 	}
 
+	@Transient
+	public List<Integer> getSuccessorsFlatUpdated() {
+		List<Integer> successorsSimple = new ArrayList<>();
+		for(PipelineStepDTO succ : successors){
+			successorsSimple.add(succ.getStepNumber());
+		}
+		this.successorsFlat = successorsSimple;
+		return successorsFlat;
+	}
+	
 	public void setSuccessorsFlat(List<Integer> successorsFlat) {
 		this.successorsFlat = successorsFlat;
 	}

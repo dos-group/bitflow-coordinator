@@ -1,6 +1,6 @@
-package de.cit.backend.mgmt.helper;
+package de.cit.backend.mgmt.helper.model;
 
-public class AgentAssigner {
+public class AgentInfo {
 
 	private static final int FORK_LIMIT = 3;
 	private int currentAgentNumber = 0;
@@ -9,11 +9,11 @@ public class AgentAssigner {
 	private int forkCount = 0;
 	private int forksOnSeparatAgents = 0;
 	
-	public AgentAssigner(){
+	public AgentInfo(){
 		this.limit = -1;
 	}
 	
-	public AgentAssigner(int limit){
+	public AgentInfo(int limit){
 		this.limit = limit;
 	}
 	
