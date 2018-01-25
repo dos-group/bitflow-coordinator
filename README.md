@@ -32,3 +32,4 @@
 * POST project/{id}/pipeline/{id} (update pipeline in project)
 * POST project/{id}/pipeline/{id}/start (execute pipeline)
 * GET capabilities
+* POST /user/{id}/changePassword
