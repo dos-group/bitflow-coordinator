@@ -37,8 +37,11 @@ export function login(username, password) {
   
   let authHeader = "Basic " + btoa(username + ":" + password);
   axios.defaults.headers.common["Authentication"] = authHeader;
-  //TODO: make call to backend to get profile
-  let sessionObject = {authHeader: authHeader, user: {name: "student123", id: 123}};
+  var response = axios.post("/login")
+  // response.then(function (a, b) {
+  //   debugger;
+  // })
+  let sessionObject = {authHeader: authHeader, user: {Name: "student123", ID: 123, Email: "test@student.com"}};
   storeSession(sessionObject);
   return {user: sessionObject.user}
 }
@@ -74,5 +77,10 @@ export function createPipeline(pipeline) {
 }
 export function deletePipeline(pipelineId) {
   return axios.delete("/pipeline/" + pipelineId)
+}
+
+// Users APIs
+export function getUsers() {
+  return axios.get("/users")
 }
 

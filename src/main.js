@@ -10,8 +10,9 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import * as backendCli from "./utils/backend-client";
 
-const url = 'http://35.227.97.73:4000';
-
+const mockUrl = 'http://35.227.97.73:4000';
+const backendUrl = 'http://10.200.1.139:8080/bitflow';
+var url = mockUrl
 backendCli.initialize(url);
 
 Vue.prototype.$baseUrl = url;

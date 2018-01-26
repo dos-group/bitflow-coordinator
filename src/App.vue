@@ -1,17 +1,22 @@
 <template>
   <div id="app">
     <header class="header">
-      <nav class="inner"  v-if="loggedInUser">
+      <nav class="inner" v-if="loggedInUser">
         <router-link to="/projects">Projects</router-link>
         <router-link to="/infrastructure">Infrastructure</router-link>
+        <!-- Example single danger button -->
         <transition name="fade" mode="out-in">
-          <div class="navbar-top-right" v-on:click="logout">
-            Logout
-            <icon name="sign-out" class="inline"/>
-          </div>
         </transition>
+
+        <div class="navbar-top-right">
+          {{loggedInUser.Name}}
+          <span v-on:click="logout" class="clickable-area">Logout
+          <icon name="sign-out" class="inline"/>
+            </span>
+        </div>
       </nav>
     </header>
+
     <transition v-if="loggedInUser" name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
@@ -35,6 +40,7 @@
     methods: {
       updateLoggedInUser: function (user) {
         this.loggedInUser = user;
+        this.$loggedInUser = user;
       },
       logout: function () {
         this.$backendCli.logout();
@@ -115,6 +121,10 @@
     vertical-align: middle;
     float: right;
     padding-left: 0.2em;
+  }
+
+  .clickable-area {
+    margin-left: 1em;
     cursor: pointer;
   }
 
