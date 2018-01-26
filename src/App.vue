@@ -1,27 +1,34 @@
 <template>
   <div id="app">
     <header class="header">
-      <nav class="inner" v-if="loggedInUser">
+      <nav class="inner">
+        <span v-if="loggedInUser">
         <router-link to="/projects">Projects</router-link>
         <router-link to="/infrastructure">Infrastructure</router-link>
-        <!-- Example single danger button -->
+          <!-- Example single danger button -->
         <transition name="fade" mode="out-in">
         </transition>
-
         <div class="navbar-top-right">
           {{loggedInUser.Name}}
           <span v-on:click="logout" class="clickable-area">Logout
           <icon name="sign-out" class="inline"/>
             </span>
         </div>
+          </span>
+        <a v-on:click="toggleBackend" class="clickable-area">Switch to {{backend}} backend</a>
       </nav>
+
     </header>
 
     <transition v-if="loggedInUser" name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
     <transition v-if="!loggedInUser" name="fade" mode="out-in">
-      <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
+      <div style="text-align: center;">
+        username: "john", password: "doe"<br>
+        username: "tester", password: "test"
+        <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
+      </div>
     </transition>
   </div>
 </template>
@@ -33,14 +40,19 @@
     name: 'app',
     data(){
       return {
+        backend: "true" === window.sessionStorage.getItem("mockbackend") ? "real" : "mock",
         originRoute: this.$router.currentRoute,
         loggedInUser: this.$backendCli.getLoggedInUser()
       }
     },
     methods: {
+      toggleBackend: function () {
+        var isMockBackend = "true" === window.sessionStorage.getItem("mockbackend");
+        window.sessionStorage.setItem("mockbackend", !isMockBackend);
+        location.reload();
+      },
       updateLoggedInUser: function (user) {
         this.loggedInUser = user;
-        this.$loggedInUser = user;
       },
       logout: function () {
         this.$backendCli.logout();
