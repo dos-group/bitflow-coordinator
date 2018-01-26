@@ -2,6 +2,7 @@
 
 ## Available operations
 
+- post /login
 - get /info
 - get /users
 - get /user/{id}

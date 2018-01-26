@@ -12,7 +12,7 @@ const mongodb = require('mongodb');
 const mongoose = require('mongoose');
 const host = process.env.MONGO_PORT_27017_TCP_ADDR;
 const port = process.env.MONGO_PORT_27017_TCP_PORT;
-const mongodbURL = 'mongodb://' + host +  ':' + port + '/dev';
+const mongodbURL = 'mongodb://' + host + ':' + port + '/dev';
 
 mongoose.connect(mongodbURL);
 let db = mongoose.connection;
@@ -44,7 +44,7 @@ const mockObjects = require('./mockObjects');
 
 // Express Application Middleware
 app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 // Enabling cors
 app.use(cors());
 // Enabling cors pre-flight requests
@@ -62,271 +62,286 @@ app.options('/pipelinestep/:id', cors());
 
 // Insert infrastructure mock data
 (function () {
-	Info.find().exec((err, existingInfo) => {
-		existingInfo.forEach(info => info.remove());
-		let info = new Info(mockObjects.testInfo);
-		info.save((err, i) => {
-			if (err || i === null) {
-				console.log(err);
-			}
-		});
-	});
+  Info.find().exec((err, existingInfo) => {
+    existingInfo.forEach(info => info.remove());
+    let info = new Info(mockObjects.testInfo);
+    info.save((err, i) => {
+      if (err || i === null) {
+        console.log(err);
+      }
+    });
+  });
 }());
 
 (function () {
-	PipelineStep.find().exec((err, existingSteps) => {
-		existingSteps.forEach(step => step.remove());
-		let steps = [
-			new PipelineStep(mockObjects.testStep0),
-			new PipelineStep(mockObjects.testStep1),
-			new PipelineStep(mockObjects.testStep2)
-		]
-		steps.forEach(step => {
-			step.save((err, s) => {
-				if (err || s === null) {
-					console.log(err);
-				}
-			});
-		});
-	});
+  PipelineStep.find().exec((err, existingSteps) => {
+    existingSteps.forEach(step => step.remove());
+    let steps = [
+      new PipelineStep(mockObjects.testStep0),
+      new PipelineStep(mockObjects.testStep1),
+      new PipelineStep(mockObjects.testStep2)
+    ]
+    steps.forEach(step => {
+      step.save((err, s) => {
+        if (err || s === null) {
+          console.log(err);
+        }
+      });
+    });
+  });
 }());
 
 app.get('/', (req, res) => {
-	res.end('This path is unused. Possible paths: info, user, project, pipeline, pipelinestep.');
+  res.end('This path is unused. Possible paths: info, user, project, pipeline, pipelinestep.');
 });
 
 // - Info
 
 // get information about agents and their tags (infrastructure)
 app.get('/info', (req, res) => {
-	Info.find().exec((err, info) => {
-		if (err || info === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(info);
-		}
-	});
+  Info.find().exec((err, info) => {
+    if (err || info === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(info);
+    }
+  });
 });
 
 // - Users
 
 // get all users
 app.get('/users', (req, res) => {
-	User.find().exec((err, users) => {
-		if (err || users === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(users);
-		}
-	});
+  User.find().exec((err, users) => {
+    if (err || users === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(users);
+    }
+  });
 });
 
 
 // get a single user
 app.get('/user/:id', (req, res) => {
-	User.findOne({'id': req.params.id}).exec((err, user) => {
-		if (err || user === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(user);
-		}
-	});
+  User.findOne({'id': req.params.id}).exec((err, user) => {
+    if (err || user === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(user);
+    }
+  });
+});
+
+// create a new user
+app.post('/login', (req, res) => {
+  res.status(200).send({
+    Name: "john",
+    Email: "john@doe.com",
+    ID: 5,
+  })
 });
 
 // create a new user
 app.post('/users', (req, res) => {
-	createNewUser(req, res);
+  createNewUser(req, res);
 });
 
 // edit a user
 app.put('/user/:id', (req, res) => {
-	User.findOne({'id': req.params.id}).exec((err, user) => {
-		if (err || user === null) {
-			res.status(400).end();
-		} else {
-			user.remove();
-			createNewUser(req, res);
-		}
-	});
+  User.findOne({'id': req.params.id}).exec((err, user) => {
+    if (err || user === null) {
+      res.status(400).end();
+    } else {
+      user.remove();
+      createNewUser(req, res);
+    }
+  });
 });
 
 function createNewUser(req, res) {
-	User.find().exec((err, users) => {
-		let user = new User(req.body);
-		let newId = users
-			.map(el => el.id)
-			.reduce((prev, curr) => { return curr > prev ? curr + 1 : prev + 1 }, 0);
-		user.id = newId;
-		user.save((err, u) => {
-			if (err || u === null) {
-				res.status(400).end();
-			} else {
-				res.status(201).send(u);
-			}
-		});
-	});
+  User.find().exec((err, users) => {
+    let user = new User(req.body);
+    let newId = users
+      .map(el => el.id)
+      .reduce((prev, curr) => {
+        return curr > prev ? curr + 1 : prev + 1
+      }, 0);
+    user.id = newId;
+    user.save((err, u) => {
+      if (err || u === null) {
+        res.status(400).end();
+      } else {
+        res.status(201).send(u);
+      }
+    });
+  });
 }
 
 // - Projects
 
 // get all projects
 app.get('/projects', (req, res) => {
-	Project.find().exec((err, projects) => {
-		if (err || projects === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(projects);
-		}
-	});
+  Project.find().exec((err, projects) => {
+    if (err || projects === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(projects);
+    }
+  });
 });
 
 // get a single project
 app.get('/project/:id', (req, res) => {
-	Project.findOne({'id': req.params.id}).exec((err, project) => {
-		if (err || project === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(project);
-		}
-	});
+  Project.findOne({'id': req.params.id}).exec((err, project) => {
+    if (err || project === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(project);
+    }
+  });
 });
 
 // create a new project
 app.post('/projects', (req, res) => {
-	createNewProject(req, res);
+  createNewProject(req, res);
 });
 
 // edit a project
 app.put('/project/:id', (req, res) => {
-	Project.findOne({'id': req.params.id}).exec((err, project) => {
-		if (err || project === null) {
-			res.status(400).end();
-		} else {
-			project.remove();
-			createNewProject(req, res);
-		}
-	});
+  Project.findOne({'id': req.params.id}).exec((err, project) => {
+    if (err || project === null) {
+      res.status(400).end();
+    } else {
+      project.remove();
+      createNewProject(req, res);
+    }
+  });
 });
 
 function createNewProject(req, res) {
-	Project.find().exec((err, projects) => {
-		let project = new Project(req.body);
-		let newId = projects
-			.map(el => el.id)
-			.reduce((prev, curr) => { return curr > prev ? curr + 1 : prev + 1 }, 0);
-		project.id = newId;
-		project.save((err, p) => {
-			if (err || p === null) {
-				res.status(400).end();
-			} else {
-				res.status(201).send(p);
-			}
-		});
-	});
+  Project.find().exec((err, projects) => {
+    let project = new Project(req.body);
+    let newId = projects
+      .map(el => el.id)
+      .reduce((prev, curr) => {
+        return curr > prev ? curr + 1 : prev + 1
+      }, 0);
+    project.id = newId;
+    project.save((err, p) => {
+      if (err || p === null) {
+        res.status(400).end();
+      } else {
+        res.status(201).send(p);
+      }
+    });
+  });
 }
 
 // delete a project
 app.delete('/project/:id', (req, res) => {
-	Project.findOne({'id': req.params.id}).exec((err, project) => {
-		if (err || project === null) {
-			res.status(400).end();
-		} else {
-			project.remove();
-			res.status(204).end();
-		}
-	});
+  Project.findOne({'id': req.params.id}).exec((err, project) => {
+    if (err || project === null) {
+      res.status(400).end();
+    } else {
+      project.remove();
+      res.status(204).end();
+    }
+  });
 });
 
 // - Pipelines
 
 // get all pipelines
 app.get('/pipelines', (req, res) => {
-	Pipeline.find().exec((err, pipelines) => {
-		if (err || pipelines === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(pipelines);
-		}
-	});
+  Pipeline.find().exec((err, pipelines) => {
+    if (err || pipelines === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(pipelines);
+    }
+  });
 });
 
 // get a single pipeline
 app.get('/pipeline/:id', (req, res) => {
-	Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
-		if (err || pipeline === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(pipeline);
-		}
-	});
+  Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
+    if (err || pipeline === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(pipeline);
+    }
+  });
 });
 
 // create a new pipeline
 app.post('/pipelines', (req, res) => {
-	createNewPipeline(req, res);
+  createNewPipeline(req, res);
 });
 
 // edit a pipeline
 app.put('/pipeline/:id', (req, res) => {
-	Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
-		if (err || pipeline === null) {
-			res.status(400).end();
-		} else {
-			pipeline.remove();
-			createNewPipeline(req, res);
-		}
-	});
+  Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
+    if (err || pipeline === null) {
+      res.status(400).end();
+    } else {
+      pipeline.remove();
+      createNewPipeline(req, res);
+    }
+  });
 });
 
 function createNewPipeline(req, res) {
-	Pipeline.find().exec((err, pipelines) => {
-		let pipeline = new Pipeline(req.body);
-		let newId = pipelines
-			.map(el => el.id)
-			.reduce((prev, curr) => { return curr > prev ? curr + 1 : prev + 1 }, 0);
-		pipeline.id = newId;
-		pipeline.save((err, p) => {
-			if (err || p === null) {
-				res.status(400).end();
-			} else {
-				res.status(201).send(p);
-			}
-		});
-	});
+  Pipeline.find().exec((err, pipelines) => {
+    let pipeline = new Pipeline(req.body);
+    let newId = pipelines
+      .map(el => el.id)
+      .reduce((prev, curr) => {
+        return curr > prev ? curr + 1 : prev + 1
+      }, 0);
+    pipeline.id = newId;
+    pipeline.save((err, p) => {
+      if (err || p === null) {
+        res.status(400).end();
+      } else {
+        res.status(201).send(p);
+      }
+    });
+  });
 }
 
 // delete a pipeline
 app.delete('/pipeline/:id', (req, res) => {
-	Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
-		if (err || pipeline === null) {
-			res.status(400).end();
-		} else {
-			pipeline.remove();
-			res.status(204).end();
-		}
-	});
+  Pipeline.findOne({'id': req.params.id}).exec((err, pipeline) => {
+    if (err || pipeline === null) {
+      res.status(400).end();
+    } else {
+      pipeline.remove();
+      res.status(204).end();
+    }
+  });
 });
 
 // - Pipeline Steps
 
 // get all pipeline steps
 app.get('/pipelinesteps', (req, res) => {
-	PipelineStep.find().exec((err, steps) => {
-		if (err || steps === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(steps);
-		}
-	});
+  PipelineStep.find().exec((err, steps) => {
+    if (err || steps === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(steps);
+    }
+  });
 });
 
 // get a single pipeline step
 app.get('/pipelinestep/:id', (req, res) => {
-	PipelineStep.findOne({'id': req.params.id}).exec((err, step) => {
-		if (err || step === null) {
-			res.status(404).end();
-		} else {
-			res.status(200).send(step);
-		}
-	});
+  PipelineStep.findOne({'id': req.params.id}).exec((err, step) => {
+    if (err || step === null) {
+      res.status(404).end();
+    } else {
+      res.status(200).send(step);
+    }
+  });
 });
