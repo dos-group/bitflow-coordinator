@@ -27,8 +27,6 @@
 
 # API-Methods not yet working
 
-* DELETE project/{id}
-* DELETE project/{id}/pipeline/{id}
 * POST project/{id}/pipeline/{id} (update pipeline in project)
 * POST project/{id}/pipeline/{id}/start (execute pipeline)
 * GET capabilities
