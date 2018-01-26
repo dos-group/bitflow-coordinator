@@ -10,11 +10,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.agent.api.model.PipelineResponse;
+import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
+import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
@@ -48,6 +50,19 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		} catch (Exception e) {
 			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
+	}
+	
+	@Override
+	public Response projectIdPost(Integer id, Project project, SecurityContext securityContext)
+			throws NotFoundException {
+		// do some magic!
+		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+	}
+
+	@Override
+	public Response projectPost(Project project, SecurityContext securityContext) throws NotFoundException {
+		// do some magic!
+		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
 	@Override
@@ -193,4 +208,11 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 	}
+
+	@Override
+    public Response projectProjectIdPipelinePipelineIdHistoryGet(Integer projectId,Integer pipelineId,SecurityContext securityContext)
+    throws NotFoundException {
+    // do some magic!
+    return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+}
 }

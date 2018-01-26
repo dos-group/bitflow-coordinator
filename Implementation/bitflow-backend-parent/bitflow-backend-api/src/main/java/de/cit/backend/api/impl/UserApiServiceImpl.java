@@ -9,6 +9,7 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.UserApiService;
 import de.cit.backend.api.converter.UserConverter;
+import de.cit.backend.api.model.ChangePassword;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
@@ -30,6 +31,19 @@ public class UserApiServiceImpl extends UserApiService {
 		}
 	}
 
+	@Override
+	public Response userIdChangePasswordPost(ChangePassword body, Integer id, SecurityContext securityContext)
+			throws NotFoundException {
+		try {
+			userService.changePassword(id, body.getOldPassword(), body.getNewPassword());
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
+		return Response.ok().build();
+	}
+	
 	@Override
 	public Response userIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
 		try {

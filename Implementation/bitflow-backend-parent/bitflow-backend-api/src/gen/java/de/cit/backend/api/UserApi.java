@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.api.factories.UserApiServiceFactory;
+import de.cit.backend.api.model.ChangePassword;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.AuthLevel;
 import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
@@ -25,6 +26,25 @@ import io.swagger.annotations.ApiParam;
 public class UserApi  {
    private final UserApiService delegate = UserApiServiceFactory.getUserApi();
 
+   @POST
+   @AuthLevel(UserRoleEnum.STANDARD)
+   @Path("/{id}/changePassword")
+   @Consumes({ "application/json", "application/xml" })
+   @Produces({ "application/json" })
+   @io.swagger.annotations.ApiOperation(value = "Update existing user.", notes = "Returns the specified user.", response = Void.class, authorizations = {
+       @io.swagger.annotations.Authorization(value = "BasicAuth")
+   }, tags={ "users", })
+   @io.swagger.annotations.ApiResponses(value = { 
+       @io.swagger.annotations.ApiResponse(code = 200, message = "If successfully changed.", response = Void.class),
+       
+       @io.swagger.annotations.ApiResponse(code = 400, message = "User validation failed.", response = Void.class),
+       
+       @io.swagger.annotations.ApiResponse(code = 404, message = "If the project with the given id does not exist.", response = Void.class) })
+   public Response userIdChangePasswordPost(@ApiParam(value = "" ,required=true) ChangePassword body, @PathParam("id") Integer id,@Context SecurityContext securityContext)
+   throws NotFoundException {
+       return delegate.userIdChangePasswordPost(body,id,securityContext);
+   }
+   
     @DELETE
     @AuthLevel(UserRoleEnum.ADMIN)
     @Path("/{id}")
