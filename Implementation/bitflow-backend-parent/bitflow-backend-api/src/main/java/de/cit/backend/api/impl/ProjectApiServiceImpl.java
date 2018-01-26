@@ -10,14 +10,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import de.cit.backend.agent.api.model.PipelineResponse;
-import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectApiService;
 import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.mgmt.exceptions.BitflowException;
-import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.services.interfaces.IPipelineService;
@@ -42,30 +40,41 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 	@Override
 	public Response projectIdGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-		ProjectDTO project = projectService.loadProject(id);
-		if (project == null) {
-			return Response.status(404).build();
+		try {
+			ProjectDTO project = projectService.loadProject(id);
+			return Response.ok().entity(new ProjectConverter().convertToFrontend(project)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
-
-		return Response.ok().entity(new ProjectConverter().convertToFrontend(project)).build();
 	}
 
 	@Override
 	public Response projectProjectIdPipelinePipelineIdDelete(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		projectService.deletePipeline(pipelineId);
+		try {
+			projectService.deletePipeline(pipelineId);
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
 		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectProjectIdPipelinePipelineIdGet(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		PipelineDTO pipe = pipelineService.loadPipelineFromProject(projectId, pipelineId);
-		if (pipe == null) {
-			return Response.status(404).build();
+		PipelineDTO pipe;
+		try {
+			pipe = pipelineService.loadPipelineFromProject(projectId, pipelineId);
+			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
-
-		return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe)).build();
 	}
 
 	@Override
@@ -73,33 +82,46 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		PipelineConverter converter = new PipelineConverter();
 		try{
 			PipelineDTO savedPipe = projectService.saveNewPipeline(converter.convertToBackend(body), id);
-			return Response.ok().entity(converter.convertToFrontend(savedPipe)).build();			
-		}catch (Exception e) {
-			return Response.status(400).build();
+			return Response.ok().entity(converter.convertToFrontend(savedPipe)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 	}
 	
 	@Override
 	public Response projectProjectIdPipelinePipelineIdPost(Pipeline body, Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		// TODO Auto-generated method stub
-		ProjectDTO pro = projectService.loadProject(projectId);
-		for(PipelineDTO pipeline : pro.getPipelines()) {
-			if(pipeline.getId().equals(pipelineId)) {
-				pipeline.setLastChanged(new Date());
-				pipeline.setName(body.getName());
-				// TODO set script? update pipeline steps?
-				break;
+		PipelineConverter converter = new PipelineConverter();
+		ProjectDTO pro;
+		try {
+			pro = projectService.loadProject(projectId);
+			for (PipelineDTO pipeline : pro.getPipelines()) {
+				if (pipeline.getId().equals(pipelineId)) {
+					pipeline.setLastChanged(new Date());
+					pipeline.setName(body.getName());
+					// TODO set script? update pipeline steps?
+					break;
+				}
 			}
+			return Response.ok().build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
-		return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
 	}
 
 	@Override
 	public Response projectIdUsersGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-		ProjectDTO pro = projectService.loadProject(id);
-		if (pro == null) {
-			return Response.status(404).build();
+		ProjectDTO pro;
+		try {
+			pro = projectService.loadProject(id);
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 		
 		return Response.ok().entity(new ProjectConverter().convertToFrontend(pro).getUsers()).build();
@@ -110,10 +132,10 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 		try {
 			projectService.removeUserFromProject(projectId, userId);
-		} catch (IllegalArgumentException e) {
-			return Response.status(404).build();
-		} catch (Exception e){
-			return Response.status(400).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 		return Response.ok().build();
 	}
@@ -123,43 +145,52 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			throws NotFoundException {
 		try {
 			projectService.assignUserToProject(projectId, userId);
-		} catch (IllegalArgumentException e) {
-			return Response.status(404).build();
-		} catch (Exception e){
-			return Response.status(400).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
-		projectService.deleteProject(id);
+		try {
+			projectService.deleteProject(id);
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
 		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectIdPipelinesGet(Integer id, SecurityContext securityContext) throws NotFoundException {
-        ProjectDTO pro = projectService.loadProject(id);
-        if (pro == null) {
-            return Response.status(404).build();
-        }
-
+        ProjectDTO pro;
 		try {
+			pro = projectService.loadProject(id);
 			List<PipelineDTO> pipes = pipelineService.loadPipelinesFromProject(id);
 			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(404).build();
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 	}
 
 	@Override
 	public Response projectProjectIdPipelinePipelineIdStartPost(Integer projectId, Integer pipelineId,
 			SecurityContext securityContext) throws NotFoundException {
-		try{
-			PipelineResponse resp = pipelineService.executePipeline(projectId, pipelineId);
+
+		PipelineResponse resp;
+		try {
+			resp = pipelineService.executePipeline(projectId, pipelineId);
 			return Response.ok().entity(resp).build();
-		}catch (Exception e) {
-			return Response.status(400).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
 	}
 }

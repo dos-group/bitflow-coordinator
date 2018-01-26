@@ -1,8 +1,10 @@
 package de.cit.backend.mgmt;
 
-import de.cit.backend.mgmt.persistence.model.UserDTO;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
-import de.cit.backend.mgmt.services.interfaces.IUserService;
+import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.Base64;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,9 +17,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-import java.lang.reflect.Method;
-import java.security.Principal;
-import java.util.*;
+
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 
 @Provider
@@ -34,7 +38,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
             .entity("Invalid Credentials").build();
     private static final Response ACCESS_FORBIDDEN = Response.status(Status.FORBIDDEN)
             .entity("Access forbidden for this user").build();
-
+    
     private static final SecurityContext GUEST_SECURITY_CONTEXT = new SecurityContext() {
         @Override
         public Principal getUserPrincipal() {
@@ -80,6 +84,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
         System.out.println("Method: "+method.getName());
         final AuthLevel authLevel = method.getDeclaredAnnotation(AuthLevel.class);
         // return if no authorization required
+        
         if(authLevel == null) {
             System.out.println("No authentication required!");
             requestContext.setSecurityContext(GUEST_SECURITY_CONTEXT);
@@ -119,12 +124,13 @@ public class AuthenticationFilter implements ContainerRequestFilter
             return;
         }
 
-        final UserDTO user = userService.loadUser(username);
-        if(user==null) {
-            System.out.println("No user found for username "+username);
-            requestContext.abortWith(ACCESS_INVALID_CREDENTIALS);
-            return;
-        }
+        UserDTO user = null;
+		try {
+			user = userService.loadUser(username);
+		} catch (BitflowException e) {
+			requestContext.abortWith(ACCESS_INVALID_CREDENTIALS);
+			return;
+		}
         if(!user.getPassword().equals(password)) {
             System.out.println("No user found for username "+username);
             requestContext.abortWith(ACCESS_INVALID_CREDENTIALS);
@@ -135,8 +141,13 @@ public class AuthenticationFilter implements ContainerRequestFilter
             requestContext.abortWith(ACCESS_FORBIDDEN);
             return;
         }
-
-        final SecurityContext securityContext = new SecurityContext() {
+        
+        requestContext.setSecurityContext(getSecurityContext(user));
+    }
+    
+    
+    private SecurityContext getSecurityContext(UserDTO user){
+    	final SecurityContext securityContext = new SecurityContext() {
 
             private final Principal principal = () -> user.getName();
 
@@ -169,7 +180,8 @@ public class AuthenticationFilter implements ContainerRequestFilter
                 return AUTHENTICATION_SCHEME;
             }
         };
-        requestContext.setSecurityContext(securityContext);
+        return securityContext;
     }
 
+    
 }

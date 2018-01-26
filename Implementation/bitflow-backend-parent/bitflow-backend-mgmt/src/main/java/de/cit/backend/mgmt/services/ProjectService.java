@@ -11,6 +11,8 @@ import javax.ejb.Stateless;
 import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
 
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
@@ -23,6 +25,7 @@ import de.cit.backend.mgmt.services.interfaces.IProjectService;
 public class ProjectService implements IProjectService {
 
 	private static final Logger log = Logger.getLogger(ProjectService.class);
+	public static final String PROJECT_ERROR_OBJECT = "Project";
 	
 	
 	@EJB
@@ -49,13 +52,10 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
-	public PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer projectId) {
-		if(projectId == null){
-			throw new IllegalArgumentException("Saving new Pipeline: Project ID must be provided!");
-		}
+	public PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer projectId) throws BitflowException {
 		ProjectDTO project = persistence.findProject(projectId);
 		if(project == null){
-			throw new IllegalArgumentException("Saving new Pipeline: Project ID does not exist!");
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
 		}
 		pipeline.setLastChanged(new Date());
 		pipeline.getProjects().add(project);
@@ -66,7 +66,7 @@ public class ProjectService implements IProjectService {
 		return pipeline;
 	}
 
-	private void setSuccessors(List<PipelineStepDTO> pipelineSteps) {
+	private void setSuccessors(List<PipelineStepDTO> pipelineSteps) throws BitflowException {
 		for(PipelineStepDTO step : pipelineSteps){
 			for(int succ : step.getSuccessorsFlat()){
 				step.getSuccessors().add(findPipelineStepByNumber(pipelineSteps, succ));
@@ -74,13 +74,14 @@ public class ProjectService implements IProjectService {
 		}
 	}
 
-	private PipelineStepDTO findPipelineStepByNumber(List<PipelineStepDTO> pipelineSteps, int succ) {
+	private PipelineStepDTO findPipelineStepByNumber(List<PipelineStepDTO> pipelineSteps, int succ) throws BitflowException {
 		for(PipelineStepDTO step : pipelineSteps){
 			if(step.getStepNumber() == succ){
 				return step;
 			}
 		}
-		throw new IllegalStateException("There is a stepnumber referenced, that is not assigned to any pipeline step!");
+		throw new BitflowException(ExceptionConstants.PIPELINE_VALIDATION_ERROR, 
+				"There is a stepnumber referenced, that is not assigned to any pipeline step!");
 	}
 
 	@Override
@@ -94,11 +95,14 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
-	public void assignUserToProject(Integer projectId, Integer userId) {
+	public void assignUserToProject(Integer projectId, Integer userId) throws BitflowException {
 		ProjectDTO project = persistence.findProject(projectId);
 		UserDTO user = persistence.findUser(userId);
-		if(project == null || user == null){
-			throw new IllegalArgumentException("Provided project or user id incorrect!");
+		if(project == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
+		}
+		if(user == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, UserService.USER_ERROR_OBJECT);
 		}
 		if(!project.getProjectMembers().contains(user)){
 			project.getProjectMembers().add(user);
@@ -107,11 +111,14 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
-	public void removeUserFromProject(Integer projectId, Integer userId) {
+	public void removeUserFromProject(Integer projectId, Integer userId) throws BitflowException {
 		ProjectDTO project = persistence.findProject(projectId);
 		UserDTO user = persistence.findUser(userId);
-		if(project == null || user == null){
-			throw new IllegalArgumentException("Provided project or user id incorrect!");
+		if(project == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
+		}
+		if(user == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, UserService.USER_ERROR_OBJECT);
 		}
 		if(project.getProjectMembers().contains(user)){
 			project.getProjectMembers().remove(user);
@@ -120,19 +127,19 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
-	public void deleteProject(Integer projectId) {
+	public void deleteProject(Integer projectId) throws BitflowException {
 		ProjectDTO project = persistence.findProject(projectId);
 		if(project == null){
-			throw new IllegalArgumentException("Provided project id incorrect!");
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
 		}
 		persistence.deleteProject(projectId);
 	}
 
 	@Override
-	public void deletePipeline(Integer pipelineId) {
+	public void deletePipeline(Integer pipelineId) throws BitflowException {
 		PipelineDTO pipeline = persistence.findPipeline(pipelineId);
 		if(pipeline == null){
-			throw new IllegalArgumentException("Provided pipeline id incorrect!");
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PipelineService.PIPELINE_ERROR_OBJECT);
 		}
 		persistence.deletePipeline(pipelineId);
 	}

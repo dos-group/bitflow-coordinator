@@ -10,7 +10,6 @@ import de.cit.backend.api.LoginApiService;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.converter.UserConverter;
 import de.cit.backend.mgmt.exceptions.BitflowException;
-import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
@@ -31,10 +30,13 @@ public class LoginApiServiceImpl extends LoginApiService {
 
 	@Override
 	public Response loginPost(SecurityContext securityContext) throws NotFoundException {
-		UserDTO userDB = userService.loadUser(securityContext.getUserPrincipal().getName());
-		if (userDB == null) {
-			return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();
+		try {
+			UserDTO userDB = userService.loadUser(securityContext.getUserPrincipal().getName());
+			return Response.ok().entity(new UserConverter().convertToFrontend(userDB)).build();
+		} catch (BitflowException e) {
+			return Response.status(404).entity(e.toFrontendFormat()).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}
-		return Response.ok().entity(new UserConverter().convertToFrontend(userDB)).build();
 	}
 }
