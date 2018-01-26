@@ -3,7 +3,9 @@ package de.cit.backend.mgmt.exceptions;
 public enum ExceptionConstants {
 
 	UNIMPLEMENTED_ERROR(1, "API-method not yet implemented."),
-	UNKNOWN_ERROR(2, "Unknown error occured.");
+	USER_NOT_FOUND_ERROR(2, "Couldn't find specified user."),
+	UNIMPLEMENTED_ERROR(1, "API-method not yet implemented."),
+	UNKNOWN_ERROR(100, "Unknown error occured.");
 
 	
 	private int code;

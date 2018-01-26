@@ -92,7 +92,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 				break;
 			}
 		}
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
 	}
 
 	@Override

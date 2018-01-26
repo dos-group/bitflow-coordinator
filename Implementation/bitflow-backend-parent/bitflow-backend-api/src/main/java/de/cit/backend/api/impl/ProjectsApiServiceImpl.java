@@ -42,6 +42,5 @@ public class ProjectsApiServiceImpl extends ProjectsApiService {
 
       List<ProjectDTO> pros = projectService.loadProjects(securityContext.getUserPrincipal().getName());
       return Response.ok().entity(new ProjectConverter().convertToFrontend(pros)).build();
-      //return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
   }
 }

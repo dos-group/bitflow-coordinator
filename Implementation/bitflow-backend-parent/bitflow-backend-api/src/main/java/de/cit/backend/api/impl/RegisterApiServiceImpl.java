@@ -7,6 +7,8 @@ import de.cit.backend.api.model.*;
 
 import java.util.List;
 import de.cit.backend.api.NotFoundException;
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 
 import java.io.InputStream;
 
@@ -19,6 +21,6 @@ public class RegisterApiServiceImpl extends RegisterApiService {
       public Response registerGet(String ip,Integer port,SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-      return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+          return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
   }
 }
