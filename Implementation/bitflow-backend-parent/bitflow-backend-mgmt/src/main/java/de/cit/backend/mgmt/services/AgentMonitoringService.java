@@ -80,7 +80,7 @@ public class AgentMonitoringService {
 		InfosApi agentApi = new InfosApi(conf);
 		try{
 			List<Capability> caps = agentApi.capabilitiesGet();
-			agent.setCapabilities(caps.toString());
+			agent.setCapability(caps.toString());
 		}catch (Exception e) {
 			log.error("GetCapabilities failed", e);
 		}

@@ -3,6 +3,7 @@ package de.cit.backend.api.impl;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
@@ -11,6 +12,8 @@ import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.UserApiService;
 import de.cit.backend.api.converter.UserConverter;
 import de.cit.backend.api.model.User;
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
@@ -36,9 +39,13 @@ public class UserApiServiceImpl extends UserApiService {
       // do some magic!
           try {
         	  userService.deleteUser(id);
-          }catch(Exception e)
+          }catch(IllegalArgumentException e)
           {
-        	  return Response.status(400).entity(new ApiResponseMessage(ApiResponseMessage.ERROR, e.getMessage())).build();
+			  return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();
+          } catch(ValidationException e) {
+			  return Response.status(404).entity(new BitflowException(ExceptionConstants.VALIDATION_ERROR).toFrontendFormat()).build();
+          } catch(Exception e) {
+			  return Response.status(404).entity(new BitflowException(ExceptionConstants.UNKNOWN_ERROR).toFrontendFormat()).build();
           }
           return Response.ok().build();
           //return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "deleted")).build();
@@ -48,7 +55,7 @@ public class UserApiServiceImpl extends UserApiService {
     		  throws NotFoundException {
     	  UserDTO userDB = userService.loadUser(id);
     	  if(userDB == null){
-    		  return Response.status(404).build();
+    		  return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();
     	  }
     	  return Response.ok().entity(new UserConverter().convertToFrontend(userDB)).build();
   }
@@ -56,22 +63,27 @@ public class UserApiServiceImpl extends UserApiService {
       public Response userIdPost(User body, Integer id, SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-      	 //FIXME response 404 if the user with given id does not exist
-		  if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name()) && !body.getName().equals(securityContext.getUserPrincipal().getName())) {
+ 		if(!body.getName().equals(securityContext.getUserPrincipal().getName())) {
 			  return Response.status(403).build();
 		  }
       	try {
-      		 userService.updateUser(body.getID(), new UserConverter().convertToBackend(body));
-      	}catch(Exception e)
-      	{
-      		 return Response.status(400).build();
+      		 UserDTO user = userService.updateUser(body.getID(), new UserConverter().convertToBackend(body));
+             return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
+      	} catch (IllegalArgumentException e) {
+     		 return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();      		
+      	} catch (ValidationException e) {
+     		 return Response.status(400).entity(new BitflowException(ExceptionConstants.VALIDATION_ERROR).toFrontendFormat()).build();
+      	} catch(Exception e) {
+      		 return Response.status(400).entity(new BitflowException(ExceptionConstants.UNKNOWN_ERROR).toFrontendFormat()).build();
       	}
-        return Response.ok().build();
       //return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
   }
       @Override
       public Response userPost(User body,SecurityContext securityContext)
       throws NotFoundException {
+    	  if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name())) {
+			  return Response.status(403).build();
+		  }
     	  try{
     		  userService.createUser(new UserConverter().convertToBackend(body));
     	  }catch (Exception e) {

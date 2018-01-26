@@ -18,7 +18,9 @@ public interface IUserService {
 	
 	void createUser(UserDTO user);
 	
-	void updateUser(int userId, UserDTO user);
+	UserDTO updateUser(int userId, UserDTO user);
 	
 	void deleteUser(int userId);
+	
+	void changePassword(int userId, String oldPw, String newPw);
 }

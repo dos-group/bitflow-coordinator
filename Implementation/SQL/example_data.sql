@@ -44,7 +44,6 @@ INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `step_typ
 INSERT INTO `PIPELINE_STEP` (`agent_id`, `step_number`, `pipeline_id`, `step_type`, `content`) VALUES (1, 2, 1, 1, "out.csv");
 
 
-
 -- Example Pipeline Succession
 INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (2, 1);
 INSERT INTO `PIPELINE_STEP_SUCCESSORS` (`successor_id`, `step_id`) VALUES (3, 2);
@@ -54,3 +53,7 @@ INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES
 INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("The port on wich to begin to deploy the proxy tcp sockets", "BITFLOW_PROXY_PORT", "60001");
 INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Maximum number of agents, a pipeline can be distributed on", "BITFLOW_MAX_AGENT_DIST", "1");
 INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the agents availability (in seconds)", "BITFLOW_MONITOR_INTERVAL", "30");
+
+INSERT INTO `CAPABILITY` (`name`,`is_fork`, `description`,`required_params`, `optional_params`) VALUES ("avg", 0, "Add an average metric for every incoming metric. Optional parameter: duration or number of samples. Optional parameters: [window]", "","window");
+
+INSERT INTO `AGENT_CAPABILITY`(`agent_id`,`capability_id`) VALUES (1,1);

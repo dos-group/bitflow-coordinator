@@ -8,20 +8,47 @@ import de.cit.backend.api.model.Capabilities;
 
 import java.util.List;
 import de.cit.backend.api.NotFoundException;
+import de.cit.backend.api.converter.CapabilityConverter;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
+import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
+import de.cit.backend.mgmt.services.interfaces.IInfoService;
 
 import java.io.InputStream;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-01-09T23:05:57.697+01:00")
 public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
-      @Override
+      
+	protected IInfoService infoService;
+
+	public CapabilitiesApiServiceImpl() {
+		Context ctx;
+		try {
+			ctx = new InitialContext();
+			infoService = (IInfoService) ctx.lookup("java:module/InfoService");
+		} catch (NamingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	  @Override
       public Response capabilitiesIdGet(Integer id,SecurityContext securityContext)
       throws NotFoundException {
       // do some magic!
-          return Response.ok().entity(new BitflowException(ExceptionConstants.UNIMPLEMENTED_ERROR).toFrontendFormat()).build();
+		  try
+		  {
+			  List<CapabilityDTO> capa =infoService.loadAgentCapabilities(id);
+		      return Response.ok().entity(new CapabilityConverter().convertToFrontend(capa)).build();
+		  } catch(IllegalArgumentException e)
+		  {
+			  return Response.status(404).entity(new BitflowException(ExceptionConstants.AGENT_NOT_FOUND_ERROR).toFrontendFormat()).build();
+		  }
+ 
       }
 }

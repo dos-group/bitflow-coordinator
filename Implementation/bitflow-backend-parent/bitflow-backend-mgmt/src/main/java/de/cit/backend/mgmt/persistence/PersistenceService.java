@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.AgentState;
+import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
@@ -55,12 +56,20 @@ public class PersistenceService {
 		return (List<AgentDTO>) query.getResultList();
 	}
 
-	public void createUser(UserDTO user) {
-		entityManager.persist(user);
+	public AgentDTO findAgent(int agentId) {
+		return entityManager.find(AgentDTO.class, agentId);
 	}
 	
-	public void updateUser(UserDTO user) {
-		entityManager.merge(user);
+	public CapabilityDTO findCapability(String name){
+		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=\""+name.replaceAll("\"","\\\"")+"\"";
+		Query query = entityManager.createNativeQuery(sqlQuery, CapabilityDTO.class);
+		List<CapabilityDTO> results = query.getResultList();
+		CapabilityDTO capa = results.size() != 1 ? null : results.get(0);
+		return capa;
+	}
+	
+	public void createUser(UserDTO user) {
+		entityManager.persist(user);
 	}
 	
 	public void deleteUser(int userId) {

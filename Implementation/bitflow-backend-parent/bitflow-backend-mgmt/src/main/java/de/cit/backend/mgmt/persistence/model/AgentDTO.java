@@ -3,7 +3,9 @@ package de.cit.backend.mgmt.persistence.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,6 +14,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,9 +31,10 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 	private Integer id;
 	private String ipAddress;
 	private short port;
-	private String capabilities;
+	private String capability;
 	private AgentState status;
 	private Date lastChecked;
+	private List<CapabilityDTO> capabilities = new ArrayList<>();
 
 	public AgentDTO() {
 	}
@@ -38,11 +44,11 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 		this.port = port;
 	}
 
-	public AgentDTO(String ipAddress, short port, String capabilities, AgentState status, Date lastChecked,
+	public AgentDTO(String ipAddress, short port, String capability, AgentState status, Date lastChecked,
 			Set<PipelineStepDTO> pipelineSteps) {
 		this.ipAddress = ipAddress;
 		this.port = port;
-		this.capabilities = capabilities;
+		this.capability = capability;
 		this.status = status;
 		this.lastChecked = lastChecked;
 	}
@@ -78,12 +84,12 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 	}
 
 	@Column(name = "CAPABILITIES", length = 256)
-	public String getCapabilities() {
-		return this.capabilities;
+	public String getCapability() {
+		return this.capability;
 	}
 
-	public void setCapabilities(String capabilities) {
-		this.capabilities = capabilities;
+	public void setCapability(String capability) {
+		this.capability = capability;
 	}
 
 	@Column(name = "STATUS")
@@ -104,5 +110,20 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 
 	public void setLastChecked(Date lastChecked) {
 		this.lastChecked = lastChecked;
+	}
+	
+	@ManyToMany
+    @JoinTable(name="AGENT_CAPABILITY",
+        joinColumns=
+            @JoinColumn(name="AGENT_ID", referencedColumnName="ID"),
+        inverseJoinColumns=
+            @JoinColumn(name="CAPABILITY_ID", referencedColumnName="ID")
+        )
+	public List<CapabilityDTO> getCapabilities() {
+		return this.capabilities;
+	}
+
+	public void setCapabilities(List<CapabilityDTO> capabilities) {
+		this.capabilities = capabilities;
 	}
 }
