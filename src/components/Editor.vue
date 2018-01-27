@@ -12,14 +12,18 @@
             <div class="contain list-group col-lg-2 col-md-auto col-sm-auto">
                 <div v-on:click="createNode('start')" class="static step start">
                     <div class="card-block">
-                        <h5 class="card-title">Start of the pipeline </h5>
-                        <p class="card-text">Source : </p>
+                        <h5 class="card-title">Default start of a pipeline </h5>
+                        <p class="card-title">Step Id : To be Discussed</p>
+                        <p class="card-text">Typ : source</p>
+                        <p class="card-text">Content : </p>
                     </div>
                 </div>
                 <div v-on:click="createNode('end')" class="static step end">
                     <div class="card-block">
-                        <h5 class="card-title">End of the pipeline</h5>
-                        <p class="card-text">Results :</p>
+                        <h5 class="card-title">Default end of a pipeline </h5>
+                        <p class="card-title">Step Id : To be Discussed</p>
+                        <p class="card-text">Typ : sink</p>
+                        <p class="card-text">Content : </p>
                     </div>
                 </div>
                 <div v-on:click="createNode(step.ID)" class="card step" v-for="step in allSteps">
@@ -88,11 +92,30 @@
 
       let countNumbers = 0;
 
-      const allNodes = [];
+      const allNodes = [{
+        "ID": 1,
+        "Number": 0,
+        "Typ": "source",
+        "Content": "127.0.0.1:5555",
+        "Params": [],
+        "Successors": [2, 1]
+      }, {
+        "ID": 2,
+        "Number": 1,
+        "Typ": "operation",
+        "Content": "127.0.0.1:5555",
+        "Params": [],
+        "Successors": [2]
+      }, {
+        "ID": 3,
+        "Number": 2,
+        "Typ": "sink",
+        "Content": "127.0.0.1:5555",
+        "Params": [],
+        "Successors": []
+      }];
 
       const coordinatesOfNodes = [];
-
-      const colorsOfNodes = [];
 
       const allSteps = [{
         "ID": 1,
@@ -104,28 +127,28 @@
       }, {
         "ID": 2,
         "Number": 1,
-        "Typ": "source",
+        "Typ": "sink",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 3,
         "Number": 2,
-        "Typ": "source",
+        "Typ": "operation",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 4,
         "Number": 3,
-        "Typ": "source",
+        "Typ": "operation",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
       }, {
         "ID": 5,
         "Number": 4,
-        "Typ": "source",
+        "Typ": "operation",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
@@ -134,7 +157,7 @@
 
       const allLines = [];
 
-      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, colorsOfNodes}
+      return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers}
     },
     methods: {
       deleteLine: function (start, end) {
@@ -387,9 +410,9 @@
         if (nodeId === "start") {
 
           const startNode = {
-            "ID": "START",
+            "ID": null,
             "Number": this.countNumbers,
-            "Typ": null,
+            "Typ": "source",
             "Content": null,
             "Params": [],
             "Successors": []
@@ -401,9 +424,9 @@
         } else if (nodeId === "end") {
 
           const endNode = {
-            "ID": "END",
+            "ID": null,
             "Number": this.countNumbers,
-            "Typ": null,
+            "Typ": "sink",
             "Content": null,
             "Params": [],
             "Successors": null
@@ -435,40 +458,110 @@
 
         const nodes = document.getElementsByClassName('square');
         Array.from(nodes).forEach(function (node) {
-          console.log()
-          if (node.childNodes[4].textContent.includes("END") || node.childNodes[4].textContent.includes("START")) {
-            node.childNodes[0].style.fill = "rgba(255,0,0,1)";
-          } else {
-            var nodeId = node.childNodes[4].textContent.match(/\d+/)[0];
-            here.colorsOfNodes.forEach(function (color) {
-              if (color.id == nodeId) {
-                node.childNodes[0].style.fill = color.color;
-              }
-            })
+          if (node.childNodes[8].textContent.includes("sink")) {
+            node.childNodes[0].style.fill = "rgba(69, 131, 174,1)";
+          } else if (node.childNodes[8].textContent.includes("source")) {
+            node.childNodes[0].style.fill = "rgba(255, 135, 91,1)";
+          }
+          else {
+            node.childNodes[0].style.fill = "rgba(152, 231, 82,1)";
           }
         })
+      },
+      getColor: function (typ) {
+        if (typ.indexOf("source") != -1)
+          return 'rgba(255, 135, 91,1)'
+        if (typ.indexOf("sink") != -1)
+          return 'rgba(69, 131, 174,1)'
+        else
+          return 'rgba(152, 231, 82,1)'
       }
     }
     ,
+    created: function () {
+      // get capabilities and build pipelinesteps from it.
+      // get pipeline if empty its ok otherwise put steps into allNodes.
+      // count pipeline steps in existing pipeline set countNumbers = tohighestNumber
+      this.countNumbers = 10;
+    },
     mounted: function () {
 
       const here = this;
 
-
       const steps = document.getElementsByClassName('card step');
       Array.from(steps).forEach(function (step) {
-        var color = random_rgba();
-        step.style.backgroundColor = color;
-        let id = step.childNodes[0].textContent.match(/\d+/)[0];
-        here.colorsOfNodes.push({"id": id, "color": color})
-      })
+        step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
+      });
 
-      function random_rgba() {
-        var o = Math.round, r = Math.random, s = 400;
+      const nodes = document.getElementsByClassName('square');
+      Array.from(nodes).forEach(function (node) {
+        node.childNodes[0].style.fill = here.getColor(node.childNodes[8].textContent.toString());
+      });
 
-        //return 'rgba(' + o(r() * s) + ',0,0,1)';
-        return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',1)';
+
+      let arrangeNodes = function (_callback) {
+        let nodeLevel = 0;
+        //let allNumber = 5;
+
+        here.allNodes.forEach(function (node) {
+          nodeLevel += 1;
+          let yLevel = -1;
+
+
+          if (node.Successors.length == 0) {
+            const squares = document.getElementsByClassName('square');
+            Array.from(squares).forEach(function (square) {
+              let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+              if (squareId == node.Number) {
+                d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + (50) + ')');
+              }
+            })
+            here.coordinatesOfNodes.push({
+              "Number": node.Number,
+              "coords": [(nodeLevel * 50) + 20, (50 + 15)]
+            });
+          }
+
+          node.Successors.forEach(function (succer) {
+            yLevel += 1;
+
+            let nodeS = false;
+            const Number = node.Number;
+            here.coordinatesOfNodes.forEach(function (c) {
+              if (c.Number == Number) {
+                nodeS = true;
+              }
+            });
+            if (!nodeS) {
+
+              const squares = document.getElementsByClassName('square');
+              Array.from(squares).forEach(function (square) {
+                let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                if (squareId == node.Number) {
+                  let x = (nodeLevel * 50) + 10;
+                  let y = (yLevel * 50) + 7.5;
+                  d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
+                }
+              })
+
+              here.coordinatesOfNodes.push({
+                "Number": Number,
+                "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
+              });
+            }
+            here.allLines.push({"start": node.Number, "end": succer})
+          })
+        });
+        _callback();
+      };
+
+      let paintLines = function () {
+        here.allLines.forEach(function (line) {
+          here.drawLine(line.start, line.end)
+        })
       }
+
+      arrangeNodes(() => paintLines());
 
 
       const svg = d3.select("svg");
@@ -539,14 +632,14 @@
         border-radius: 0.2em;
         margin-bottom: 5px;
         padding: 10px;
-        background-color: red;
+        background-color: rgba(255, 135, 91, 1);
     }
 
     .static.step.end {
         border-radius: 0.2em;
         margin-bottom: 5px;
         padding: 10px;
-        background-color: red;
+        background-color: rgba(69, 131, 174, 1);
     }
 
     .card-text {
