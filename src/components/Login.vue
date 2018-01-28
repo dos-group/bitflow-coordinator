@@ -39,8 +39,7 @@
           this.$emit('userHasLoggedIn', result.user);
 
         } catch (err) {
-
-          if (err.status === 401) {
+          if (err.response.status === 401) {
             this.message = "Please check your username and password.";
           } else {
             this.message = "An unknown error occurred, please try again later.";

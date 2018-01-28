@@ -31,20 +31,13 @@ export function isUserLoggedIn() {
   return !!getSession()
 }
 
-export function login(username, password) {
-  return new Promise(function (resolve, reject) {
-      let authHeader = "Basic " + btoa(username + ":" + password);
-      axios.defaults.headers.common[authHeaderName] = authHeader;
-      axios.post("/login").then(function (response) {
-          let sessionObject = {authHeader: authHeader, user: response.data};
-          storeSession(sessionObject);
-          resolve({user: response.data})
-        }, function (error) {
-          reject(error.response);
-        }
-      )
-    }
-  );
+export async function login(username, password) {
+  let authHeader = "Basic " + btoa(username + ":" + password);
+  axios.defaults.headers.common[authHeaderName] = authHeader;
+  let response = await axios.post("/login");
+  let sessionObject = {authHeader: authHeader, user: response.data};
+  storeSession(sessionObject);
+  return {user: response.data};
 }
 
 export function logout() {
@@ -101,7 +94,7 @@ export async function getRunningPipelinesOfAllProjects() {
   const projects = await getProjects();
   const projectIDs = projects.data.map(project => project.ID);
   var allPipelines = [];
-  for(let i = 0; i < projectIDs.length; i++) {
+  for (let i = 0; i < projectIDs.length; i++) {
     const pipelinesOfProject = await getPipelines(projectIDs[i]);
     allPipelines.push(pipelinesOfProject.data);
   }
