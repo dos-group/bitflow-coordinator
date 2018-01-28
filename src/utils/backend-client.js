@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const authHeaderName = "authorization";
+
 function getSession() {
   return JSON.parse(window.sessionStorage.getItem("session"))
 }
@@ -12,7 +14,7 @@ export function initialize(baseUrl) {
   axios.defaults.baseURL = baseUrl;
   let session = getSession();
   if (session) {
-    axios.defaults.headers.common["Authentication"] = session.authHeader;
+    axios.defaults.headers.common[authHeaderName] = session.authHeader;
   }
 }
 
@@ -30,17 +32,19 @@ export function isUserLoggedIn() {
 }
 
 export function login(username, password) {
-  //TODO: make backend call to verify user credentials or get token (later)
-  if (username === "invalid@gmail.com") {
-    return {error: "invalid password"};
-  }
-  
-  let authHeader = "Basic " + btoa(username + ":" + password);
-  axios.defaults.headers.common["Authentication"] = authHeader;
-  //TODO: make call to backend to get profile
-  let sessionObject = {authHeader: authHeader, user: {name: "student123", id: 123}};
-  storeSession(sessionObject);
-  return {user: sessionObject.user}
+  return new Promise(function (resolve, reject) {
+      let authHeader = "Basic " + btoa(username + ":" + password);
+      axios.defaults.headers.common[authHeaderName] = authHeader;
+      axios.post("/login").then(function (response) {
+          let sessionObject = {authHeader: authHeader, user: response.data};
+          storeSession(sessionObject);
+          resolve({user: response.data})
+        }, function (error) {
+          reject(error.response);
+        }
+      )
+    }
+  );
 }
 
 export function logout() {
@@ -107,5 +111,10 @@ export function startPipeline(projectId, pipelineId) {
 }
 export function deletePipeline(projectId, pipelineId) {
   return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
+}
+
+// Users APIs
+export function getUsers() {
+  return axios.get("/users")
 }
 
