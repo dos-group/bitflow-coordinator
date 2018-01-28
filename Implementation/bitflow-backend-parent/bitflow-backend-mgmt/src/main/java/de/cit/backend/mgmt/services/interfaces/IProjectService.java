@@ -18,5 +18,6 @@ public interface IProjectService {
 	void removeUserFromProject(Integer projectId, Integer userId) throws BitflowException;
 	void deleteProject(Integer projectId) throws BitflowException;
 	void deletePipeline(Integer projectId) throws BitflowException;
-
+	ProjectDTO createProject(ProjectDTO project) throws BitflowException;
+	ProjectDTO updateProject(int projectId, ProjectDTO project) throws BitflowException;
 }

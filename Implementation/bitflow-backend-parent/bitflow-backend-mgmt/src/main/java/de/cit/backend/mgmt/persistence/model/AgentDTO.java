@@ -30,7 +30,7 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 
 	private Integer id;
 	private String ipAddress;
-	private short port;
+	private int port;
 	private String capability;
 	private AgentState status;
 	private Date lastChecked;
@@ -75,11 +75,11 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 	}
 
 	@Column(name = "PORT", nullable = false)
-	public short getPort() {
+	public int getPort() {
 		return this.port;
 	}
 
-	public void setPort(short port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 

@@ -55,14 +55,26 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectIdPost(Integer id, Project project, SecurityContext securityContext)
 			throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try {
+			ProjectDTO pro = projectService.updateProject(id, new ProjectConverter().convertToBackend(project));
+			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
+		} catch(BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();			
+		} catch(Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
 	}
 
 	@Override
 	public Response projectPost(Project project, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try {
+			ProjectDTO pro = projectService.createProject(new ProjectConverter().convertToBackend(project));
+			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
+		} catch(BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();			
+		} catch(Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
 	}
 
 	@Override

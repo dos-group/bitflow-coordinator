@@ -23,5 +23,5 @@ public interface IUserService {
 	
 	void deleteUser(int userId) throws BitflowException;
 	
-	void changePassword(int userId, String oldPw, String newPw) throws BitflowException;
+	void changePassword(int userId, String userName, String oldPw, String newPw) throws BitflowException;
 }

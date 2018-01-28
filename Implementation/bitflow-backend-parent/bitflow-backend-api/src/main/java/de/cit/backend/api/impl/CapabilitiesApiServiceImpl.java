@@ -1,5 +1,6 @@
 package de.cit.backend.api.impl;
 
+import de.cit.backend.agent.ApiResponse;
 import de.cit.backend.api.*;
 import de.cit.backend.api.model.*;
 
@@ -7,7 +8,7 @@ import de.cit.backend.api.model.*;
 import de.cit.backend.api.model.Capabilities;
 
 import java.util.List;
-import de.cit.backend.api.NotFoundException;
+
 import de.cit.backend.api.converter.CapabilityConverter;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
@@ -44,10 +45,11 @@ public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
 		  try
 		  {
 			  List<CapabilityDTO> capa =infoService.loadAgentCapabilities(id);
-		      return Response.ok().entity(new CapabilityConverter().convertToFrontend(capa)).build();
-		  } catch(IllegalArgumentException e)
-		  {
-			  return Response.status(404).entity(new BitflowException(ExceptionConstants.AGENT_NOT_FOUND_ERROR).toFrontendFormat()).build();
+			  return Response.ok().entity(new CapabilityConverter().convertToFrontend(capa)).build();
+		  } catch (BitflowException e) {
+			  return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+		  } catch (Exception e) {
+			  return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		  }
  
       }

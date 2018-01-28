@@ -61,15 +61,12 @@ public class PersistenceService {
 	}
 	
 	public CapabilityDTO findCapability(String name){
-		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=\""+name.replaceAll("\"","\\\"")+"\"";
-		Query query = entityManager.createNativeQuery(sqlQuery, CapabilityDTO.class);
+		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=?";
+		Query query = entityManager.createNativeQuery(sqlQuery,CapabilityDTO.class);
+		query.setParameter(1, name);
 		List<CapabilityDTO> results = query.getResultList();
 		CapabilityDTO capa = results.size() != 1 ? null : results.get(0);
 		return capa;
-	}
-	
-	public void createUser(UserDTO user) {
-		entityManager.persist(user);
 	}
 	
 	public void deleteUser(int userId) {

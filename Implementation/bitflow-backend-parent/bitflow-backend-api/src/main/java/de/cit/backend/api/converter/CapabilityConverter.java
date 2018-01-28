@@ -14,20 +14,26 @@ public class CapabilityConverter implements Converter<CapabilityDTO, Capability>
 			out.setName(in.getName());
 			out.setIsFork(in.getIsFork());
 			out.setDescription(in.getDescription());
-			StringBuilder rparams = new StringBuilder() ;
-			for (String str : in.getRequiredParams())
+			if(in.getRequiredParams()!=null)
 			{
-				rparams.append(str);
-				rparams.append(",");
+				StringBuilder rparams = new StringBuilder() ;
+				for (String str : in.getRequiredParams())
+				{
+					rparams.append(str);
+					rparams.append(",");
+				}
+				out.setRequiredParams(rparams.toString());
 			}
-			out.setRequiredParams(rparams.toString());
-			StringBuilder oparams = new StringBuilder() ;
-			for (String str : in.getOptionalParams())
+			if(in.getOptionalParams()!=null)
 			{
-				oparams.append(str);
-				oparams.append(",");
+				StringBuilder oparams = new StringBuilder() ;
+				for (String str : in.getOptionalParams())
+				{
+					oparams.append(str);
+					oparams.append(",");
+				}
+				out.setOptionalParams(oparams.toString());
 			}
-			out.setOptionalParams(oparams.toString());
 			return out;
 		}
 
@@ -36,12 +42,14 @@ public class CapabilityConverter implements Converter<CapabilityDTO, Capability>
 			out.setName(in.getName());
 			out.setIsFork(in.isIsFork());
 			out.setDescription(in.getDescription());
-			
-			List<String> rparams = new ArrayList<String>(Arrays.asList(in.getRequiredParams().split(",")));
-			List<String> oparams = new ArrayList<String>(Arrays.asList(in.getOptionalParams().split(",")));
-			out.setRequiredParams(rparams);
-			out.setOptionalParams(oparams);
-			
+			if(in.getRequiredParams()!=null) {
+				List<String> rparams = new ArrayList<String>(Arrays.asList(in.getRequiredParams().split(",")));
+				out.setRequiredParams(rparams);
+			}
+			if(in.getOptionalParams()!=null) {
+				List<String> oparams = new ArrayList<String>(Arrays.asList(in.getOptionalParams().split(",")));
+				out.setOptionalParams(oparams);
+			}
 			return out;
 		}
 		

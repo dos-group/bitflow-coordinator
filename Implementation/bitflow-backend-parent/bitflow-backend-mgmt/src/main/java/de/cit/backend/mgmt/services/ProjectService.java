@@ -144,4 +144,30 @@ public class ProjectService implements IProjectService {
 		persistence.deletePipeline(pipelineId);
 	}
 
+	@Override
+	public ProjectDTO createProject(ProjectDTO project) throws BitflowException {
+		if (project.getName().length() > 256) {
+			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR,"Project name too long.");
+		}
+		project.setCreatedAt(new Date());
+		persistence.saveObject(project);
+		return project;
+	}
+
+	@Override
+	public ProjectDTO updateProject(int projectId, ProjectDTO project) throws BitflowException {
+		ProjectDTO pro = persistence.findProject(projectId);
+		if(pro == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
+		}
+		if (project.getName().length() > 256) {
+			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR,"Project name too long.");
+		}
+		Hibernate.initialize(pro.getUserdata());
+		Hibernate.initialize(pro.getProjectMembers());
+		Hibernate.initialize(pro.getPipelines());
+		pro.setName(project.getName());
+		return pro;
+	}
+
 }

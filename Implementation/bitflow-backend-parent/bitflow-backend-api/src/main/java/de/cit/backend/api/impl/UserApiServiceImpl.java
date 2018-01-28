@@ -6,6 +6,7 @@ import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import de.cit.backend.api.ApiResponseMessage;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.UserApiService;
 import de.cit.backend.api.converter.UserConverter;
@@ -35,7 +36,7 @@ public class UserApiServiceImpl extends UserApiService {
 	public Response userIdChangePasswordPost(ChangePassword body, Integer id, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
-			userService.changePassword(id, body.getOldPassword(), body.getNewPassword());
+			userService.changePassword(id, securityContext.getUserPrincipal().getName(), body.getOldPassword(), body.getNewPassword());
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
@@ -73,7 +74,7 @@ public class UserApiServiceImpl extends UserApiService {
 		try {
 			checkAuthorization(securityContext, body);
 
-			UserDTO user = userService.updateUser(body.getID(), new UserConverter().convertToBackend(body));
+			UserDTO user = userService.updateUser(id, new UserConverter().convertToBackend(body));
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
@@ -85,7 +86,9 @@ public class UserApiServiceImpl extends UserApiService {
 	@Override
 	public Response userPost(User body, SecurityContext securityContext) throws NotFoundException {
 		try {
-			UserDTO user = userService.createUser(new UserConverter().convertToBackend(body));
+			UserDTO user = new UserConverter().convertToBackend(body);
+			user.setPassword(body.getPassword());
+			user = userService.createUser(user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (Exception e) {
 			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();

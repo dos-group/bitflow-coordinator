@@ -1,6 +1,7 @@
 package de.cit.backend.mgmt.services;
 
 import java.util.List;
+import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -56,7 +57,8 @@ public class UserService implements IUserService {
 	@Override
 	public UserDTO createUser(UserDTO user) {
 		user.setRole(UserRoleEnum.STANDARD);
-		persistence.createUser(user);
+		user.setRegisteredSince(new Date());
+		persistence.saveObject(user);
 		return user;
 	}
 
@@ -66,9 +68,13 @@ public class UserService implements IUserService {
 		if (dbuser == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, USER_ERROR_OBJECT);
 		}
-		// TODO E-Mail and Name Validation 
+		if(!dbuser.getName().equals(user.getName()))
+		{
+			throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
+		}
+		// TODO E-Mail Validation 
 		dbuser.setEmail(user.getEmail());
-		dbuser.setName(user.getName());
+		//dbuser.setName(user.getName());
 		return dbuser;
 	}
 
@@ -82,15 +88,18 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void changePassword(int userId, String oldPw, String newPw) throws BitflowException {
+	public void changePassword(int userId, String userName, String oldPw, String newPw) throws BitflowException {
 		UserDTO dbuser = persistence.findUser(userId);
 		if (dbuser == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, USER_ERROR_OBJECT);
 		}
-		if (dbuser.getPassword() == oldPw) {
+		if (!dbuser.getName().equals(userName)) {
+			throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
+		}
+		if (dbuser.getPassword().equals(oldPw)) {
 			dbuser.setPassword(newPw);			
 		} else {
-			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR, "Old password does not match the new one.");
+			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR, "Old password does not match the stored one.");
 		}
 
 	}
