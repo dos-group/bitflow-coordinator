@@ -24,10 +24,13 @@
 * POST user (create new user)
 * GET info
 * POST login
+* POST user/{id}/changePassword
+* POST project
+* POST project/{id}
 
 # API-Methods not yet working
 
 * POST project/{id}/pipeline/{id} (update pipeline in project)
 * POST project/{id}/pipeline/{id}/start (execute pipeline)
 * GET capabilities
-* POST /user/{id}/changePassword
+
