@@ -24,27 +24,28 @@
 					</template>
 					<template slot="row-details" slot-scope="row">
 						<b-card>
-							<b-row v-for="tag in row.item.tags" :key="tag.slots" class="mb-2">
+							<b-row v-for="tag in row.item.Tags" :key="tag.Slots" class="mb-2">
 								<b-col sm="2" class="text-sm-right"><b>Resources:</b></b-col>
-								<b-col>{{ tag.resources }}</b-col>
+								<b-col>{{ tag.Resources }}</b-col>
 								<b-col sm="2" class="text-sm-right"><b>Slots:</b></b-col>
-								<b-col>{{ tag.slots }}</b-col>
+								<b-col>{{ tag.Slots }}</b-col>
 							</b-row>
 						</b-card>
 					</template>
 					<template slot="usedCpuCores" slot-scope="data">
-						{{ data.item.usedCpuCores.join(', ') }}
+						{{ data.item.UsedCpuCores.join(', ') }}
 					</template>
 				</b-table>
 			</b-tab>
 			<b-tab title="Running Pipelines">
 				<ul class="pipeline-list list-group">
-					<li v-for="item in runningPipelines" :key="item.id">
+					<li v-for="item in runningPipelines" :key="item.ID">
 						<div class="list-item list-group-item">
 							<div class="pipeline-box">
-								<router-link :to="{path: '/projects/' + item.projectId + '/pipelines/' + item.id + '/editor'}"
+								<!--TODO: item.Project is null for all test data -->
+								<router-link :to="{path: '/projects/' + item.Project + '/pipelines/' + item.ID + '/editor'}"
 									class="list-item-link"
-								>{{ item.name }}</router-link>
+								>{{ item.Name }}</router-link>
 							</div>
 						</div>
 					</li>
@@ -65,30 +66,30 @@ export default {
 			runningPipelinesCount: null,
       agents: [],
       agentFields: [
-        { key: "hostName", label: "Host Name" },
-        { key: "apiPort", label: "API Port" }, //TODO: Will we keep that? Depends on API
-        { key: "tags", label: "Tags" },
-        { key: "usedMem", label: "Used Memory" },
-        { key: "totalMem", label: "Total Memory" },
-        { key: "usedCpu", label: "Used CPU" },
-        { key: "usedCpuCores", label: "Used CPU Cores" },
-        { key: "numCores", label: "Cores" },
-        { key: "numProcs", label: "Procedures" },
-        { key: "goroutines", label: "Goroutines" }
+        { key: "Hostname", label: "Host Name" },
+        { key: "Tags", label: "Tags" },
+        { key: "UsedMem", label: "Used Memory" },
+        { key: "TotalMem", label: "Total Memory" },
+        { key: "UsedCpu", label: "Used CPU" },
+        { key: "UsedCpuCores", label: "Used CPU Cores" },
+        { key: "NumCores", label: "Cores" },
+        { key: "NumProcs", label: "Procedures" },
+        { key: "Goroutines", label: "Goroutines" }
 			],
 			runningPipelines: []
     };
   },
   async created() {
     try {
-      const infoResponse = await this.$backendCli.getInfo();
-      const info = infoResponse.data[0];
-      this.numberOfAgents = String(info.numberOfAgents);
-      this.numberOfIdleAgents = String(info.numberOfIdleAgents);
-			this.runningPipelinesCount = "?"; //TODO: can't read from API yet
-			this.agents = info.agents;
-            const pipResponse = await this.$backendCli.getPipelines();
-			this.runningPipelines = pipResponse.data; //TODO: only get running ones, API not ready
+			const infoResponse = await this.$backendCli.getInfo();
+			const info = infoResponse.data;
+      this.numberOfAgents = info.NumberOfAgents == null ? "?" : String(info.NumberOfAgents);
+      this.numberOfIdleAgents = info.NumberOfIdleAgents == null ? "?" : String(info.NumberOfIdleAgents);
+			this.runningPipelinesCount = "?"; //TODO: not provided by API yet
+			this.agents = info.Agents;
+			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
+			//TODO: add filter to backendCli function once API is ready to provide the state of pipelines	
+			console.log(this.runningPipelines[0].Project);
     } catch (e) {
       alert(e);
     }

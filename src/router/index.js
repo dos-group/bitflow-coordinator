@@ -25,12 +25,12 @@ export default new Router({
       component: Infrastructure
     },
     {
-      path: '/projects/:project_id/pipelines',
+      path: '/project/:project_id/pipelines',
       name: 'Pipelines',
       component: Pipelines
     },
     {
-      path: '/projects/:project_id/pipelines/:pipeline_id/editor',
+      path: '/project/:project_id/pipelines/:pipeline_id/editor',
       name: 'Editor',
       component: Editor
     }

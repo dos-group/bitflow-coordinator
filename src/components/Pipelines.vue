@@ -12,29 +12,29 @@
       </div>
     </div>
     <ul class="list-items list-group">
-      <li v-for="item in pipelines" :key="item.id">
+      <li v-for="item in pipelines" :key="item.ID">
         <div class="list-item list-group-item">
           <b-btn v-b-modal.delete-pipeline-modal
 						type="button" 
 						class="btn btn-danger btn-md float-right action-button"
-						@click="selectedId = item.id"
+						@click="selectedId = item.ID"
 					><icon name="trash" class="inline"/></b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
 						type="button" 
 						class="btn btn-secondary btn-md float-right action-button"
-						@click="selectedId = item.id"
+						@click="selectedId = item.ID"
 					><icon name="copy" class="inline"/></b-btn>
 					<b-btn
 						type="button" 
 						class="btn btn-secondary btn-md float-right action-button"
+						@click="startPipeline(item.ID)"
 					><icon name="play" class="inline"/></b-btn>
-					<!-- TODO: API call for starting the pipeline -->
           <div>
-						<router-link :to="{path: '/projects/' + projectId + '/pipelines/' + item.id + '/editor'}" 
+						<router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}" 
 							class="list-item-link"
-						>{{ item.name }}</router-link>
+						>{{ item.Name }}</router-link>
 					</div>
-          <div>last changed: {{ item.lastChanged }}</div>
+          <div>last changed: {{ formatISODate(item.LastChanged) }}</div>
         </div>
       </li>
     </ul>
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import createCurrentTimeFormatted from '../utils';
+import { createCurrentTimeFormatted, formatISODate } from '../utils';
 
 export default {
   name: "Pipelines",
@@ -85,9 +85,9 @@ export default {
   },
   async created() {
     try {
-			const response = await this.$backendCli.getPipelines();
 			const pid = this.$router.history.current.fullPath.split('/')[2];
-			this.pipelines = response.data.filter(pip => pip.projectId == pid);
+			const resp = await this.$backendCli.getPipelines(pid);
+			this.pipelines = resp.data;
     } catch (e) {
       alert(e);
     }
@@ -96,18 +96,20 @@ export default {
 		clearName() {
 			this.name = "";
 		},
+		formatISODate(date) {
+      return formatISODate(date);
+    },
 		async createPipeline(evt) {
 			evt.preventDefault();
 			if (!this.name) {
 				alert("Please enter a name");
 			} else {
 				const pipeline = {
-					name: this.name,
-					projectId: this.projectId,
-					lastChanged: createCurrentTimeFormatted()
+					Name: this.name,
+					LastChanged: createCurrentTimeFormatted()
 				};
 				try {
-					const resp = await this.$backendCli.createPipeline(pipeline);
+					const resp = await this.$backendCli.createPipeline(this.projectId, pipeline);
 					this.pipelines.push(resp.data);
 					this.clearName;
 					this.$refs.createModal.hide();
@@ -116,30 +118,38 @@ export default {
 				}
 			}  
 		},
+		async startPipeline(id) {
+			try {
+				const resp = await this.$backendCli.startPipeline(this.projectId, id);
+				alert(resp);
+			} catch (e) {
+				alert(e); //TODO: 400
+			}
+		},
 		async clonePipeline(id) {
 			if (!this.name) {
 				alert("Please enter a name");
 			} else {
 				try {
-				const template = this.pipelines.find(pip => pip.id === id);
-				const clone = {
-					name: this.name,
-					projectId: template.projectId,
-					lastChanged: createCurrentTimeFormatted()
-				}
-				const resp = await this.$backendCli.createPipeline(clone);
+				const template = this.pipelines.find(pip => pip.ID === id);
+				template.ID = null;
+				template.PipelineSteps.forEach(step => step.ID = null);
+			  template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
+				template.Name = this.name;
+				template.LastChanged = createCurrentTimeFormatted();
+				const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
 				this.pipelines.push(resp.data);
 				this.clearName;
 				this.$refs.cloneModal.hide();
 				} catch (e) {
-					alert(e);
+				 	alert(e);
 				}
 			}
 		},
 		async deletePipeline(id) {
 			try {
-				await this.$backendCli.deletePipeline(id);
-				this.pipelines = this.pipelines.filter(pip => pip.id !== id);
+				await this.$backendCli.deletePipeline(this.projectId, id); //TODO: 400
+				this.pipelines = this.pipelines.filter(pip => pip.ID !== id);
 				this.$refs.deleteModal.hide();
 			} catch (e) {
 				alert(e);

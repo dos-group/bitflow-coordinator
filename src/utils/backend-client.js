@@ -84,10 +84,10 @@ export function getProject(projectId) {
   return axios.get("/project/" + projectId);
 }
 export function createProject(project) {
-  return axios.post("/projects", project); //TODO: missing in API
+  return axios.post("/projects", project);
 }
 export function updateProject(projectId, updatedProject) {
-  return axios.put("/project/" + projectId, updatedProject); //TODO: missing in API
+  return axios.put("/project/" + projectId, updatedProject);
 }
 export function deleteProject(projectId) {
   return axios.delete("/project/" + projectId);
@@ -96,6 +96,17 @@ export function deleteProject(projectId) {
 // Pipelines
 export function getPipelines(projectId) {
   return axios.get("/project/" + projectId + "/pipelines");
+}
+export async function getRunningPipelinesOfAllProjects() {
+  const projects = await getProjects();
+  const projectIDs = projects.data.map(project => project.ID);
+  var allPipelines = [];
+  for(let i = 0; i < projectIDs.length; i++) {
+    const pipelinesOfProject = await getPipelines(projectIDs[i]);
+    allPipelines.push(pipelinesOfProject.data);
+  }
+  return flatten(allPipelines);
+  //TODO: filter running ones, API not ready
 }
 export function getPipeline(projectId, pipelineId) {
   return axios.get("/project/" + projectId + "/pipeline/" + pipelineId);
@@ -107,8 +118,14 @@ export function updatePipeline(projectId, pipeline) {
   return axios.post("/project/" + projectId + "/pipeline/" + pipeline.id, pipeline);
 }
 export function startPipeline(projectId, pipelineId) {
-  return axios.post("/project/" + projectId + "/pipeline/" + pipeline.id + "/start", null);
+  return axios.post("/project/" + projectId + "/pipeline/" + pipelineId + "/start", {});
 }
 export function deletePipeline(projectId, pipelineId) {
   return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
+}
+
+function flatten(arr) {
+  return arr.reduce(function (flat, toFlatten) {
+    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+  }, []);
 }

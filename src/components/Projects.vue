@@ -12,24 +12,24 @@
 			</div>
 		</div>
 		<ul class="list-items list-group">
-			<li v-for="item in projects" :key="item.id">
+			<li v-for="item in projects" :key="item.ID">
 				<div class="list-item list-group-item">
 					<b-btn v-b-modal.delete-project-modal
 						type="button"
 						class="btn btn-danger btn-md float-right action-button"
-						@click="selectedId = item.id"
+						@click="selectedId = item.ID"
 					><icon name="trash" class="inline"/></b-btn>
 					<b-btn v-b-modal.edit-project-modal
 						type="button"
 						class="btn btn-secondary btn-md float-right action-button"
-						@click="selectedId = item.id"
+						@click="selectedId = item.ID"
 					><icon name="edit" class="inline"/></b-btn>
 					<div>
-						<router-link :to="{path: '/projects/' + item.id + '/pipelines'}" class="list-item-link">
-							{{ item.name }}
+						<router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link">
+							{{ item.Name }}
 						</router-link>
 					</div>
-					<div>created at: {{ item.createdAt }}</div>
+					<div>created at: {{ formatISODate(item.CreatedAt) }}</div>
 				</div>
 			</li>
 		</ul>
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import createCurrentTimeFormatted from '../utils';
+import { createCurrentTimeFormatted, formatISODate } from '../utils';
 
 export default {
   name: "Projects",
@@ -80,6 +80,7 @@ export default {
   async created() {
     try {
       const response = await this.$backendCli.getProjects();
+      //TODO: filter by CreateUser.ID
       this.projects = response.data;
     } catch (e) {
       alert(e);
@@ -89,18 +90,21 @@ export default {
     clearName() {
       this.name = "";
     },
+    formatISODate(date) {
+      return formatISODate(date);
+    },
     async createProject(evt) {
       evt.preventDefault();
       if (!this.name) {
         alert("Please enter a name");
       } else {
         const project = {
-          name: this.name,
-          creatorId: 0, //TODO: get current user id
-          createdAt: createCurrentTimeFormatted()
+          Name: this.name,
+          CreateUser: 0, //TODO: get current user id
+          CreatedAt: createCurrentTimeFormatted()
         };
         try {
-          const resp = await this.$backendCli.createProject();
+          const resp = await this.$backendCli.createProject(); //TODO: 405 (method not allowed)
           this.projects.push(resp.data);
           this.clearName();
           this.$refs.createModal.hide();
@@ -114,9 +118,9 @@ export default {
         alert("Please enter a name");
       } else {
         try {
-          let updatedProject = this.projects.find(pr => pr.id === id);
+          let updatedProject = this.projects.find(pr => pr.ID === id);
           updatedProject.name = this.name;
-          await this.$backendCli.updateProject(id,updatedProject);
+          await this.$backendCli.updateProject(id, updatedProject); //TODO: 405 (method not allowed)
         } catch (e) {
           alert(e);
         }
@@ -124,8 +128,8 @@ export default {
     },
     async deleteProject(id) {
       try {
-        await this.$backendCli.deleteProject(id);
-        this.projects = this.projects.filter(pr => pr.id !== id);
+        await this.$backendCli.deleteProject(id); //TODO: 400
+        this.projects = this.projects.filter(pr => pr.ID !== id);
         this.$refs.deleteModal.hide();
       } catch (e) {
         alert(e);
