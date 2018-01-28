@@ -112,9 +112,3 @@ export function startPipeline(projectId, pipelineId) {
 export function deletePipeline(projectId, pipelineId) {
   return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
 }
-
-// Users APIs
-export function getUsers() {
-  return axios.get("/users")
-}
-
