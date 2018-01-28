@@ -48,6 +48,34 @@ paths:
               $ref: "#/definitions/Project"
         400:
           description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project:
+    post:
+      tags:
+      - "project"
+      summary: "Create a new project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Create a new project.'
+      parameters:
+        - in: "body"
+          name: "project"
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+      responses:
+        200:
+          description: "Newly created project."
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "If the project validation failed"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{id}:
     get:
       tags:
@@ -71,9 +99,41 @@ paths:
           schema:
             $ref: "#/definitions/Project"
         400:
-          description: "If the user has no access to that projectt"
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    post:
+      tags:
+      - "project"
+      summary: "Update an existing project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Update an existing project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - in: "body"
+        name: "project"
+        required: true
+        schema:
+          $ref: "#/definitions/Project"
+      responses:
+        200:
+          description: "If update was successful"
+        400:
+          description: "If the user validation failed"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     delete:
       tags:
       - "project"
@@ -95,8 +155,12 @@ paths:
           description: "If project was deleted successfully"
         400:
           description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{id}/users:
     get:
       tags:
@@ -123,8 +187,12 @@ paths:
               $ref: "#/definitions/User"
         400:
           description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{projectId}/users/{userId}:
     delete:
       tags:
@@ -152,6 +220,8 @@ paths:
           description: "If user was removed successfully."
         404:
           description: "If the project or the user with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     post:
       tags:
       - "project"
@@ -176,8 +246,12 @@ paths:
       responses:
         400:
           description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{id}/pipelines:
     get:
       tags:
@@ -204,8 +278,12 @@ paths:
               $ref: "#/definitions/Pipeline"
         400:
           description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{id}/pipeline:
     post:
       tags:
@@ -230,11 +308,17 @@ paths:
         format: int32
       responses:
         200:
-          description: "If successful."
+          description: "If successful, the persisted Pipeline."
+          schema:
+            $ref: "#/definitions/Pipeline"
         400:
           description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{projectId}/pipeline/{pipelineId}:
     get:
       tags:
@@ -263,9 +347,13 @@ paths:
           schema:
             $ref: "#/definitions/Pipeline"
         400:
-          description: "If the user has no access to that projectt"
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     post:
       tags:
       - "pipeline"
@@ -297,8 +385,12 @@ paths:
           description: "If successful."
         400:
           description: "If pipeline validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     delete:
       tags:
       - "pipeline"
@@ -323,6 +415,8 @@ paths:
       responses:
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /project/{projectId}/pipeline/{pipelineId}/start:
     post:
       tags:
@@ -348,10 +442,53 @@ paths:
       responses:
         200:
           description: "If pipeline started successfully"
+          schema:
+            type: object
         400:
           description: "If pipeline execution failed on startup"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}/history:
+    get:
+      tags:
+      - "pipeline"
+      summary: "Get execution history."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query the status, date and duration of each pipeline execution.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PipelineHistory"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /login:
     post:
       tags:
@@ -370,6 +507,8 @@ paths:
             $ref: "#/definitions/User"
         400:
           description: "If login failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /users:
     get:
       tags:
@@ -390,6 +529,8 @@ paths:
               $ref: "#/definitions/User"
         400:
           description: "If access was denied."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /user/{id}:
     get:
       tags:
@@ -414,6 +555,8 @@ paths:
             $ref: "#/definitions/User"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     delete:
       tags:
       - "users"
@@ -433,6 +576,8 @@ paths:
       responses:
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
     post:
       tags:
       - "users"
@@ -457,8 +602,45 @@ paths:
       responses:
         400:
           description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         404:
           description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /user/{id}/changePassword:
+    post:
+      tags:
+      - "users"
+      summary: "Update existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/ChangePassword"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If successfully changed."
+        400:
+          description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /user:
     post:
       tags:
@@ -478,8 +660,14 @@ paths:
         schema:
           $ref: "#/definitions/User"
       responses:
+        200:
+          description: "The newly persisted user."
+          schema:
+            $ref: "#/definitions/User"
         400:
           description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /info:
     get:
       tags:
@@ -520,6 +708,8 @@ paths:
             $ref: "#/definitions/Capabilities"
         404:
           description: "If the agent with the specified id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /register:
     get:
       tags:
@@ -607,6 +797,26 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/PipelineStep"
+  PipelineHistory:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 5
+      Status:
+        type: string
+        enum: [failed, finished, running, terminated]
+        example: "finished"
+      StartedAt:
+        type: string
+        format: date-time
+      FinishedAt:
+        type: string
+        format: date-time
+      Duration:
+        type: number
+        format: double
   User:
     type: object
     properties:
@@ -623,6 +833,10 @@ definitions:
       RegisteredSince:
         type: string
         format: date-time
+      Password:
+        type: string
+        description: "This is only to be used when creating a new user. If sending it with another request it will be ignored. This field will never be returned from backend."
+        example: "pwd"
   Project:
     type: object
     properties:
@@ -737,6 +951,25 @@ definitions:
       slots:
         type: string
         example: "6"
+  ErrorMessage:
+    type: object
+    properties:
+      errorCode:
+        type: integer
+        format: int32
+        example: 5
+      errorMessage:
+        type: string
+        example: "The specified User you requested does not exist."
+  ChangePassword:
+    type: object
+    properties:
+      oldPassword:
+        type: string
+        example: "oldPassword"
+      newPassword:
+        type: string
+        example: "newPassword"
 externalDocs:
   description: Find out more about Swagger
   url: 'http://swagger.io'
