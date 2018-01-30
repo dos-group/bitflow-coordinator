@@ -5,7 +5,7 @@ import de.cit.backend.api.InfoApiService;
 import de.cit.backend.api.factories.InfoApiServiceFactory;
 
 import de.cit.backend.mgmt.AuthLevel;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 

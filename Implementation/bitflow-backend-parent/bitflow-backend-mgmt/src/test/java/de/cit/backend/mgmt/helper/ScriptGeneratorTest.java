@@ -7,7 +7,7 @@ import org.junit.Test;
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
-import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public class ScriptGeneratorTest extends AbstractPipelineTest{
 	

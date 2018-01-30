@@ -11,7 +11,7 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.factories.ProjectsApiServiceFactory;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.AuthLevel;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 
 @Path("/projects")
 

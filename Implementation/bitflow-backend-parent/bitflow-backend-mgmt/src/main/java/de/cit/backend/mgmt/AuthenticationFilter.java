@@ -20,7 +20,7 @@ import javax.ws.rs.ext.Provider;
 
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 

@@ -15,7 +15,7 @@ import de.cit.backend.api.factories.UserApiServiceFactory;
 import de.cit.backend.api.model.ChangePassword;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.AuthLevel;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 import io.swagger.annotations.ApiParam;
 
 @Path("/user")
