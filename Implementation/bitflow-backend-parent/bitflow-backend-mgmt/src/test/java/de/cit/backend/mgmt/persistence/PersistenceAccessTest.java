@@ -14,13 +14,15 @@ import org.junit.Test;
 
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
-import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.persistence.model.ConfigurationDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
-import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
+import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public class PersistenceAccessTest {
 
@@ -74,6 +76,30 @@ public class PersistenceAccessTest {
 		for(AgentDTO a : agentList){
 			System.out.println(a.getIpAddress() + ":" + a.getPort());
 		}
+	}
+	
+	@Test
+//	@Ignore
+	public void savePipelineHistoryTest(){
+		PipelineDTO pipeline = new PipelineDTO();
+		pipeline.setLastChanged(new Date());
+		pipeline.setName("TestPipe");
+		pipeline.setStatus("test");
+		
+		PipelineHistoryDTO hist = new PipelineHistoryDTO();
+		hist.setStatus(PipelineStateEnum.RUNNING);
+		hist.setStartedAt(new Date());
+		hist.setPipeline(pipeline);
+		
+		pipeline.getPipelineHistory().add(hist);
+		
+		em.getTransaction().begin();
+		em.persist(pipeline);
+		
+		Assert.assertNotNull(pipeline.getId());
+		Assert.assertNotNull(hist.getId());
+		
+		em.getTransaction().rollback();
 	}
 	
 	@Test

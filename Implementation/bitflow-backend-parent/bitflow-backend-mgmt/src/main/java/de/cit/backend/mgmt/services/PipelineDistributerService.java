@@ -25,9 +25,9 @@ import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
-import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 
 @Singleton
 public class PipelineDistributerService {

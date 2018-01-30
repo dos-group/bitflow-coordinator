@@ -6,7 +6,7 @@ import java.util.List;
 import de.cit.backend.api.model.PipelineStep;
 import de.cit.backend.api.model.PipelineStep.TypEnum;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
-import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public class PipelineStepConverter implements Converter <PipelineStepDTO, PipelineStep>{
 

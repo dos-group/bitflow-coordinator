@@ -11,7 +11,7 @@ import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
-import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public class ScriptGenerator {
 

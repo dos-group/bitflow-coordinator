@@ -6,7 +6,7 @@ import java.util.List;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
-import de.cit.backend.mgmt.persistence.model.StepTypeEnum;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public abstract class AbstractPipelineTest {
 

@@ -11,7 +11,6 @@ import javax.ejb.*;
 import de.cit.backend.agent.api.model.Capability;
 import de.cit.backend.agent.api.model.Info;
 import de.cit.backend.mgmt.services.interfaces.IAgentMonitoringService;
-import de.cit.backend.mgmt.services.interfaces.IInfoService;
 import org.jboss.logging.Logger;
 
 import de.cit.backend.agent.ApiClient;
@@ -20,7 +19,7 @@ import de.cit.backend.agent.api.InfosApi;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
-import de.cit.backend.mgmt.persistence.model.AgentState;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 
 @Singleton
 @Startup
@@ -103,6 +102,7 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 	}
 	
 	private void getCapabilitiesAgent(AgentDTO agent, ApiClient conf){
+		/*
 		InfosApi agentApi = new InfosApi(conf);
 		try{
 			List<Capability> caps = agentApi.capabilitiesGet();
@@ -110,5 +110,6 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 		}catch (Exception e) {
 			log.error("GetCapabilities failed", e);
 		}
+		*/
 	}
 }

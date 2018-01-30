@@ -12,7 +12,7 @@ import javax.ws.rs.core.SecurityContext;
 import de.cit.backend.api.factories.CapabilitiesApiServiceFactory;
 import de.cit.backend.api.model.Capabilities;
 import de.cit.backend.mgmt.AuthLevel;
-import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
+import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 
 @Path("/capabilities")
 

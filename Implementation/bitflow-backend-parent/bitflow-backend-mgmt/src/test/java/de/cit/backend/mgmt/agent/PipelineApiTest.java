@@ -88,6 +88,12 @@ public class PipelineApiTest {
 	}
 	
 	@Test
+	public void testStringFormat(){
+		String test = "String ohne Parameter";
+		Assert.assertEquals(test, String.format(test, "void"));
+	}
+	
+	@Test
 	public void testHttpParse(){
 		HttpUrl url = HttpUrl.parse("127.0.0.1:8082/pipeline?params=-tcp-limit%201");
 		Assert.assertTrue(url == null);

@@ -11,11 +11,11 @@ import javax.persistence.Query;
 import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
-import de.cit.backend.mgmt.persistence.model.AgentState;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 
 @Stateless
 public class PersistenceService {
