@@ -46,7 +46,7 @@ public class UserApi  {
    }
    
     @DELETE
-    @AuthLevel(UserRoleEnum.ADMIN)
+    @AuthLevel(UserRoleEnum.STANDARD)
     @Path("/{id}")
     @Consumes({ "application/json", "application/xml" })
     @Produces({ "application/json" })

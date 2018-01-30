@@ -15,6 +15,7 @@ import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.persistence.model.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
@@ -36,6 +37,13 @@ public class UserApiServiceImpl extends UserApiService {
 	public Response userIdChangePasswordPost(ChangePassword body, Integer id, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
+			final UserDTO target = userService.loadUser(id);
+			if(target == null) {
+				return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();
+			}
+			if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name()) && !securityContext.getUserPrincipal().getName().equals(target.getName())) {
+				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
+			}
 			userService.changePassword(id, securityContext.getUserPrincipal().getName(), body.getOldPassword(), body.getNewPassword());
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
@@ -48,6 +56,13 @@ public class UserApiServiceImpl extends UserApiService {
 	@Override
 	public Response userIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
 		try {
+			final UserDTO target = userService.loadUser(id);
+			if(target == null) {
+				return Response.status(404).entity(new BitflowException(ExceptionConstants.USER_NOT_FOUND_ERROR).toFrontendFormat()).build();
+			}
+			if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name()) && !securityContext.getUserPrincipal().getName().equals(target.getName())) {
+				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
+			}
 			userService.deleteUser(id);
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();

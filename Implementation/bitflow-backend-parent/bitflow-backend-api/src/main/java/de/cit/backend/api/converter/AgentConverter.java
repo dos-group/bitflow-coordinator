@@ -3,6 +3,7 @@ package de.cit.backend.api.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cit.backend.agent.api.model.Info;
 import de.cit.backend.api.model.Agent;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 
@@ -16,7 +17,19 @@ public class AgentConverter implements Converter<AgentDTO, Agent> {
 	public Agent convertToFrontend(AgentDTO in) {
 		Agent out = new Agent();
 		out.setHostname(in.getIpAddress() + ":" + in.getPort());
+		return out;
+	}
 
+	public Agent convertToFrontend(AgentDTO in, Info info) {
+		Agent out = convertToFrontend(in);
+		out.setGoroutines(info.getGoroutines());
+		out.setNumCores(info.getNumCores());
+		out.setNumProcs(info.getNumProcs());
+		//out.setTags(info.getTags());
+		out.setTotalMem(info.getTotalMem());
+		out.setUsedCpu(info.getUsedCpu());
+		out.setUsedCpuCores(info.getUsedCpuCores());
+		out.setUsedMem(info.getUsedMem());
 		return out;
 	}
 	

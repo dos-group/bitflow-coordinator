@@ -11,7 +11,7 @@ import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 @Local
 public interface IProjectService {
 
-	ProjectDTO loadProject(int projectId) throws BitflowException;
+	ProjectDTO loadProject(int projectId);
 	List<ProjectDTO> loadProjects(String username);
 	PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer id) throws BitflowException;
 	void assignUserToProject(Integer projectId, Integer userId) throws BitflowException;
