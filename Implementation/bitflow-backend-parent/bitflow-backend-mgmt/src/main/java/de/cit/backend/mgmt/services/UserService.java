@@ -27,9 +27,6 @@ public class UserService implements IUserService {
 	@EJB
 	private PersistenceService persistence;
 	
-	@EJB
-	private PipelineMonitoringService pipeMonitor;
-	
 	@PostConstruct
 	public void init(){
 		log.info("EJB initialized");
@@ -38,7 +35,6 @@ public class UserService implements IUserService {
 	@Override
 	public UserDTO loadUser(int userId) throws BitflowException {
 		UserDTO user = persistence.findUser(userId);
-		pipeMonitor.monitorPipeline(userId);
 		if(user == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, USER_ERROR_OBJECT);
 		}
