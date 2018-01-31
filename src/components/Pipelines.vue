@@ -15,22 +15,22 @@
       <li v-for="item in pipelines" :key="item.ID">
         <div class="list-item list-group-item">
           <b-btn v-b-modal.delete-pipeline-modal
-						type="button" 
+						type="button"
 						class="btn btn-danger btn-md float-right action-button"
 						@click="selectedId = item.ID"
 					><icon name="trash" class="inline"/></b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
-						type="button" 
+						type="button"
 						class="btn btn-secondary btn-md float-right action-button"
 						@click="selectedId = item.ID"
 					><icon name="copy" class="inline"/></b-btn>
 					<b-btn
-						type="button" 
+						type="button"
 						class="btn btn-secondary btn-md float-right action-button"
 						@click="startPipeline(item.ID)"
 					><icon name="play" class="inline"/></b-btn>
           <div>
-						<router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}" 
+						<router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}"
 							class="list-item-link"
 						>{{ item.Name }}</router-link>
 					</div>
@@ -116,7 +116,7 @@ export default {
 				} catch (e) {
 					alert(e);
 				}
-			}  
+			}
 		},
 		async startPipeline(id) {
 			try {
@@ -131,16 +131,17 @@ export default {
 				alert("Please enter a name");
 			} else {
 				try {
-				const template = this.pipelines.find(pip => pip.ID === id);
-				template.ID = null;
-				template.PipelineSteps.forEach(step => step.ID = null);
-			  template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
-				template.Name = this.name;
-				template.LastChanged = createCurrentTimeFormatted();
-				const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
-				this.pipelines.push(resp.data);
-				this.clearName;
-				this.$refs.cloneModal.hide();
+          const originalPipeline = this.pipelines.find(pip => pip.ID === id);
+          var template = Object.assign({}, originalPipeline);
+          template.ID = null;
+          template.PipelineSteps.forEach(step => step.ID = null);
+          template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
+          template.Name = this.name;
+          template.LastChanged = createCurrentTimeFormatted();
+          const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
+          this.pipelines.push(resp.data);
+          this.clearName;
+          this.$refs.cloneModal.hide();
 				} catch (e) {
 				 	alert(e);
 				}
@@ -148,7 +149,7 @@ export default {
 		},
 		async deletePipeline(id) {
 			try {
-				await this.$backendCli.deletePipeline(this.projectId, id); //TODO: 400
+				await this.$backendCli.deletePipeline(this.projectId, id);
 				this.pipelines = this.pipelines.filter(pip => pip.ID !== id);
 				this.$refs.deleteModal.hide();
 			} catch (e) {

@@ -77,10 +77,10 @@ export function getProject(projectId) {
   return axios.get("/project/" + projectId);
 }
 export function createProject(project) {
-  return axios.post("/projects", project);
+  return axios.post("/project", project);
 }
 export function updateProject(projectId, updatedProject) {
-  return axios.put("/project/" + projectId, updatedProject);
+  return axios.post("/project/" + projectId, updatedProject);
 }
 export function deleteProject(projectId) {
   return axios.delete("/project/" + projectId);
