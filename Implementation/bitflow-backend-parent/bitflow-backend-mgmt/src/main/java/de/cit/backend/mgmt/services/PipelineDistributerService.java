@@ -1,6 +1,7 @@
 package de.cit.backend.mgmt.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,10 @@ import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.enums.AgentState;
+import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
 
 @Singleton
 public class PipelineDistributerService {
@@ -42,6 +45,9 @@ public class PipelineDistributerService {
 	
 	@EJB
 	private PersistenceService persistence;
+	
+	@EJB
+	private PipelineMonitoringService pipeMonitor;
 	
 	private List<AgentDTO> idleAgents = new ArrayList<>();
 	private int maxSplit;
@@ -127,10 +133,23 @@ public class PipelineDistributerService {
 		deployPipelines(deployment);
 		//assignAgentsToPipeline(pipeline);
 		
+		PipelineHistoryDTO hist = createPipelineHistory(pipeline);
+		
+		pipeMonitor.monitorPipeline(deployment, hist);
 		
 		return null;
 	}
 	
+	private PipelineHistoryDTO createPipelineHistory(PipelineDTO pipeline) {
+		PipelineHistoryDTO hist = new PipelineHistoryDTO();
+		hist.setStartedAt(new Date());
+		hist.setStatus(PipelineStateEnum.RUNNING);
+		hist.setPipeline(pipeline);
+		
+		persistence.saveObject(hist);
+		return hist;
+	}
+
 	private void deployPipelines(DeploymentInfo[] deployment) {
 		
 		Map<Integer, String> agentMapping = new HashMap<>();
@@ -184,6 +203,7 @@ public class PipelineDistributerService {
 				System.out.println(deploy.getFormattedScript(i));
 				PipelineResponse resp = pipelineApi.pipelinePost(deploy.getFormattedScript(i, sinkParams), null, PARAM_TCP_LIMIT);
 				System.out.println("Deployed on " + deploy.getAdjustedTCPAdress(i));
+				deploy.setPipelineIdOnAgent(resp.getID());
 				return deploy.getAdjustedTCPAdress(i);
 			} catch (ApiException e) {
 				System.out.println(String.format(PORT_ERROR, deploy.getAdjustedTCPAdress(i)));
@@ -192,6 +212,7 @@ public class PipelineDistributerService {
 				}
 			}			
 		}
+		//FIXME starte gesamte Pipeline auf einem Agent
 		return null;
 	}
 }

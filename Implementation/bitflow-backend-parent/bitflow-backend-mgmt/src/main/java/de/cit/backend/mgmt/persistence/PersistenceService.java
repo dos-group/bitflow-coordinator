@@ -101,4 +101,8 @@ public class PersistenceService {
 	public void saveObject(Object object){
 		entityManager.persist(object);
 	}
+	
+	public void mergeObject(Object object){
+		entityManager.merge(object);
+	}
 }

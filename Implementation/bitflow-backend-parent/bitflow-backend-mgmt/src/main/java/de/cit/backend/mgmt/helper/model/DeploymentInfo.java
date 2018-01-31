@@ -20,6 +20,7 @@ public class DeploymentInfo {
 	private boolean withProxy;
 	private int numberOfProxySinks;
 	private List<Integer> successorAgents;
+	private int pipelineIdOnAgent = -1;
 	
 	
 	public DeploymentInfo(int identifier) {
@@ -76,6 +77,15 @@ public class DeploymentInfo {
 	public List<Integer> getSuccessorAgents(){
 		return this.successorAgents;
 	}
+	
+	public int getPipelineIdOnAgent() {
+		return pipelineIdOnAgent;
+	}
+
+	public void setPipelineIdOnAgent(int pipelineIdOnAgent) {
+		this.pipelineIdOnAgent = pipelineIdOnAgent;
+	}
+
 	public String getAdjustedTCPAdress(int i){
 		return tcpIP + ":" + (tcpPort + i);
 	}
