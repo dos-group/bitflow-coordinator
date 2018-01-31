@@ -1,5 +1,6 @@
 package de.cit.backend.mgmt.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,11 +88,17 @@ public class ProjectService implements IProjectService {
 	@Override
 	public List<ProjectDTO> loadProjects(String username) {
 		UserDTO user = persistence.findUser(username);
-		List<ProjectDTO> pros = user.getJoinedProjects();
-		for (ProjectDTO projectDTO : pros) {
-			this.loadProject(projectDTO.getId());
+		
+		List<ProjectDTO> allProjectsFromUser = new ArrayList<>();
+		allProjectsFromUser.addAll(user.getJoinedProjects());
+		allProjectsFromUser.addAll(user.getCreatedProjects());
+		
+		for(ProjectDTO pro : allProjectsFromUser){
+			Hibernate.initialize(pro.getUserdata());
+			Hibernate.initialize(pro.getProjectMembers());
 		}
-		return user.getJoinedProjects();
+		
+		return allProjectsFromUser;
 	}
 
 	@Override
@@ -132,7 +139,8 @@ public class ProjectService implements IProjectService {
 		if(project == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
 		}
-		persistence.deleteProject(projectId);
+		
+		persistence.deleteProject(project);
 	}
 
 	@Override

@@ -1,19 +1,6 @@
 package de.cit.backend.api.impl;
 
-import de.cit.backend.api.*;
-import de.cit.backend.api.model.*;
-
-
-import de.cit.backend.api.model.Project;
-import de.cit.backend.mgmt.persistence.model.ProjectDTO;
-import de.cit.backend.mgmt.services.interfaces.IPipelineService;
-import de.cit.backend.mgmt.services.interfaces.IProjectService;
-
 import java.util.List;
-import de.cit.backend.api.NotFoundException;
-import de.cit.backend.api.converter.ProjectConverter;
-
-import java.io.InputStream;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -21,9 +8,17 @@ import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import de.cit.backend.api.NotFoundException;
+import de.cit.backend.api.ProjectsApiService;
+import de.cit.backend.api.converter.ProjectConverter;
+import de.cit.backend.api.model.Project;
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.services.interfaces.IProjectService;
+
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-01-18T15:01:42.432+01:00")
 public class ProjectsApiServiceImpl extends ProjectsApiService {
-      
+
 	protected IProjectService projectService;
 
 	public ProjectsApiServiceImpl() {
@@ -35,12 +30,15 @@ public class ProjectsApiServiceImpl extends ProjectsApiService {
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-      public Response projectsGet(SecurityContext securityContext)
-      throws NotFoundException {
 
-      List<ProjectDTO> pros = projectService.loadProjects(securityContext.getUserPrincipal().getName());
-      return Response.ok().entity(new ProjectConverter().convertToFrontend(pros)).build();
-  }
+	@Override
+	public Response projectsGet(SecurityContext securityContext) throws NotFoundException {
+		try {
+			List<ProjectDTO> pros = projectService.loadProjects(securityContext.getUserPrincipal().getName());
+			List<Project> frontendProjects = new ProjectConverter().convertToFrontend(pros);
+			return Response.ok().entity(frontendProjects).build();
+		} catch (Exception e) {
+			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+		}
+	}
 }
