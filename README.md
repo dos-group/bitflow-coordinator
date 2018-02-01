@@ -28,6 +28,7 @@
 * POST project
 * POST project/{id}
 * GET capabilities
+* GET project/{id}/pipeline/{id}/history 
 
 # API-Methods not yet working
 

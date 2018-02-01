@@ -15,7 +15,7 @@ import de.cit.backend.agent.ApiException;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.PipelineApi;
 import de.cit.backend.agent.api.model.PipelineResponse;
-import de.cit.backend.mgmt.helper.model.DeploymentInfo;
+import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
@@ -44,13 +44,13 @@ public class PipelineMonitoringService {
 	}
 
 	@Asynchronous
-	public void monitorPipeline(DeploymentInfo[] deployment, PipelineHistoryDTO hist) {
+	public void monitorPipeline(DeploymentInformation[] deployment, PipelineHistoryDTO hist) {
 		
 		boolean finished = false;
 		
 		while(true){
 			finished = true;
-			for(DeploymentInfo deploy : deployment){
+			for(DeploymentInformation deploy : deployment){
 				ApiClient conf = Configuration.getDefaultApiClient();
 				conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
 				conf.setBasePath(deploy.getAgentAdress());

@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 
-public class DeploymentInfo {
+public class DeploymentInformation {
 
 	public static final String PLACEHOLDER_SOURCE = "%source%";
 	public static final String PLACEHOLDER_SINK = "%sink%";
@@ -23,7 +23,7 @@ public class DeploymentInfo {
 	private int pipelineIdOnAgent = -1;
 	
 	
-	public DeploymentInfo(int identifier) {
+	public DeploymentInformation(int identifier) {
 		this.scriptBuilder = new StringBuilder();
 		this.successorAgents = new ArrayList<>();
 		this.identifier = identifier;

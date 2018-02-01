@@ -14,7 +14,7 @@ import de.cit.backend.agent.ApiException;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.PipelineApi;
 import de.cit.backend.agent.api.model.PipelineResponse;
-import de.cit.backend.mgmt.helper.model.DeploymentInfo;
+import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 
 public class PipelineApiTest {
@@ -58,7 +58,7 @@ public class PipelineApiTest {
 //		Assert.assertNotNull(response.getID());
 	}
 	
-	private PipelineResponse deployPipelineOn(DeploymentInfo deploy){
+	private PipelineResponse deployPipelineOn(DeploymentInformation deploy){
 		for(int i = 0; i < 100; i++){
 			ApiClient conf = Configuration.getDefaultApiClient();
 			conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
@@ -104,7 +104,7 @@ public class PipelineApiTest {
 	
 	@Test
 	public void testDeploymentScript(){
-		DeploymentInfo deploy = new DeploymentInfo(1);
+		DeploymentInformation deploy = new DeploymentInformation(1);
 		String script = "127.0.0.1 -> avg() -> output.csv";
 		deploy.appendToScript(script);
 		
@@ -117,8 +117,8 @@ public class PipelineApiTest {
 		agent.setIpAddress("127.0.0.1");
 		agent.setPort((short)8082);
 		
-		DeploymentInfo deploy = new DeploymentInfo(1);
-		String script = DeploymentInfo.PLACEHOLDER_SOURCE + " -> avg() -> " + DeploymentInfo.PLACEHOLDER_SINK;
+		DeploymentInformation deploy = new DeploymentInformation(1);
+		String script = DeploymentInformation.PLACEHOLDER_SOURCE + " -> avg() -> " + DeploymentInformation.PLACEHOLDER_SINK;
 		deploy.appendToScript(script);
 		deploy.deployOnAgent(agent, 60000);
 		

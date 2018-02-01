@@ -13,7 +13,7 @@ public class PartialScriptBuilder {
 	private static final String CLOSE_FORK = "}";
 	private static final String CLOSE_BRANCH = ";";
 	
-	private Map<Integer, DeploymentInfo> partialScriptMap;
+	private Map<Integer, DeploymentInformation> partialScriptMap;
 
 	public PartialScriptBuilder() {
 		partialScriptMap = new HashMap<>();
@@ -32,7 +32,7 @@ public class PartialScriptBuilder {
 		partialScriptMap.get(agent).setNumberOfProxySinks(forkSizeOnDifferentAgents);
 		appendToScript(agent, null, " -> { ");
 		for(int i=0; i<forkSizeOnDifferentAgents;i++){
-			appendToScript(agent, null, DeploymentInfo.PLACEHOLDER_SINK + "; ");
+			appendToScript(agent, null, DeploymentInformation.PLACEHOLDER_SINK + "; ");
 		}
 		if(forkSizeOnDifferentAgents == forkSizeOverall){
 			deleteFromScript(agent, 2);
@@ -42,18 +42,18 @@ public class PartialScriptBuilder {
 	
 	public void initIfNeeded(int agent){
 		if(!partialScriptMap.containsKey(agent)){
-			partialScriptMap.put(agent, new DeploymentInfo(agent));
+			partialScriptMap.put(agent, new DeploymentInformation(agent));
 			
 			if(partialScriptMap.size() > 1){
-				partialScriptMap.get(agent).appendToScript(DeploymentInfo.PLACEHOLDER_SOURCE + " -> ");//add proxy source
+				partialScriptMap.get(agent).appendToScript(DeploymentInformation.PLACEHOLDER_SOURCE + " -> ");//add proxy source
 			}
 		}
 	}
 
-	public DeploymentInfo[] buildScripts() {
+	public DeploymentInformation[] buildScripts() {
 		validateAndClean();
 		
-		DeploymentInfo[] ret = new DeploymentInfo[partialScriptMap.size()];
+		DeploymentInformation[] ret = new DeploymentInformation[partialScriptMap.size()];
 		Integer[] keys = new Integer[partialScriptMap.size()];
 		partialScriptMap.keySet().toArray(keys);
 		Arrays.sort(keys);
@@ -68,7 +68,7 @@ public class PartialScriptBuilder {
 	}
 	
 	private void validateAndClean(){
-		for(DeploymentInfo info : partialScriptMap.values()){
+		for(DeploymentInformation info : partialScriptMap.values()){
 			validateAndClean(info.getScriptBuider());
 		}
 	}

@@ -19,7 +19,7 @@ import de.cit.backend.agent.ApiException;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.PipelineApi;
 import de.cit.backend.agent.api.model.PipelineResponse;
-import de.cit.backend.mgmt.helper.model.DeploymentInfo;
+import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.helper.service.PartialScriptGenerator;
 import de.cit.backend.mgmt.helper.service.PipelineDistributer2;
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
@@ -122,13 +122,13 @@ public class PipelineDistributerService {
 		return null;
 	}
 	
-	public List<PipelineResponse> distributedDeployment(PipelineDTO pipeline){
+	public DeploymentInformation[] distributedDeployment(PipelineDTO pipeline){
 		if(pipeline.getPipelineSteps().isEmpty()){
 			return null;
 		}
 		init();
 		suggestPipelineDistribution(pipeline);
-		DeploymentInfo[] deployment = PartialScriptGenerator.generateParallelScripts(pipeline);
+		DeploymentInformation[] deployment = PartialScriptGenerator.generateParallelScripts(pipeline);
 		
 		deployPipelines(deployment);
 		//assignAgentsToPipeline(pipeline);
@@ -137,7 +137,7 @@ public class PipelineDistributerService {
 		
 		pipeMonitor.monitorPipeline(deployment, hist);
 		
-		return null;
+		return deployment;
 	}
 	
 	private PipelineHistoryDTO createPipelineHistory(PipelineDTO pipeline) {
@@ -150,13 +150,13 @@ public class PipelineDistributerService {
 		return hist;
 	}
 
-	private void deployPipelines(DeploymentInfo[] deployment) {
+	private void deployPipelines(DeploymentInformation[] deployment) {
 		
 		Map<Integer, String> agentMapping = new HashMap<>();
 		
 		int i= 0;
 		while(i < deployment.length){
-			for(DeploymentInfo info : deployment){
+			for(DeploymentInformation info : deployment){
 				if(agentMapping.containsKey(info.getIdentifier())){
 					continue;
 				}
@@ -168,7 +168,7 @@ public class PipelineDistributerService {
 		}
 	}
 
-	private boolean dependenciesFulfilled(Map<Integer, String> agentMapping, DeploymentInfo info) {
+	private boolean dependenciesFulfilled(Map<Integer, String> agentMapping, DeploymentInformation info) {
 		for(int i : info.getSuccessorAgents()){
 			if(!agentMapping.containsKey(i)){
 				return false;
@@ -177,7 +177,7 @@ public class PipelineDistributerService {
 		return true;
 	}
 
-	private String findPortAndDeploy(DeploymentInfo info, Map<Integer, String> agentMapping) {
+	private String findPortAndDeploy(DeploymentInformation info, Map<Integer, String> agentMapping) {
 		String[] dependencies = new String[info.getSuccessorAgents().size()];
 		for(int i=0;i<dependencies.length;i++){
 			dependencies[i] = agentMapping.get(info.getSuccessorAgents().get(i));
@@ -192,7 +192,7 @@ public class PipelineDistributerService {
 	}
 
 
-	private String deployPipelineOn(DeploymentInfo deploy, String[] sinkParams){
+	private String deployPipelineOn(DeploymentInformation deploy, String[] sinkParams){
 		for(int i = 0; i < proxyTries; i++){
 			ApiClient conf = Configuration.getDefaultApiClient();
 			conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
