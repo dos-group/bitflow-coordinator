@@ -153,10 +153,12 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
-	public ProjectDTO createProject(ProjectDTO project) throws BitflowException {
-		if (project.getName().length() > 256) {
-			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR,"Project name too long.");
+	public ProjectDTO createProject(ProjectDTO project, String username) throws BitflowException {
+		UserDTO user = persistence.findUser(username);
+		if (user == null) {
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, UserService.USER_ERROR_OBJECT);
 		}
+		project.setUserdata(user);
 		project.setCreatedAt(new Date());
 		persistence.saveObject(project);
 		return project;

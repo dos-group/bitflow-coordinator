@@ -78,7 +78,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectPost(Project project, SecurityContext securityContext) throws NotFoundException {
 		try {
-			ProjectDTO pro = projectService.createProject(new ProjectConverter().convertToBackend(project));
+			ProjectDTO pro = projectService.createProject(new ProjectConverter().convertToBackend(project),securityContext.getUserPrincipal().getName());
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
 		} catch(BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();			

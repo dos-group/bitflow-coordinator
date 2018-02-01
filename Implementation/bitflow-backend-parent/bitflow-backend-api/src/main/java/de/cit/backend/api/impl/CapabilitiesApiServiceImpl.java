@@ -45,7 +45,8 @@ public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
 		  try
 		  {
 			  List<CapabilityDTO> capa =infoService.loadAgentCapabilities(id);
-			  return Response.ok().entity(new CapabilityConverter().convertToFrontend(capa)).build();
+			  List<Capability> frontendcapa = new CapabilityConverter().convertToFrontend(capa); 
+			  return Response.ok().entity(frontendcapa).build();
 		  } catch (BitflowException e) {
 			  return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		  } catch (Exception e) {
