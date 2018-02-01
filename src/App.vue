@@ -15,7 +15,6 @@
             </span>
         </div>
           </span>
-        <a v-on:click="toggleBackend" class="clickable-area">Switch to {{backend}} backend</a>
       </nav>
 
     </header>
@@ -40,17 +39,11 @@
     name: 'app',
     data(){
       return {
-        backend: "true" === window.sessionStorage.getItem("mockbackend") ? "real" : "mock",
         originRoute: this.$router.currentRoute,
         loggedInUser: this.$backendCli.getLoggedInUser()
       }
     },
     methods: {
-      toggleBackend: function () {
-        var isMockBackend = "true" === window.sessionStorage.getItem("mockbackend");
-        window.sessionStorage.setItem("mockbackend", !isMockBackend);
-        location.reload();
-      },
       updateLoggedInUser: function (user) {
         this.loggedInUser = user;
       },
