@@ -29,6 +29,7 @@ public class InfoApiServiceImpl extends InfoApiService {
 		try {
 			ctx = new InitialContext();
 			infoService = (IInfoService) ctx.lookup("java:module/InfoService");
+			agentMonitoringService = (IAgentMonitoringService) ctx.lookup("java:module/AgentMonitoringService");
 		} catch (NamingException e) {
 			e.printStackTrace();
 		}
