@@ -81,96 +81,96 @@
 </template>
 
 <script>
-  import {createCurrentTimeFormatted, formatISODate} from '../utils';
+import {createCurrentTimeFormatted, formatISODate} from '../utils';
 
-  export default {
-    name: "Pipelines",
-    data() {
-      return {
-        title: "Existing Pipelines",
-        name: "",
-        selectedId: null,
-        pipelines: [],
-        projectId: this.$router.history.current.fullPath.split('/')[2],
-        modalErrorMessage: ""
-      };
+export default {
+  name: "Pipelines",
+  data() {
+    return {
+      title: "Existing Pipelines",
+      name: "",
+      selectedId: null,
+      pipelines: [],
+      projectId: this.$router.history.current.fullPath.split('/')[2],
+      modalErrorMessage: ""
+    };
+  },
+  async created() {
+    try {
+      const pid = this.$router.history.current.fullPath.split('/')[2];
+      const resp = await this.$backendCli.getPipelines(pid);
+      this.pipelines = resp.data;
+    } catch (e) {
+      this.$notifyError(e);
+    }
+  },
+  methods: {
+    clearName() {
+      this.name = "";
+      this.modalErrorMessage = ""
     },
-    async created() {
+    showModalErrorMessage(messageOrError){
+      this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
+    },
+    formatISODate(date) {
+      return formatISODate(date);
+    },
+    async createPipeline(evt) {
+      evt.preventDefault();
+      if (!this.name) {
+        this.showModalErrorMessage("Please enter a name");
+      } else {
+        const pipeline = {
+          Name: this.name,
+          LastChanged: createCurrentTimeFormatted()
+        };
+        try {
+          const resp = await this.$backendCli.createPipeline(this.projectId, pipeline);
+          this.pipelines.push(resp.data);
+          this.clearName;
+          this.$refs.createModal.hide();
+        } catch (e) {
+          showModalErrorMessage(e);
+        }
+      }
+    },
+    async startPipeline(id) {
       try {
-        const pid = this.$router.history.current.fullPath.split('/')[2];
-        const resp = await this.$backendCli.getPipelines(pid);
-        this.pipelines = resp.data;
+        const resp = await this.$backendCli.startPipeline(this.projectId, id);
       } catch (e) {
         this.$notifyError(e);
       }
     },
-    methods: {
-      clearName() {
-        this.name = "";
-        this.modalErrorMessage = ""
-      },
-      showModalErrorMessage(messageOrError){
-        this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
-      },
-      formatISODate(date) {
-        return formatISODate(date);
-      },
-      async createPipeline(evt) {
-        evt.preventDefault();
-        if (!this.name) {
-          this.showModalErrorMessage("Please enter a name");
-        } else {
-          const pipeline = {
-            Name: this.name,
-            LastChanged: createCurrentTimeFormatted()
-          };
-          try {
-            const resp = await this.$backendCli.createPipeline(this.projectId, pipeline);
-            this.pipelines.push(resp.data);
-            this.clearName;
-            this.$refs.createModal.hide();
-          } catch (e) {
-            showModalErrorMessage(e);
-          }
-        }
-      },
-      async startPipeline(id) {
+    async clonePipeline(id) {
+      if (!this.name) {
+        this.showModalErrorMessage("Please enter a name");
+      } else {
         try {
-          const resp = await this.$backendCli.startPipeline(this.projectId, id);
+          const originalPipeline = this.pipelines.find(pip => pip.ID === id);
+          var template = Object.assign({}, originalPipeline);
+          template.ID = null;
+          template.PipelineSteps.forEach(step => step.ID = null);
+          template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
+          template.Name = this.name;
+          template.LastChanged = createCurrentTimeFormatted();
+          const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
+          this.pipelines.push(resp.data);
+          this.clearName;
+          this.$refs.cloneModal.hide();
         } catch (e) {
-          this.$notifyError(e);
-        }
-      },
-      async clonePipeline(id) {
-        if (!this.name) {
-          this.showModalErrorMessage("Please enter a name");
-        } else {
-          try {
-            const originalPipeline = this.pipelines.find(pip => pip.ID === id);
-            var template = Object.assign({}, originalPipeline);
-            template.ID = null;
-            template.PipelineSteps.forEach(step => step.ID = null);
-            template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
-            template.Name = this.name;
-            template.LastChanged = createCurrentTimeFormatted();
-            const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
-            this.pipelines.push(resp.data);
-            this.clearName;
-            this.$refs.cloneModal.hide();
-          } catch (e) {
-            showModalErrorMessage(e);
-          }
-        }
-      },
-      async deletePipeline(id) {
-        try {
-          await this.$backendCli.deletePipeline(this.projectId, id);
-          this.pipelines = this.pipelines.filter(pip => pip.ID !== id);
-          this.$refs.deleteModal.hide();
-        } catch (e) {
-          this.$notifyError(e);
+          showModalErrorMessage(e);
         }
       }
+    },
+    async deletePipeline(id) {
+      try {
+        await this.$backendCli.deletePipeline(this.projectId, id);
+        this.pipelines = this.pipelines.filter(pip => pip.ID !== id);
+        this.$refs.deleteModal.hide();
+      } catch (e) {
+        this.$notifyError(e);
+      }
     }
-  };
+  }
+};
 </script>
