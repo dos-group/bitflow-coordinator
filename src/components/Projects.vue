@@ -178,7 +178,7 @@ export default {
         try {
           let updatedProject = selectedProject;
           updatedProject.Name = this.name;
-          await this.$backendCli.updateProject(id, updatedProject); //TODO: 405 (method not allowed)
+          await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
         } catch (e) {
           alert(e);
         }
