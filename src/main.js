@@ -4,6 +4,7 @@ import Vue from "vue";
 import App from "./App";
 import router from "./router";
 import BootstrapVue from "bootstrap-vue";
+import Notifications from "vue-notification";
 import Icon from "vue-awesome/components/Icon.vue";
 import "vue-awesome/icons";
 import "bootstrap/dist/css/bootstrap.css";
@@ -18,6 +19,31 @@ Vue.prototype.$baseUrl = url;
 Vue.prototype.$backendCli = backendCli;
 Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
+Vue.use(Notifications)
+const libMethod = Vue.prototype.$notify
+Vue.prototype.$notifyInfo = function (message) {
+  libMethod({
+    group: 'global-notifier',
+    title: 'Important message',
+    type: 'info',
+    text: message
+  });
+};
+Vue.prototype.$notifyError = function (error) {
+  console.warn("Error occurred", error);
+  if (error.errorMessage) {
+    error = error.errorMessage;
+  } else if (error.message) {
+    error = error.message;
+  }
+  libMethod({
+    group: 'global-notifier',
+    type: 'error',
+    title: 'Oops... ',
+    text: error
+  });
+}
+Vue.prototype.$notify = Vue.prototype.$notifyInfo
 Vue.component('icon', Icon);
 
 /* eslint-disable no-new */
