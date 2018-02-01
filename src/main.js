@@ -11,7 +11,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import * as backendCli from "./utils/backend-client";
 
 const mockUrl = 'http://35.227.97.73:4000';
-var url = 'http://10.200.2.70:1337/10.200.1.139:8080/bitflow';
+var url = 'http://10.200.1.139:8080/bitflow';
 if ("true" === window.sessionStorage.getItem("mockbackend")) {
   url = mockUrl
 }
