@@ -1,7 +1,11 @@
 package de.cit.backend.mgmt.exceptions;
 
+import org.jboss.logging.Logger;
+
 public class BitflowException extends Exception{
 
+	private static final Logger log = Logger.getLogger(BitflowException.class);
+	
 	public static final int UNKNOWN_ERROR = 99;
 	private int errorCode;
 	private int httpResponseCode;
@@ -23,6 +27,7 @@ public class BitflowException extends Exception{
 	}
 	
 	public BitflowFrontendError toFrontendFormat(){
+		log.error(getLocalizedMessage());
 		return new BitflowFrontendError(this);
 	}
 	

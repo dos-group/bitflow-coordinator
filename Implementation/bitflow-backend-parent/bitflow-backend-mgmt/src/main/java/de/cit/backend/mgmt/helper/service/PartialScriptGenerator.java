@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jboss.logging.Logger;
 
-import de.cit.backend.mgmt.helper.model.DeploymentInfo;
+import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.helper.model.ForkJoinTracker;
 import de.cit.backend.mgmt.helper.model.ForkStorage;
 import de.cit.backend.mgmt.helper.model.PartialScriptBuilder;
@@ -17,7 +17,7 @@ public class PartialScriptGenerator {
 
 	private static final Logger log = Logger.getLogger(PartialScriptGenerator.class);
 	
-	public static DeploymentInfo[] generateParallelScripts(PipelineDTO pipeline){//, int numberOfAgents
+	public static DeploymentInformation[] generateParallelScripts(PipelineDTO pipeline){//, int numberOfAgents
 //		PipelineDistributer2.distributePipeline(pipeline, numberOfAgents);//do that independently
 		
 		try {

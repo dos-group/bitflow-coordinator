@@ -443,7 +443,7 @@ paths:
         200:
           description: "If pipeline started successfully"
           schema:
-            type: object
+            $ref: "#/definitions/DeploymentInfo"
         400:
           description: "If pipeline execution failed on startup"
           schema:
@@ -871,6 +871,33 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/Agent"
+  DeploymentInfo:
+    type: object
+    properties:
+      Status:
+        type: string
+        example: 'running'
+      HistoryID:
+        type: integer
+        format: int32
+        example: 6
+      PartialDeployments:
+        type: array
+        items:
+          $ref: "#/definitions/PartialDeployment"
+  PartialDeployment:
+    type: object
+    properties:
+      AgentAdress:
+        type: string
+        example: '127.0.0.1:8081'
+      PipelineIdOnAgent:
+        type: integer
+        format: int32
+        example: 6
+      PartialScript:
+        type: string
+        example: 'input.csv -> avg() -> 127.0.0.1:60001'
   Agent:
     type: object
     properties:

@@ -1,5 +1,6 @@
 package de.cit.backend.mgmt.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import de.cit.backend.agent.api.InfosApi;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 
 @Singleton
@@ -112,4 +114,30 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 		}
 		*/
 	}
+	
+	private void updateCapabilities(AgentDTO agent, ApiClient conf) {
+		InfosApi agentApi = new InfosApi(conf);
+		try{
+			List<CapabilityDTO> apicapas = new de.cit.backend.mgmt.converter.CapabilityConverter().convertToBackend(agentApi.capabilitiesGet());
+			List<CapabilityDTO> capabilities = new ArrayList<CapabilityDTO>();
+			for(CapabilityDTO apicapa : apicapas) {
+				CapabilityDTO capa = persistence.findCapability(apicapa.getName());
+				if(capa==null)
+				{
+					persistence.saveObject(apicapa);
+					capa = apicapa;
+				}
+				if(!agent.getCapabilities().contains(capa))
+				{
+					agent.getCapabilities().add(capa);					
+				}
+				capabilities.add(capa);
+			}
+			agent.getCapabilities().retainAll(capabilities);
+			
+		} catch (Exception e) {
+			log.error("GetCapabilities failed", e);
+		}
+	}
+	
 }

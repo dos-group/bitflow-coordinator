@@ -81,8 +81,22 @@ public class PersistenceService {
 		return entityManager.find(PipelineDTO.class, pipelineId);
 	}
 
+	@Deprecated
 	public void deleteProject(int projectId) {
-		entityManager.remove(this.findProject(projectId));
+		deleteProject(findProject(projectId));
+	}
+	
+	public void deleteProject(ProjectDTO project) {
+		for(UserDTO user : project.getProjectMembers()){
+			user.getJoinedProjects().remove(project);
+		}
+		for(PipelineDTO pipe : project.getPipelines()){
+			pipe.getProjects().remove(project);
+		}
+		
+		project.getProjectMembers().clear();
+		project.getPipelines().clear();
+		entityManager.remove(project);
 	}
 
 	public void deletePipeline(int pipelineId) {
@@ -100,5 +114,9 @@ public class PersistenceService {
 	
 	public void saveObject(Object object){
 		entityManager.persist(object);
+	}
+	
+	public void mergeObject(Object object){
+		entityManager.merge(object);
 	}
 }
