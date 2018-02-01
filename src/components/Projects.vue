@@ -57,6 +57,7 @@
       <form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
 
     <b-modal
@@ -69,6 +70,7 @@
       <form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
     <b-modal
         id="project-users-modal"
@@ -97,6 +99,7 @@
           </li>
         </ul>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
 
     <b-modal id="delete-project-modal"
@@ -118,7 +121,8 @@ export default {
       projects: [],
       selectedProject: {},
       projectUsersIDs: [],
-      users: []
+      users: [],
+      modalErrorMessage: ""
     };
   },
   async created() {
@@ -133,12 +137,16 @@ export default {
         return user.ID !== loggedInUser.ID
       });
     } catch (e) {
-      alert(e);
+      this.$notifyError(e);
     }
   },
   methods: {
     clearName() {
       this.name = "";
+      this.modalErrorMessage = "";
+    },
+    showModalErrorMessage(messageOrError){
+      this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
     },
     async onAddUser(selectedProject) {
       this.projectUsersIDs = selectedProject.Users.map(function (user) {
@@ -151,7 +159,7 @@ export default {
     async createProject(evt) {
       evt.preventDefault();
       if (!this.name) {
-        alert("Please enter a name");
+        this.showModalErrorMessage("Please enter a name");
       } else {
         var loggedInUser = this.$backendCli.getLoggedInUser()
         const project = {
@@ -167,20 +175,20 @@ export default {
           // add myself as user of the project
           await this.$backendCli.addUserToProject(resp.data.ID, loggedInUser.ID);
         } catch (e) {
-          alert(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
     async updateProject(selectedProject) {
       if (!this.name) {
-        alert("Please enter a name");
+        this.showModalErrorMessage("Please enter a name");
       } else {
         try {
           let updatedProject = selectedProject;
           updatedProject.Name = this.name;
           await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
         } catch (e) {
-          alert(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
@@ -190,7 +198,7 @@ export default {
         this.projects = this.$backendCli.getProjects();
         this.$refs.deleteModal.hide();
       } catch (e) {
-        alert(e);
+        this.$notifyError(e);
       }
     },
     async addUserToProject(selectedProject, userToAdd) {
@@ -199,7 +207,7 @@ export default {
         selectedProject.Users.push(userToAdd);
         this.projectUsersIDs.push(userToAdd.ID)
       } catch (e) {
-        alert(e);
+        this.showModalErrorMessage(e);
       }
     },
     async removeUserFromProject(selectedProject, userToRemove) {
@@ -212,16 +220,9 @@ export default {
           return u !== userToRemove.ID;
         });
       } catch (e) {
-        alert(e);
+        this.showModalErrorMessage(e);
       }
     }
   }
 };
 </script>
-<style scoped>
-  .clickable-area {
-    margin-left: 1em;
-    cursor: pointer;
-  }
-</style>
-

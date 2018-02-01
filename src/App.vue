@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <notifications group="global-notifier"/>
     <header class="header">
       <nav class="inner">
         <span v-if="loggedInUser">
@@ -166,5 +167,14 @@
 
   .inline {
     vertical-align: middle;
+  }
+
+  .clickable-area {
+    margin-left: 1em;
+    cursor: pointer;
+  }
+
+  .error-message {
+    color: darkred;
   }
 </style>

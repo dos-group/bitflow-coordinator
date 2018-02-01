@@ -91,7 +91,7 @@ export default {
 			//TODO: add filter to backendCli function once API is ready to provide the state of pipelines	
 			console.log(this.runningPipelines[0].Project);
     } catch (e) {
-      alert(e);
+      this.$notifyError(e);
     }
   }
 };
