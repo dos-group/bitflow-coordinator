@@ -9,6 +9,7 @@ import "vue-awesome/icons";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 import * as backendCli from "./utils/backend-client";
+import 'font-awesome/css/font-awesome.css';
 
 const url = 'http://10.200.1.139:8080/bitflow';
 
