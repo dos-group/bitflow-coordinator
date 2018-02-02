@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <b-card>
-      <b-form @submit="onSubmit">
+      <b-form id="login-form">
         <b-form-group label="Username:" label-for="username">
           <b-form-input id="username" v-model="form.username" required placeholder="Enter username">
           </b-form-input>
@@ -11,7 +11,7 @@
                         placeholder="Enter password"></b-form-input>
         </b-form-group>
         <p id="error-message" v-if="message">{{message}}</p>
-        <b-button type="submit" variant="primary">Login</b-button>
+        <b-button id="login-button" type="submit" variant="primary" @click="login">Login</b-button>
       </b-form>
     </b-card>
   </div>
@@ -29,15 +29,14 @@
       }
     },
     methods: {
-      async onSubmit (evt) {
+      async login (evt) {
         evt.preventDefault();
-
         try {
           let result = await this.$backendCli.login(this.form.username, this.form.password);
           this.$emit('userHasLoggedIn', result.user);
 
         } catch (err) {
-          if (err.response.status === 401) {
+          if (err.response && err.response.status === 401) {
             this.message = "Please check your username and password.";
           } else {
             this.$notifyError(err);
