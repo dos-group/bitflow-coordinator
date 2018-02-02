@@ -3,6 +3,7 @@ package de.cit.backend.api.converter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import de.cit.backend.api.model.Capability;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
@@ -53,7 +54,7 @@ public class CapabilityConverter implements Converter<CapabilityDTO, Capability>
 			return out;
 		}
 		
-		public List<Capability> convertToFrontend(List<CapabilityDTO> in){
+		public List<Capability> convertToFrontend(Set<CapabilityDTO> in){
 			List<Capability> out = new ArrayList<Capability>();
 			for (CapabilityDTO capabilityDTO : in) {
 				out.add(this.convertToFrontend(capabilityDTO));

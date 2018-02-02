@@ -1,15 +1,15 @@
 package de.cit.backend.mgmt.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.*;
 
-import de.cit.backend.agent.api.model.Capability;
 import de.cit.backend.agent.api.model.Info;
 import de.cit.backend.mgmt.services.interfaces.IAgentMonitoringService;
 import org.jboss.logging.Logger;
@@ -17,6 +17,7 @@ import org.jboss.logging.Logger;
 import de.cit.backend.agent.ApiClient;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.InfosApi;
+import de.cit.backend.mgmt.converter.CapabilityConverter;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
@@ -58,9 +59,13 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 			boolean isOnline = pingAgent(agent, conf);
 			
 			//if null, read capabilities of agent
-			if(isOnline && agent.getCapabilities() == null){
+			//if(isOnline && agent.getCapabilities() == null){
+			  if(isOnline) {
 				updateAgentInfos(agent, conf);
-				//getCapabilitiesAgent(agent, conf);
+				if(agent.getCapabilities().isEmpty()) {
+					getCapabilitiesAgent(agent, conf);					
+				}
+
 			}
 		}
 	}
@@ -104,40 +109,42 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 	}
 	
 	private void getCapabilitiesAgent(AgentDTO agent, ApiClient conf){
-		/*
 		InfosApi agentApi = new InfosApi(conf);
-		try{
-			List<Capability> caps = agentApi.capabilitiesGet();
-			agent.setCapability(caps.toString());
-		}catch (Exception e) {
-			log.error("GetCapabilities failed", e);
-		}
-		*/
-	}
-	
-	private void updateCapabilities(AgentDTO agent, ApiClient conf) {
-		InfosApi agentApi = new InfosApi(conf);
-		try{
-			List<CapabilityDTO> apicapas = new de.cit.backend.mgmt.converter.CapabilityConverter().convertToBackend(agentApi.capabilitiesGet());
+		try {
+			/*			
+			 List<CapabilityDTO> apicapas = new de.cit.backend.mgmt.converter.CapabilityConverter()
+			.convertToBackend(agentApi.capabilitiesGet());
 			List<CapabilityDTO> capabilities = new ArrayList<CapabilityDTO>();
-			for(CapabilityDTO apicapa : apicapas) {
-				CapabilityDTO capa = persistence.findCapability(apicapa.getName());
-				if(capa==null)
-				{
+			for (CapabilityDTO apicapa : apicapas) {
+				CapabilityDTO capa = persistence.findCapability(apicapa);
+				if (capa == null) {
 					persistence.saveObject(apicapa);
 					capa = apicapa;
 				}
-				if(!agent.getCapabilities().contains(capa))
-				{
-					agent.getCapabilities().add(capa);					
+				if (!agent.getCapabilities().contains(capa)) {
+					agent.getCapabilities().add(capa);
 				}
 				capabilities.add(capa);
 			}
 			agent.getCapabilities().retainAll(capabilities);
-			
+			*/
+
+			List<CapabilityDTO> apicapas = new CapabilityConverter()
+					.convertToBackend(agentApi.capabilitiesGet());
+			Set<CapabilityDTO> capabilities = new HashSet<CapabilityDTO>();
+			for (CapabilityDTO apicapa : apicapas) {
+				CapabilityDTO capa = persistence.findCapability(apicapa);
+				if (capa == null) {
+					persistence.saveObject(apicapa);
+					capa = apicapa;
+				}
+				capabilities.add(capa);
+			}
+			//agent.getCapabilities().clear();
+			agent.setCapabilities(capabilities);
 		} catch (Exception e) {
 			log.error("GetCapabilities failed", e);
 		}
 	}
-	
+
 }
