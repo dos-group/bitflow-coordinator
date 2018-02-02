@@ -67,7 +67,7 @@
         id="clone-pipeline-modal"
         ref="cloneModal"
         title="Name for cloned Pipeline"
-        @ok="clonePipeline(selectedId)"
+        @ok="clonePipeline"
         @shown="clearName"
     >
       <form @submit.stop.prevent="handleSubmit">
@@ -76,7 +76,7 @@
       <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
 
-    <b-modal id="delete-pipeline-modal" ref="deleteModal" title="Delete Pipeline?" @ok="deletePipeline(selectedId)"/>
+    <b-modal id="delete-pipeline-modal" ref="deleteModal" title="Delete Pipeline?" @ok="deletePipeline"/>
   </div>
 </template>
 
@@ -141,7 +141,9 @@ export default {
         this.$notifyError(e);
       }
     },
-    async clonePipeline(id) {
+    async clonePipeline(evt) {
+      evt.preventDefault();
+      var id = this.selectedId;
       if (!this.name) {
         this.showModalErrorMessage("Please enter a name");
       } else {
@@ -162,9 +164,11 @@ export default {
         }
       }
     },
-    async deletePipeline(id) {
+    async deletePipeline(evt) {
+      evt.preventDefault();
+      var id = this.selectedId;
       try {
-        await this.$backendCli.deletePipeline(this.projectId, id);
+        await this.$backendCli.deletePipeline(this.selectedId, id);
         this.pipelines = this.pipelines.filter(pip => pip.ID !== id);
         this.$refs.deleteModal.hide();
       } catch (e) {

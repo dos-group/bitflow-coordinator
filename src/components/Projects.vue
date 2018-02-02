@@ -64,7 +64,7 @@
         id="edit-project-modal"
         ref="updateModal"
         title="Edit Project"
-        @ok="updateProject(selectedProject)"
+        @ok="updateProject"
         @shown="clearName"
     >
       <form @submit.stop.prevent="handleSubmit">
@@ -76,7 +76,7 @@
         id="project-users-modal"
         ref="projectUsersModal"
         title="Project Users"
-        @shown="onAddUser(selectedProject)"
+        @shown="onAddUserModalOpen(selectedProject)"
         ok-title="Close"
         ok-only
     >
@@ -105,6 +105,7 @@
     <b-modal id="delete-project-modal"
              ref="deleteModal"
              title="Delete Project?"
+             @close="clearName"
              @ok="deleteProject(selectedProject)"/>
   </div>
 </template>
@@ -148,7 +149,8 @@ export default {
     showModalErrorMessage(messageOrError){
       this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
     },
-    async onAddUser(selectedProject) {
+    async onAddUserModalOpen(selectedProject) {
+      this.clearName();
       this.projectUsersIDs = selectedProject.Users.map(function (user) {
         return user.ID
       });
@@ -179,12 +181,13 @@ export default {
         }
       }
     },
-    async updateProject(selectedProject) {
+    async updateProject(evt) {
+      evt.preventDefault();
       if (!this.name) {
         this.showModalErrorMessage("Please enter a name");
       } else {
         try {
-          let updatedProject = selectedProject;
+          let updatedProject = this.selectedProject;
           updatedProject.Name = this.name;
           await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
         } catch (e) {
