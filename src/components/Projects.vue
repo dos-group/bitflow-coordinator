@@ -198,7 +198,8 @@ export default {
     async deleteProject(projectToDelete) {
       try {
         await this.$backendCli.deleteProject(projectToDelete.ID);
-        this.projects = this.$backendCli.getProjects();
+        var projectsResp = await this.$backendCli.getProjects();
+        this.projects = projectsResp.data;
         this.$refs.deleteModal.hide();
       } catch (e) {
         this.$notifyError(e);
