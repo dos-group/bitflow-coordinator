@@ -2,18 +2,15 @@
   <div class="container">
     <b-card>
       <b-form @submit="onSubmit">
-        <b-form-group id="emailaddress" label="Email address:" label-for="emailaddress">
-          <b-form-input id="emailaddress" type="email" v-model="form.email" required
-                        placeholder="Enter email">
+        <b-form-group label="Username:" label-for="username">
+          <b-form-input id="username" v-model="form.username" required placeholder="Enter username">
           </b-form-input>
         </b-form-group>
-        <b-form-group id="password" label="Your Name:" label-for="password">
+        <b-form-group label="Password" label-for="password">
           <b-form-input id="password" type="password" v-model="form.password" required
                         placeholder="Enter password"></b-form-input>
         </b-form-group>
-        <p class="error-message" v-if="message">
-          {{message}}
-        </p>
+        <p id="error-message" v-if="message">{{message}}</p>
         <b-button type="submit" variant="primary">Login</b-button>
       </b-form>
     </b-card>
@@ -26,7 +23,7 @@
       return {
         message: null,
         form: {
-          email: '',
+          username: '',
           password: '',
         },
       }
@@ -35,21 +32,23 @@
       async onSubmit (evt) {
         evt.preventDefault();
 
-        let result = await this.$backendCli.login(this.form.email, this.form.password);
-        if (result.user) {
+        try {
+          let result = await this.$backendCli.login(this.form.username, this.form.password);
           this.$emit('userHasLoggedIn', result.user);
-        } else {
-          this.message = "Please check your username and password.";
+
+        } catch (err) {
+          if (err.response.status === 401) {
+            this.message = "Please check your username and password.";
+          } else {
+            this.$notifyError(err);
+          }
+
         }
       },
     }
   }
 </script>
 <style>
-  .error-message {
-    color: red;
-  }
-
   .container {
     width: 50%;
     float: none;

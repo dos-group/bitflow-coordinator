@@ -1,22 +1,34 @@
 <template>
   <div id="app">
+    <notifications group="global-notifier"/>
     <header class="header">
-      <nav class="inner"  v-if="loggedInUser">
+      <nav class="inner">
+        <span v-if="loggedInUser">
         <router-link to="/projects">Projects</router-link>
         <router-link to="/infrastructure">Infrastructure</router-link>
+          <!-- Example single danger button -->
         <transition name="fade" mode="out-in">
-          <div class="navbar-top-right" v-on:click="logout">
-            Logout
-            <icon name="sign-out" class="inline"/>
-          </div>
         </transition>
+        <div class="navbar-top-right">
+          {{loggedInUser.Name}}
+          <span v-on:click="logout" class="clickable-area">Logout
+          <icon name="sign-out" class="inline"/>
+            </span>
+        </div>
+          </span>
       </nav>
+
     </header>
+
     <transition v-if="loggedInUser" name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
     <transition v-if="!loggedInUser" name="fade" mode="out-in">
-      <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
+      <div style="text-align: center;">
+        username: "john", password: "doe"<br>
+        username: "tester", password: "test"
+        <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
+      </div>
     </transition>
   </div>
 </template>
@@ -115,6 +127,10 @@
     vertical-align: middle;
     float: right;
     padding-left: 0.2em;
+  }
+
+  .clickable-area {
+    margin-left: 1em;
     cursor: pointer;
   }
 
@@ -151,5 +167,14 @@
 
   .inline {
     vertical-align: middle;
+  }
+
+  .clickable-area {
+    margin-left: 1em;
+    cursor: pointer;
+  }
+
+  .error-message {
+    color: darkred;
   }
 </style>
