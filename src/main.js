@@ -8,6 +8,7 @@ import Icon from 'vue-awesome/components/Icon.vue';
 import 'vue-awesome/icons';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+import 'font-awesome/css/font-awesome.css';
 import * as backendCli from "./utils/backend-client";
 
 const url = 'http://35.227.97.73:4000';
