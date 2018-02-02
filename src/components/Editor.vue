@@ -98,6 +98,7 @@
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
+        "AgentId": "not set",
         "Successors": [2, 1]
       }, {
         "ID": 2,
@@ -105,12 +106,14 @@
         "Typ": "operation",
         "Content": "127.0.0.1:5555",
         "Params": [],
+        "AgentId": "not set",
         "Successors": [2]
       }, {
         "ID": 3,
         "Number": 2,
         "Typ": "sink",
         "Content": "127.0.0.1:5555",
+        "AgentId": "not set",
         "Params": [],
         "Successors": []
       }];
@@ -123,18 +126,21 @@
         "Typ": "source",
         "Content": "127.0.0.1:5555",
         "Params": [],
+        "AgentId": "not set",
         "Successors": []
       }, {
         "ID": 2,
         "Number": 1,
         "Typ": "sink",
         "Content": "127.0.0.1:5555",
+        "AgentId": "not set",
         "Params": [],
         "Successors": []
       }, {
         "ID": 3,
         "Number": 2,
         "Typ": "operation",
+        "AgentId": "not set",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
@@ -142,6 +148,7 @@
         "ID": 4,
         "Number": 3,
         "Typ": "operation",
+        "AgentId": "not set",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []
@@ -149,6 +156,7 @@
         "ID": 5,
         "Number": 4,
         "Typ": "operation",
+        "AgentId": "not set",
         "Content": "127.0.0.1:5555",
         "Params": [],
         "Successors": []

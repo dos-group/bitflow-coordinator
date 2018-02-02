@@ -5,7 +5,7 @@ import App from "./App";
 import router from "./router";
 import BootstrapVue from "bootstrap-vue";
 import Notifications from "vue-notification";
-import Icon from "vue-awesome/components/Icon.vue";
+//import Icon from "vue-awesome/components/Icon.vue";
 import "vue-awesome/icons";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -44,8 +44,8 @@ Vue.prototype.$notifyError = function (error) {
     text: error
   });
 }
-Vue.prototype.$notify = Vue.prototype.$notifyInfo
-Vue.component('icon', Icon);
+Vue.prototype.$notify = Vue.prototype.$notifyInfo;
+//Vue.component('icon', Icon);
 
 /* eslint-disable no-new */
 new Vue({
