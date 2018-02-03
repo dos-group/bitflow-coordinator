@@ -21,10 +21,11 @@ public abstract class Validator {
 	
 	public static List<Validator> getUserValidators(UserDTO user){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotEmptyOrNullValidator(user.getEmail(), "Email must be provided."));
-		validators.add(new NotEmptyOrNullValidator(user.getName(), "Name must be provided."));
-		validators.add(new NotEmptyOrNullValidator(user.getPassword(), "Password must be provided."));
-		
+		validators.add(new NotNullValidator(user.getRegisteredSince(), "Registration date must be set."));
+		validators.add(new NotNullValidator(user.getRole(), "User role must be set."));
+		validators.add(new NotEmptyValidator(user.getEmail(), "Email must be provided."));
+		validators.add(new NotEmptyValidator(user.getName(), "Name must be provided."));
+		validators.add(new NotEmptyValidator(user.getPassword(), "Password must be provided."));
 		validators.add(new StringLengthValidator(user.getEmail(), "Limit for email is 128 characters.", 128));
 		validators.add(new StringLengthValidator(user.getName(), "Limit for name is 128 characters.", 128));
 		validators.add(new StringLengthValidator(user.getPassword(), "Limit for password is 128 characters.", 128));
@@ -36,12 +37,13 @@ public abstract class Validator {
 		List<Validator> validators = new ArrayList<>();
 		validators.add(new NotEmptyOrNullValidator(agent.getIpAddress(), "IP must be provided."));
 		validators.add(new StringLengthValidator(agent.getIpAddress(), "Limit for ip is 128 characters.", 128));
+		validators.add(new PortRangeValidator(agent.getPort()));
 		return validators;
 	}
 
 	public static List<Validator> getCapabilityValidators(CapabilityDTO capability){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotEmptyOrNullValidator(capability.getName(), "Name must be provided."));
+		validators.add(new NotEmptyValidator(capability.getName(), "Name must be provided."));
 		validators.add(new StringLengthValidator(capability.getName(), "Limit for name is 64 characters.", 64));
 		validators.add(new StringLengthValidator(capability.getDescription(), "Limit for description is 512 characters.", 512));
 		validators.add(new StringLengthValidator(capability.getRequiredParams(), "Limit for required params is 128 characters.", 128));
@@ -67,8 +69,8 @@ public abstract class Validator {
 
 	public static List<Validator> getPipelineParameterValidators(PipelineParameterDTO pipelineParameter){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotEmptyOrNullValidator(pipelineParameter.getParamName(), "Parameter name must be provided."));
-		validators.add(new NotEmptyOrNullValidator(pipelineParameter.getParamValue(), "Parameter value must be provided."));
+		validators.add(new NotEmptyValidator(pipelineParameter.getParamName(), "Parameter name must be provided."));
+		validators.add(new NotEmptyValidator(pipelineParameter.getParamValue(), "Parameter value must be provided."));
 		validators.add(new StringLengthValidator(pipelineParameter.getParamName(), "Limit for parameter name is 128 characters.", 128));
 		validators.add(new StringLengthValidator(pipelineParameter.getParamValue(), "Limit for parameter value is 128 characters.", 128));
 		return validators;
@@ -76,15 +78,19 @@ public abstract class Validator {
 
 	public static List<Validator> getPipelineStepValidators(PipelineStepDTO pipelineStep){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotEmptyOrNullValidator(pipelineStep.getContent(), "Content must be provided."));
+		validators.add(new NotNullValidator(pipelineStep.getType(), "Step type must be set."));
+		validators.add(new NotNullValidator(pipelineStep.getStepNumber(), "Step number must be set."));
+		validators.add(new NotEmptyValidator(pipelineStep.getContent(), "Content must be provided."));
 		validators.add(new StringLengthValidator(pipelineStep.getStatus(), "Limit for status is 32 characters.", 32));
 		validators.add(new StringLengthValidator(pipelineStep.getContent(), "Limit for content is 256 characters.", 256));
+		validators.add(new PositiveNumberOrNullValidator(pipelineStep.getStepNumber(), "Pipeline step number must be positive."));
 		return validators;
 	}
 
 	public static List<Validator> getProjectValidators(ProjectDTO project){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotEmptyOrNullValidator(project.getName(), "Name must be provided."));
+		validators.add(new NotNullValidator(project.getCreatedAt(), "Creation date must be set."));
+		validators.add(new NotEmptyValidator(project.getName(), "Name must be provided."));
 		validators.add(new StringLengthValidator(project.getName(), "Limit for name is 256 characters.", 256));
 		return validators;
 	}

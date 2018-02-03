@@ -3,10 +3,10 @@ package de.cit.backend.mgmt.validation;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 
-public class PortRangeValidator extends PositiveNumberValidator {
+public class PortRangeValidator extends PositiveNumberOrNullValidator {
 
-	public PortRangeValidator(Integer obj, String messge) {
-		super(obj, messge);
+	public PortRangeValidator(Integer obj) {
+		super(obj, "Port must be between 0 and 65535.");
 	}
 
 	@Override
