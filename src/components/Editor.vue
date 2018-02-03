@@ -20,20 +20,20 @@
         </div>
         <div class="row viewContainer">
             <div class="contain list-group col-lg-2 col-md-auto col-sm-auto">
-                <div v-on:click="createNode('start')" class="static step start">
+                <div class="static step start" v-b-modal.add-source-modal>
                     <div class="card-block">
                         <h5 class="card-title">Default start of a pipeline </h5>
                         <p class="card-title">Step Id : To be Discussed</p>
                         <p class="card-text">Typ : source</p>
-                        <p class="card-text">Content : </p>
+                        <p class="card-text">Content :</p>
                     </div>
                 </div>
-                <div v-on:click="createNode('end')" class="static step end">
+                <div class="static step end" v-b-modal.add-sink-modal>
                     <div class="card-block">
                         <h5 class="card-title">Default end of a pipeline </h5>
                         <p class="card-title">Step Id : To be Discussed</p>
                         <p class="card-text">Typ : sink</p>
-                        <p class="card-text">Content : </p>
+                        <p class="card-text">Content :</p>
                     </div>
                 </div>
                 <div v-on:click="createNode(step.ID)" class="card step" v-for="step in allSteps">
@@ -45,10 +45,26 @@
                     </div>
                 </div>
                 <b-modal
-                        id="add-pipeline-modal"
-                        ref="successModal"
+                        id="add-source-modal"
+                        ref="sourceModal"
                         title="Pipeline Saved"
-                >
+                        @ok="createNode('start')"
+                        @shown="clearModal">
+                    <form @submit.stop.prevent="handleSubmit">
+                        <b-form-input type="text" placeholder="Source" v-model="source"/>
+                        <span class="error-message">{{ modalErrorMessage }}</span>
+                    </form>
+                </b-modal>
+                <b-modal
+                        id="add-sink-modal"
+                        ref="sinkModal"
+                        title="Pipeline Saved"
+                        @ok="createNode('end')"
+                        @shown="clearModal">
+                    <form @submit.stop.prevent="handleSubmit">
+                        <b-form-input type="text" placeholder="Destination" v-model="destination"/>
+                        <span class="error-message">{{ modalErrorMessage }}</span>
+                    </form>
                 </b-modal>
             </div>
             <div class="svg-container col-lg-10 col-md-auto col-sm-auto">
@@ -108,6 +124,8 @@
             const blobs = true;
             const projectId = this.$router.history.current.fullPath.split('/')[2];
             const pipelineId = this.$router.history.current.fullPath.split('/')[4];
+            const source= '';
+            const destination= '';
 
             let countNumbers = 0;
 
@@ -426,12 +444,12 @@
                 const here = this;
 
                 if (nodeId === "start") {
-
+                    this.countNumbers += 1;
                     const startNode = {
-                        "ID": null,
+                        "ID": this.countNumbers,
                         "Number": this.countNumbers,
                         "Typ": "source",
-                        "Content": null,
+                        "Content": this.source,
                         "Params": [],
                         "Successors": []
                     };
@@ -440,18 +458,15 @@
                     this.allNodes.push(startNode);
 
                 } else if (nodeId === "end") {
-
+                    this.countNumbers += 1;
                     const endNode = {
                         "ID": null,
                         "Number": this.countNumbers,
                         "Typ": "sink",
-                        "Content": null,
+                        "Content": this.destination,
                         "Params": [],
                         "Successors": null
                     };
-
-                    this.countNumbers += 1;
-
                     this.allNodes.push(endNode);
 
                 } else {
@@ -503,19 +518,22 @@
                             "PipelineSteps": this.allNodes
                         };
                         const resp = await this.$backendCli.updatePipeline(this.projectId, pipeline);
-                        console.log(resp.statusText);
-                        if (resp.statusText == "Ok")
+                        if (resp.statusText == "OK")
                         {
                             alert("Pipeline successfully Saved.")
                         }
+                        return true;
                     } catch (e) {
                         alert(e);
                     }
                 }
             },
-            saveandstart: function () {
-                this.updatePipeline();
-                this.startPipeline();
+            saveandstart: async function () {
+                const done = await this.updatePipeline();
+                if (done ) {
+                    console.log("Pipeline updated");
+                    await this.startPipeline();
+                }
             },
             startPipeline: async function () {
                 try {
@@ -526,7 +544,14 @@
                 } catch (e) {
                     alert(e); //TODO: 400
                 }
-            }
+            },
+            clearModal: function(){
+                this.source = "";
+                this.destination = "";
+            },
+            showModalErrorMessage: function(messageOrError){
+                this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
+            },
         },
         created: function () {
             // get capabilities and build pipelinesteps from it.
@@ -677,19 +702,19 @@
     .card.step {
         margin-bottom: 5px;
         padding: 10px;
+        border-radius: 25px;
     }
 
-    .static.step.start {
-        border-radius: 0.2em;
+    .static.step{
+        border-radius: 40px;
         margin-bottom: 5px;
         padding: 10px;
+    }
+    .start {
         background-color: rgba(255, 135, 91, 1);
     }
 
-    .static.step.end {
-        border-radius: 0.2em;
-        margin-bottom: 5px;
-        padding: 10px;
+    .end {
         background-color: rgba(69, 131, 174, 1);
     }
 
