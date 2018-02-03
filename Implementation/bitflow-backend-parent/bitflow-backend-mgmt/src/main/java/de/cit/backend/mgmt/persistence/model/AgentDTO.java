@@ -3,9 +3,7 @@ package de.cit.backend.mgmt.persistence.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -35,7 +33,7 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
 	private int port;
 	private AgentState status;
 	private Date lastChecked;
-	private List<CapabilityDTO> capabilities = new ArrayList<>();
+	private Set<CapabilityDTO> capabilities;
 
 	public AgentDTO() {
 	}
@@ -110,11 +108,11 @@ public class AgentDTO extends BaseIdEntity implements java.io.Serializable {
         inverseJoinColumns=
             @JoinColumn(name="CAPABILITY_ID", referencedColumnName="ID")
         )
-	public List<CapabilityDTO> getCapabilities() {
+	public Set<CapabilityDTO> getCapabilities() {
 		return this.capabilities;
 	}
 
-	public void setCapabilities(List<CapabilityDTO> capabilities) {
+	public void setCapabilities(Set<CapabilityDTO> capabilities) {
 		this.capabilities = capabilities;
 	}
 }

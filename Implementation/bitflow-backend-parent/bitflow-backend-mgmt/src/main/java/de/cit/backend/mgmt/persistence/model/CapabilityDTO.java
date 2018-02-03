@@ -2,8 +2,7 @@ package de.cit.backend.mgmt.persistence.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +22,7 @@ public class CapabilityDTO extends BaseIdEntity implements java.io.Serializable 
 	private String description;
 	private String requiredParams;
 	private String optionalParams;
-	private List<AgentDTO> agents = new ArrayList<>();
+	private Set<AgentDTO> agents;
 	
 	public CapabilityDTO() {
 	}
@@ -99,11 +98,11 @@ public class CapabilityDTO extends BaseIdEntity implements java.io.Serializable 
 	}
 
 	@ManyToMany(mappedBy="capabilities")
-	public List<AgentDTO> getAgents() {
+	public Set<AgentDTO> getAgents() {
 		return this.agents;
 	}
 
-	public void setAgents(List<AgentDTO> agents) {
+	public void setAgents(Set<AgentDTO> agents) {
 		this.agents = agents;
 	}
 	

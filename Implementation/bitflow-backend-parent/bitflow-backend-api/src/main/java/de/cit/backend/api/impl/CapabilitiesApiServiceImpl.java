@@ -1,21 +1,16 @@
 package de.cit.backend.api.impl;
 
-import de.cit.backend.agent.ApiResponse;
 import de.cit.backend.api.*;
 import de.cit.backend.api.model.*;
 
 
-import de.cit.backend.api.model.Capabilities;
-
 import java.util.List;
+import java.util.Set;
 
 import de.cit.backend.api.converter.CapabilityConverter;
 import de.cit.backend.mgmt.exceptions.BitflowException;
-import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.services.interfaces.IInfoService;
-
-import java.io.InputStream;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -44,7 +39,7 @@ public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
       // do some magic!
 		  try
 		  {
-			  List<CapabilityDTO> capa =infoService.loadAgentCapabilities(id);
+			  Set<CapabilityDTO> capa =infoService.loadAgentCapabilities(id);
 			  List<Capability> frontendcapa = new CapabilityConverter().convertToFrontend(capa); 
 			  return Response.ok().entity(frontendcapa).build();
 		  } catch (BitflowException e) {

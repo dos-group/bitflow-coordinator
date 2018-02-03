@@ -60,13 +60,15 @@ public class PersistenceService {
 		return entityManager.find(AgentDTO.class, agentId);
 	}
 	
-	public CapabilityDTO findCapability(String name){
-		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=?";
+	public CapabilityDTO findCapability(CapabilityDTO capa){
+		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=? and is_fork=? and description like ?";
 		Query query = entityManager.createNativeQuery(sqlQuery,CapabilityDTO.class);
-		query.setParameter(1, name);
+		query.setParameter(1, capa.getName());
+		query.setParameter(2, capa.isIsFork());
+		query.setParameter(3, capa.getDescription());
 		List<CapabilityDTO> results = query.getResultList();
-		CapabilityDTO capa = results.size() != 1 ? null : results.get(0);
-		return capa;
+		CapabilityDTO cap = results.size() != 1 ? null : results.get(0);
+		return cap;
 	}
 	
 	public void deleteUser(int userId) {
