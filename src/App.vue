@@ -4,20 +4,17 @@
     <header class="header">
       <nav class="inner">
         <span v-if="loggedInUser">
-        <router-link to="/projects">Projects</router-link>
-        <router-link to="/infrastructure">Infrastructure</router-link>
-          <!-- Example single danger button -->
-        <transition name="fade" mode="out-in">
-        </transition>
-        <div class="navbar-top-right">
-          {{loggedInUser.Name}}
-          <span v-on:click="logout" class="clickable-area">Logout
-          <icon name="sign-out" class="inline"/>
+          <router-link to="/projects">Projects</router-link>
+          <router-link to="/infrastructure">Infrastructure</router-link>
+          <transition name="fade" mode="out-in" />
+          <div class="navbar-top-right">
+            {{loggedInUser.Name}}
+            <span v-on:click="logout" class="clickable-area">Logout
+              <i class="fa fa-sign-out" />
             </span>
-        </div>
-          </span>
+          </div>
+        </span>
       </nav>
-
     </header>
 
     <transition v-if="loggedInUser" name="fade" mode="out-in">
@@ -163,10 +160,6 @@
 
   .action-button {
     margin: 5px 5px 10px 5px;
-  }
-
-  .inline {
-    vertical-align: middle;
   }
 
   .clickable-area {
