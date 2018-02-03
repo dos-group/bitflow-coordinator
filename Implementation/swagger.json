@@ -863,7 +863,11 @@ definitions:
         type: integer
         format: int32
         example: 6
-      NumberOfIdleAgents:
+      NumberOfOnlineAgents:
+        type: integer
+        format: int32
+        example: 3
+      NumberOfOfflineAgents:
         type: integer
         format: int32
         example: 3
@@ -936,6 +940,10 @@ definitions:
         type: integer
         format: int32
         example: 6
+      Status:
+        type: string
+        enum: [ONLINE, OFFLINE]
+        example: "ONLINE"
   Capabilities:
     type: object
     properties:

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import de.cit.backend.api.model.Tag;
 import java.util.List;
 import javax.validation.constraints.*;
@@ -22,6 +23,28 @@ public class Agent   {
   private Long usedMem = null;
   private Integer numProcs = null;
   private Integer goroutines = null;
+
+  /**
+   * Gets or Sets status
+   */
+  public enum StatusEnum {
+    ONLINE("ONLINE"),
+
+    OFFLINE("OFFLINE");
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+  }
+
+  private StatusEnum status = null;
 
   /**
    **/
@@ -131,6 +154,17 @@ public class Agent   {
     this.goroutines = goroutines;
   }
 
+  /**
+   **/
+
+  @ApiModelProperty(example = "ONLINE", value = "")
+  @JsonProperty("Status")
+  public StatusEnum getStatus() {
+    return status;
+  }
+  public void setStatus(StatusEnum status) {
+    this.status = status;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -149,12 +183,13 @@ public class Agent   {
         Objects.equals(usedCpu, agent.usedCpu) &&
         Objects.equals(usedMem, agent.usedMem) &&
         Objects.equals(numProcs, agent.numProcs) &&
-        Objects.equals(goroutines, agent.goroutines);
+            Objects.equals(goroutines, agent.goroutines) &&
+            Objects.equals(status, agent.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(hostname, tags, numCores, totalMem, usedCpuCores, usedCpu, usedMem, numProcs, goroutines);
+    return Objects.hash(hostname, tags, numCores, totalMem, usedCpuCores, usedCpu, usedMem, numProcs, goroutines, status);
   }
 
   @Override
@@ -171,6 +206,7 @@ public class Agent   {
     sb.append("    usedMem: ").append(toIndentedString(usedMem)).append("\n");
     sb.append("    numProcs: ").append(toIndentedString(numProcs)).append("\n");
     sb.append("    goroutines: ").append(toIndentedString(goroutines)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
   }

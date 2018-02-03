@@ -5,7 +5,9 @@ import java.util.List;
 
 import de.cit.backend.agent.api.model.Info;
 import de.cit.backend.api.model.Agent;
+import de.cit.backend.api.model.Agent.StatusEnum;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 
 public class AgentConverter implements Converter<AgentDTO, Agent> {
 
@@ -30,6 +32,7 @@ public class AgentConverter implements Converter<AgentDTO, Agent> {
 		out.setUsedCpu(info.getUsedCpu());
 		out.setUsedCpuCores(info.getUsedCpuCores());
 		out.setUsedMem(info.getUsedMem());
+		out.setStatus(AgentState.ONLINE.equals(in.getStatus()) ? StatusEnum.ONLINE : StatusEnum.OFFLINE);
 		return out;
 	}
 	

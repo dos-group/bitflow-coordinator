@@ -14,7 +14,8 @@ import io.swagger.annotations.*;
 public class Info   {
   
   private Integer numberOfAgents = null;
-  private Integer numberOfIdleAgents = null;
+  private Integer numberOfOnlineAgents = null;
+  private Integer numberOfOfflineAgents = null;
   private List<Agent> agents = new ArrayList<Agent>();
 
   /**
@@ -31,14 +32,26 @@ public class Info   {
 
   /**
    **/
-  
+
   @ApiModelProperty(example = "3", value = "")
-  @JsonProperty("NumberOfIdleAgents")
-  public Integer getNumberOfIdleAgents() {
-    return numberOfIdleAgents;
+  @JsonProperty("NumberOfOnlineAgents")
+  public Integer getNumberOfOnlineAgents() {
+    return numberOfOnlineAgents;
   }
-  public void setNumberOfIdleAgents(Integer numberOfIdleAgents) {
-    this.numberOfIdleAgents = numberOfIdleAgents;
+  public void setNumberOfOnlineAgents(Integer numberOfOnlineAgents) {
+    this.numberOfOnlineAgents = numberOfOnlineAgents;
+  }
+
+  /**
+   **/
+
+  @ApiModelProperty(example = "3", value = "")
+  @JsonProperty("NumberOfOfflineAgents")
+  public Integer getNumberOfOfflineAgents() {
+    return numberOfOfflineAgents;
+  }
+  public void setNumberOfOfflineAgents(Integer numberOfOfflineAgents) {
+    this.numberOfOfflineAgents = numberOfOfflineAgents;
   }
 
   /**
@@ -64,13 +77,14 @@ public class Info   {
     }
     Info info = (Info) o;
     return Objects.equals(numberOfAgents, info.numberOfAgents) &&
-        Objects.equals(numberOfIdleAgents, info.numberOfIdleAgents) &&
+            Objects.equals(numberOfOnlineAgents, info.numberOfOnlineAgents) &&
+            Objects.equals(numberOfOfflineAgents, info.numberOfOfflineAgents) &&
         Objects.equals(agents, info.agents);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(numberOfAgents, numberOfIdleAgents, agents);
+    return Objects.hash(numberOfAgents, numberOfOnlineAgents, numberOfOfflineAgents, agents);
   }
 
   @Override
@@ -79,7 +93,8 @@ public class Info   {
     sb.append("class Info {\n");
     
     sb.append("    numberOfAgents: ").append(toIndentedString(numberOfAgents)).append("\n");
-    sb.append("    numberOfIdleAgents: ").append(toIndentedString(numberOfIdleAgents)).append("\n");
+    sb.append("    numberOfOnlineAgents: ").append(toIndentedString(numberOfOnlineAgents)).append("\n");
+    sb.append("    numberOfOfflineAgents: ").append(toIndentedString(numberOfOfflineAgents)).append("\n");
     sb.append("    agents: ").append(toIndentedString(agents)).append("\n");
     sb.append("}");
     return sb.toString();

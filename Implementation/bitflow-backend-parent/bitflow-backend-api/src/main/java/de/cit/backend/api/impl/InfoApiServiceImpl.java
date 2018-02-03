@@ -15,6 +15,7 @@ import de.cit.backend.api.converter.AgentConverter;
 import de.cit.backend.api.model.Agent;
 import de.cit.backend.api.model.Info;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 import de.cit.backend.mgmt.services.interfaces.IAgentMonitoringService;
 import de.cit.backend.mgmt.services.interfaces.IInfoService;
 
@@ -41,12 +42,18 @@ public class InfoApiServiceImpl extends InfoApiService {
 		Info info = new Info();
 		final List<Agent> agentList = new ArrayList<Agent>(agents.size());
 		final AgentConverter agentConverter = new AgentConverter();
+		int onlineAgentsCounter = 0;
 		for(AgentDTO agent : agents) {
 			final de.cit.backend.agent.api.model.Info agentInfo = agentMonitoringService.getAgentInfo(agent.getId());
 			agentList.add(agentConverter.convertToFrontend(agent, agentInfo));
+			if(AgentState.ONLINE.equals(agent.getStatus())) {
+				onlineAgentsCounter++;
+			}
 		}
 		info.setAgents(agentList);
 		info.setNumberOfAgents(agents.size());
+		info.setNumberOfOnlineAgents(onlineAgentsCounter);
+		info.setNumberOfOfflineAgents(agents.size() - onlineAgentsCounter);
 		return Response.ok().entity(info).build();
 	}
 }
