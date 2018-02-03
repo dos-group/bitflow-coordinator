@@ -57,24 +57,26 @@
       <form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
 
     <b-modal
         id="edit-project-modal"
         ref="updateModal"
         title="Edit Project"
-        @ok="updateProject(selectedProject)"
+        @ok="updateProject"
         @shown="clearName"
     >
       <form @submit.stop.prevent="handleSubmit">
         <b-form-input type="text" placeholder="New Project Name" v-model="name"/>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
     <b-modal
         id="project-users-modal"
         ref="projectUsersModal"
         title="Project Users"
-        @shown="onAddUser(selectedProject)"
+        @shown="onAddUserModalOpen(selectedProject)"
         ok-title="Close"
         ok-only
     >
@@ -97,11 +99,13 @@
           </li>
         </ul>
       </form>
+      <span class="error-message">{{ modalErrorMessage }}</span>
     </b-modal>
 
     <b-modal id="delete-project-modal"
              ref="deleteModal"
              title="Delete Project?"
+             @close="clearName"
              @ok="deleteProject(selectedProject)"/>
   </div>
 </template>
@@ -118,7 +122,8 @@ export default {
       projects: [],
       selectedProject: {},
       projectUsersIDs: [],
-      users: []
+      users: [],
+      modalErrorMessage: ""
     };
   },
   async created() {
@@ -133,14 +138,19 @@ export default {
         return user.ID !== loggedInUser.ID
       });
     } catch (e) {
-      alert(e);
+      this.$notifyError(e);
     }
   },
   methods: {
     clearName() {
       this.name = "";
+      this.modalErrorMessage = "";
     },
-    async onAddUser(selectedProject) {
+    showModalErrorMessage(messageOrError){
+      this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
+    },
+    async onAddUserModalOpen(selectedProject) {
+      this.clearName();
       this.projectUsersIDs = selectedProject.Users.map(function (user) {
         return user.ID
       });
@@ -151,7 +161,7 @@ export default {
     async createProject(evt) {
       evt.preventDefault();
       if (!this.name) {
-        alert("Please enter a name");
+        this.showModalErrorMessage("Please enter a name");
       } else {
         var loggedInUser = this.$backendCli.getLoggedInUser()
         const project = {
@@ -167,30 +177,32 @@ export default {
           // add myself as user of the project
           await this.$backendCli.addUserToProject(resp.data.ID, loggedInUser.ID);
         } catch (e) {
-          alert(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
-    async updateProject(selectedProject) {
+    async updateProject(evt) {
+      evt.preventDefault();
       if (!this.name) {
-        alert("Please enter a name");
+        this.showModalErrorMessage("Please enter a name");
       } else {
         try {
-          let updatedProject = selectedProject;
+          let updatedProject = this.selectedProject;
           updatedProject.Name = this.name;
           await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
         } catch (e) {
-          alert(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
     async deleteProject(projectToDelete) {
       try {
         await this.$backendCli.deleteProject(projectToDelete.ID);
-        this.projects = this.$backendCli.getProjects();
+        var projectsResp = await this.$backendCli.getProjects();
+        this.projects = projectsResp.data;
         this.$refs.deleteModal.hide();
       } catch (e) {
-        alert(e);
+        this.$notifyError(e);
       }
     },
     async addUserToProject(selectedProject, userToAdd) {
@@ -199,7 +211,7 @@ export default {
         selectedProject.Users.push(userToAdd);
         this.projectUsersIDs.push(userToAdd.ID)
       } catch (e) {
-        alert(e);
+        this.showModalErrorMessage(e);
       }
     },
     async removeUserFromProject(selectedProject, userToRemove) {
@@ -212,16 +224,9 @@ export default {
           return u !== userToRemove.ID;
         });
       } catch (e) {
-        alert(e);
+        this.showModalErrorMessage(e);
       }
     }
   }
 };
 </script>
-<style scoped>
-  .clickable-area {
-    margin-left: 1em;
-    cursor: pointer;
-  }
-</style>
-

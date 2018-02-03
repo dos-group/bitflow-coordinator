@@ -30,10 +30,15 @@ export default new Router({
       component: Pipelines
     },
     {
-      path: '/project/:project_id/pipelines/:pipeline_id/editor',
+      path: '/project/:project_id/pipeline/:pipeline_id/editor',
       name: 'Editor',
       component: Editor
-    }
+    },
+      {
+          path: '/infrastructure/:project_id/pipeline/:pipeline_id/editor',
+          name: 'Editor',
+          component: Editor
+      }
   ],
   mode: "history"
 })

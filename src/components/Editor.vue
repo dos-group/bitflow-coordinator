@@ -44,6 +44,12 @@
                         <p class="card-text">Typ : {{step.Typ}}</p>
                     </div>
                 </div>
+                <b-modal
+                        id="add-pipeline-modal"
+                        ref="successModal"
+                        title="Pipeline Saved"
+                >
+                </b-modal>
             </div>
             <div class="svg-container col-lg-10 col-md-auto col-sm-auto">
                 <svg preserveAspectRatio="xMidYMid meet" class="svg-content" viewBox="0 0 200 100">
@@ -53,7 +59,6 @@
                             <path d="M 0 0 L 10 5 L 0 10 z"></path>
                         </marker>
                     </defs>
-
                     <g class="wholeGraph">
                         <path hidden d="m0,0 l 0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
                         <g class="lines">
@@ -491,17 +496,18 @@
             },
             updatePipeline: async function () {
                 {
-                    const pipeline = {
-                        ID: this.pipelineId,
-                        LastChanged: createCurrentTimeFormatted(),
-                        PipelineSteps: this.allNodes
-                    };
                     try {
+                        const pipeline = {
+                            "ID": this.$router.history.current.fullPath.split('/')[4],
+                            "LastChanged": createCurrentTimeFormatted(),
+                            "PipelineSteps": this.allNodes
+                        };
                         const resp = await this.$backendCli.updatePipeline(this.projectId, pipeline);
-                        this.pipelines.push(resp.data);
-                        //this.clearName;
-                        this.$refs.createModal.hide();
-                        console.log(resp);
+                        console.log(resp.statusText);
+                        if (resp.statusText == "Ok")
+                        {
+                            alert("Pipeline successfully Saved.")
+                        }
                     } catch (e) {
                         alert(e);
                     }
@@ -511,7 +517,6 @@
                 this.updatePipeline();
                 this.startPipeline();
             },
-
             startPipeline: async function () {
                 try {
                     console.log(this.pipelineId)
