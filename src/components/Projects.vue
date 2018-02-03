@@ -19,20 +19,20 @@
                  type="button"
                  class="btn btn-danger btn-md float-right action-button"
                  @click="selectedProject = item">
-            <icon name="trash" class="inline"/>
+            <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.edit-project-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedProject = item">
-            <icon name="edit" class="inline"/>
+            <i class="fa fa-edit" />
           </b-btn>
 
           <b-btn v-b-modal.project-users-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedProject = item">
-            <icon name="user" class="inline"/>
+            <i class="fa fa-user" />
           </b-btn>
 
           <div>
@@ -87,12 +87,12 @@
               <b-btn type="button" class="btn btn-success btn-md action-button"
                      @click="addUserToProject(selectedProject, user)"
                      v-if="projectUsersIDs.indexOf(user.ID) === -1">
-                <icon name="plus" class="inline"/>
+                <i class="fa fa-plus" />
               </b-btn>
               <b-btn type="button" class="btn btn-md action-button"
                      @click="removeUserFromProject(selectedProject, user)"
                      v-else>
-                <icon name="minus" class="inline"/>
+                <i class="fa fa-minus" />
               </b-btn>
               {{ user.Name }} ({{ user.Email }})
             </span>

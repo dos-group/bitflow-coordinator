@@ -20,21 +20,21 @@
                  class="btn btn-danger btn-md float-right action-button"
                  @click="selectedId = item.ID"
           >
-            <icon name="trash" class="inline"/>
+            <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedId = item.ID"
           >
-            <icon name="copy" class="inline"/>
+            <i class="fa fa-copy" />
           </b-btn>
           <b-btn
               type="button"
               class="btn btn-secondary btn-md float-right action-button"
               @click="startPipeline(item.ID)"
           >
-            <icon name="play" class="inline"/>
+            <i class="fa fa-play" />
           </b-btn>
           <div>
             <router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}"
