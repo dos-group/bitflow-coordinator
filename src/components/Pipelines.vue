@@ -155,7 +155,7 @@ export default {
           template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
           template.Name = this.name;
           template.LastChanged = createCurrentTimeFormatted();
-          const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
+          const resp = await this.$backendCli.createPipeline(this.projectId, template);
           this.pipelines.push(resp.data);
           this.clearName;
           this.$refs.cloneModal.hide();
