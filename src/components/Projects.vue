@@ -173,9 +173,9 @@ export default {
           const resp = await this.$backendCli.createProject(project);
           this.projects.push(resp.data);
           this.clearName();
-          this.$refs.createModal.hide();
           // add myself as user of the project
           await this.$backendCli.addUserToProject(resp.data.ID, loggedInUser.ID);
+          this.$refs.createModal.hide();
         } catch (e) {
           this.showModalErrorMessage(e);
         }
@@ -189,7 +189,8 @@ export default {
         try {
           let updatedProject = this.selectedProject;
           updatedProject.Name = this.name;
-          await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
+          await this.$backendCli.updateProject(updatedProject.ID, updatedProject);
+          this.$refs.updateModal.hide();
         } catch (e) {
           this.showModalErrorMessage(e);
         }
