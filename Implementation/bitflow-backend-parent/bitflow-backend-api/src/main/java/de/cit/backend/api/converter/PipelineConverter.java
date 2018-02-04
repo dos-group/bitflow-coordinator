@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.cit.backend.api.model.Pipeline;
-import de.cit.backend.api.model.PipelineStep;
+import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
-import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 
 public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 	
@@ -40,14 +39,24 @@ public class PipelineConverter implements Converter<PipelineDTO, Pipeline>{
 		out.setLastChanged(in.getLastChanged());
 		out.setSript(ScriptGenerator.generateScriptForPipeline(in));
 		out.setPipelineSteps(new PipelineStepConverter().convertToFrontend(in.getPipelineSteps()));
+		
+		Project project = new Project();
+		out.setProject(project);
 		return out;
 	}
 	
-	public List<Pipeline> convertToFrontend(List<PipelineDTO> in) {
+	public List<Pipeline> convertToFrontend(List<PipelineDTO> in, Integer projectId) {
 		List<Pipeline> out = new ArrayList<Pipeline>();
 		for (PipelineDTO pipelineDTO : in) {
-			out.add(this.convertToFrontend(pipelineDTO));
+			out.add(this.convertToFrontend(pipelineDTO, projectId));
 		}
 		return out;
+	}
+
+	public Pipeline convertToFrontend(PipelineDTO savedPipe, Integer projectId) {
+		Pipeline pipe = convertToFrontend(savedPipe);
+		pipe.getProject().setID(projectId);
+		
+		return pipe;
 	}
 }

@@ -16,19 +16,19 @@ public class ValidatorTest {
 	@Test
 	public void testUserValidation(){
 		UserDTO user = createTestUser("TestAdmin", "test@test.com", "pwd");
-		List<BitflowFrontendError> errors = Validator.validate(Validator.getUserValidators(user));
+		List<BitflowFrontendError> errors = Validator.validate(Validator.getUserValidators(user, true));
 		Assert.assertTrue(errors.isEmpty());
 		
 		user = createTestUser("", "test@test.com", "pwd");
-		errors = Validator.validate(Validator.getUserValidators(user));
+		errors = Validator.validate(Validator.getUserValidators(user, true));
 		Assert.assertTrue(errors.size() == 1);
 		
 		user = createTestUser("", "test@test.com", "");
-		errors = Validator.validate(Validator.getUserValidators(user));
+		errors = Validator.validate(Validator.getUserValidators(user, true));
 		Assert.assertTrue(errors.size() == 2);
 		
 		user = createTestUser("TestAdmin", null, LONG_STRING);
-		errors = Validator.validate(Validator.getUserValidators(user));
+		errors = Validator.validate(Validator.getUserValidators(user, true));
 		Assert.assertTrue(errors.size() == 2);
 	}
 

@@ -38,17 +38,16 @@ public class ProjectService implements IProjectService {
 	}
 	
 	@Override
-	public ProjectDTO loadProject(int projectId) {
+	public ProjectDTO loadProject(int projectId) throws BitflowException {
 		ProjectDTO pro = persistence.findProject(projectId);
 		
-		if(pro == null) return null;//TODO remove later
+		if(pro == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PROJECT_ERROR_OBJECT);
+		}
 		Hibernate.initialize(pro.getUserdata());
 		Hibernate.initialize(pro.getProjectMembers());
 		Hibernate.initialize(pro.getPipelines());
-//		List<PipelineDTO> lines = pro.getPipelines();
-//		for (PipelineDTO pipelineDTO : lines) {
-//			Hibernate.initialize(pipelineDTO.getPipelineSteps());
-//		}
+
 		return pro;
 	}
 

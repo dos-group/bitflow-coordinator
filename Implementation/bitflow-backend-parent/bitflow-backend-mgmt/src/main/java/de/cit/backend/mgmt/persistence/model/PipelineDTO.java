@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -106,6 +107,7 @@ public class PipelineDTO extends BaseIdEntity implements java.io.Serializable {
 	}
 	
 	@OneToMany(mappedBy="pipeline", fetch=FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true )
+	@OrderBy("startedAt DESC")
 	public List<PipelineHistoryDTO> getPipelineHistory() {
 		return pipelineHistory;
 	}

@@ -18,6 +18,7 @@ import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
@@ -109,7 +110,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
 			pipe = pipelineService.loadPipelineFromProject(projectId, pipelineId);
-			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe)).build();
+			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe, projectId)).build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
@@ -125,7 +126,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
 			PipelineDTO savedPipe = projectService.saveNewPipeline(converter.convertToBackend(body), id);
-			return Response.ok().entity(converter.convertToFrontend(savedPipe)).build();
+			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
@@ -226,7 +227,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			}
 			pro = projectService.loadProject(id);
 			List<PipelineDTO> pipes = pipelineService.loadPipelinesFromProject(id);
-			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes)).build();
+			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes, id)).build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
@@ -262,20 +263,44 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			List<PipelineHistoryDTO> hist = pipelineService.loadPipelineHistory(projectId, pipelineId);
 			
 			return Response.ok().entity(new PipelineHistoryConverter().convertToFrontend(hist)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
+		}
+	}
+	
+	@Override
+	public Response projectProjectIdPipelinePipelineIdHistoryLastGet(Integer projectId, Integer pipelineId,
+			SecurityContext securityContext) throws NotFoundException {
+		try {
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			PipelineHistoryDTO hist = pipelineService.loadPipelineHistoryLast(projectId, pipelineId);
+
+			return Response.ok().entity(new PipelineHistoryConverter().convertToFrontend(hist)).build();
+		} catch (Exception e) {
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
-	private boolean isMemberOfProject(final Integer projectId, final String username) {
+	private boolean isMemberOfProject(final Integer projectId, final String username) throws BitflowException {
 		final ProjectDTO project = projectService.loadProject(projectId);
 		if(project.getUserdata().getName().equals(username)) return true;
 		for(UserDTO user : project.getProjectMembers()) {
 			if(user.getName().equals(username)) return true;
 		}
 		return false;
+	}
+	
+	private void checkIfProjectMember(Integer projectId, String username) throws BitflowException {
+		final ProjectDTO project = projectService.loadProject(projectId);
+		if(project.getUserdata().getName().equals(username)){
+			return;
+		}
+		for(UserDTO user : project.getProjectMembers()) {
+			if(user.getName().equals(username)){
+				return;
+			}
+		}
+		throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 	}
 
 

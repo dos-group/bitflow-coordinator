@@ -94,4 +94,15 @@ public class PipelineService implements IPipelineService {
 		return pipe.getPipelineHistory();
 	}
 
+	@Override
+	public PipelineHistoryDTO loadPipelineHistoryLast(Integer projectId, Integer pipelineId) throws BitflowException {
+		PipelineDTO pipe = persistence.findPipeline(pipelineId);
+		if(pipe == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PIPELINE_ERROR_OBJECT);
+		}
+		Hibernate.initialize(pipe.getPipelineHistory());
+		
+		return pipe.getPipelineHistory().get(0);
+	}
+
 }

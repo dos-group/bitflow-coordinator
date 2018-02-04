@@ -268,4 +268,22 @@ public class ProjectApi  {
     throws NotFoundException {
         return delegate.projectProjectIdUsersUserIdPost(projectId,userId,securityContext);
     }
+    @GET
+    @AuthLevel(UserRoleEnum.STANDARD)
+    @Path("/{projectId}/pipeline/{pipelineId}/history/last")
+    @Consumes({ "application/json", "application/xml" })
+    @Produces({ "application/json" })
+    @io.swagger.annotations.ApiOperation(value = "Get state of latest execution.", notes = "Get state of latest execution.", response = PipelineHistory.class, authorizations = {
+        @io.swagger.annotations.Authorization(value = "BasicAuth")
+    }, tags={ "pipeline", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "Pipeline infos", response = PipelineHistory.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 400, message = "If the user has no access to that project", response = PipelineHistory.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "If the project with the given id does not exist.", response = PipelineHistory.class) })
+    public Response projectProjectIdPipelinePipelineIdHistoryLastGet( @PathParam("projectId") Integer projectId, @PathParam("pipelineId") Integer pipelineId,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.projectProjectIdPipelinePipelineIdHistoryLastGet(projectId,pipelineId,securityContext);
+    }
 }

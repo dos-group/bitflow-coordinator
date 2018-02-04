@@ -5,7 +5,14 @@ import java.util.List;
 
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
-import de.cit.backend.mgmt.persistence.model.*;
+import de.cit.backend.mgmt.persistence.model.AgentDTO;
+import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
+import de.cit.backend.mgmt.persistence.model.ConfigurationDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
+import de.cit.backend.mgmt.persistence.model.ProjectDTO;
+import de.cit.backend.mgmt.persistence.model.UserDTO;
 
 public abstract class Validator {
 
@@ -19,16 +26,18 @@ public abstract class Validator {
 	
 	public abstract void validate() throws BitflowException;
 	
-	public static List<Validator> getUserValidators(UserDTO user){
+	public static List<Validator> getUserValidators(UserDTO user, boolean validatePwd){
 		List<Validator> validators = new ArrayList<>();
-		validators.add(new NotNullValidator(user.getRegisteredSince(), "Registration date must be set."));
-		validators.add(new NotNullValidator(user.getRole(), "User role must be set."));
+		//validators.add(new NotNullValidator(user.getRegisteredSince(), "Registration date must be set."));
+		//validators.add(new NotNullValidator(user.getRole(), "User role must be set."));
 		validators.add(new NotEmptyValidator(user.getEmail(), "Email must be provided."));
 		validators.add(new NotEmptyValidator(user.getName(), "Name must be provided."));
-		validators.add(new NotEmptyValidator(user.getPassword(), "Password must be provided."));
 		validators.add(new StringLengthValidator(user.getEmail(), "Limit for email is 128 characters.", 128));
 		validators.add(new StringLengthValidator(user.getName(), "Limit for name is 128 characters.", 128));
-		validators.add(new StringLengthValidator(user.getPassword(), "Limit for password is 128 characters.", 128));
+		if(validatePwd){
+			validators.add(new NotEmptyValidator(user.getPassword(), "Password must be provided."));
+			validators.add(new StringLengthValidator(user.getPassword(), "Limit for password is 128 characters.", 128));
+		}
 
 		return validators;
 	}
