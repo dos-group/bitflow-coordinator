@@ -38,18 +38,29 @@
 				</b-table>
 			</b-tab>
 			<b-tab title="Running Pipelines">
+				<div class="row">
+					<select v-model="selected" class="form-control" @change="filterPipeline()">
+						<option value="" disabled hidden>Filter according to project</option>
+						<option v-for="project in projects" v-bind:value="project.ID">
+							{{ project.Name }}
+						</option>
+					</select>
+					<span>{{ selected }}</span>
+				</div>
+				<div class="row">
 				<ul class="pipeline-list list-group">
 					<li v-for="item in runningPipelines" :key="item.ID">
 						<div class="list-item list-group-item">
 							<div class="pipeline-box">
 								<!--TODO: item.Project is null for all test data -->
-								<router-link :to="{path: '/projects/' + item.Project + '/pipelines/' + item.ID + '/editor'}"
+								<router-link :to="{path: '/project/' + selected + '/pipelines/' + item.ID + '/editor'}"
 									class="list-item-link"
 								>{{ item.Name }}</router-link>
 							</div>
 						</div>
 					</li>
 				</ul>
+				</div>
 			</b-tab>
 		</b-tabs>
   </div>
@@ -63,7 +74,9 @@ export default {
       title: "Infrastructure",
       numberOfAgents: null,
       numberOfIdleAgents: null,
-			runningPipelinesCount: null,
+		runningPipelinesCount: null,
+        projects: [],
+		selected: '',
       agents: [],
       agentFields: [
         { key: "Hostname", label: "Host Name" },
@@ -81,8 +94,10 @@ export default {
   },
   async created() {
     try {
-			const infoResponse = await this.$backendCli.getInfo();
-			const info = infoResponse.data;
+        const projectsResp = await this.$backendCli.getProjects();
+        this.projects = projectsResp.data;
+		const infoResponse = await this.$backendCli.getInfo();
+		const info = infoResponse.data;
       this.numberOfAgents = info.NumberOfAgents == null ? "?" : String(info.NumberOfAgents);
       this.numberOfIdleAgents = info.NumberOfIdleAgents == null ? "?" : String(info.NumberOfIdleAgents);
 			this.runningPipelinesCount = "?"; //TODO: not provided by API yet
@@ -93,7 +108,20 @@ export default {
     } catch (e) {
       this.$notifyError(e);
     }
-  }
+  },
+    methods:{
+        filterPipeline : async function () {
+          // to do Change the list of pipelines displayed.
+          try {
+              const resp = await this.$backendCli.getPipelines(this.selected);
+              this.runningPipelines = resp.data;
+              console.log("success");
+          }catch(e){
+              alert(e);
+		  }
+		  
+      }
+	}
 };
 </script>
 
@@ -111,4 +139,6 @@ export default {
 .pipeline-box {
 	padding: 15px 0px 15px 0px;
 }
+	.row
+	{padding: 10px;}
 </style>

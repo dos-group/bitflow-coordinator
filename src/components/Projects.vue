@@ -18,13 +18,15 @@
           <b-btn v-b-modal.delete-project-modal
                  type="button"
                  class="btn btn-danger btn-md float-right action-button"
-                 @click="selectedProject = item">
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Delete Project">
             <icon name="trash" class="inline"/>
           </b-btn>
           <b-btn v-b-modal.edit-project-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
-                 @click="selectedProject = item">
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Edit Project Details">
             <icon name="edit" class="inline"/>
           </b-btn>
 
@@ -35,7 +37,7 @@
             <icon name="user" class="inline"/>
           </b-btn>
 
-          <div>
+          <div v-b-tooltip.hover title='Click name to see details'>
             <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link">
               {{ item.Name }}
             </router-link>
