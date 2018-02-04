@@ -2,6 +2,8 @@ package de.cit.backend.mgmt.exceptions;
 
 import java.io.Serializable;
 
+import javax.ws.rs.core.Response;
+
 public class BitflowFrontendError implements Serializable {
 
 	private int errorCode;
@@ -26,5 +28,14 @@ public class BitflowFrontendError implements Serializable {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+	
+	public static Response handleException(Exception ex){
+		if(ex instanceof BitflowException){
+			BitflowException be = (BitflowException)ex;
+			return Response.status(be.getHttpStatus()).entity(be.toFrontendFormat()).build();
+		}else{
+			return Response.status(400).entity(new BitflowException(ex).toFrontendFormat()).build();
+		}
 	}
 }

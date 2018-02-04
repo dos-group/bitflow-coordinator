@@ -121,4 +121,8 @@ public class PersistenceService {
 	public void mergeObject(Object object){
 		entityManager.merge(object);
 	}
+	
+	public void flush(){
+		entityManager.flush();
+	}
 }

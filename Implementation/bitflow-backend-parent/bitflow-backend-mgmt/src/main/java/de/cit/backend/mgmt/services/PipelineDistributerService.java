@@ -147,6 +147,7 @@ public class PipelineDistributerService {
 		hist.setPipeline(pipeline);
 		
 		persistence.saveObject(hist);
+		persistence.flush();
 		return hist;
 	}
 

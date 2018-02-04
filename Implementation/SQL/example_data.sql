@@ -1,11 +1,11 @@
 -- Example Agents
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("10.200.2.231", "8080",NULL,0, NULL);
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("10.200.2.231", "5555",NULL,0, NULL);
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("10.200.1.146", "8080",NULL,0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("10.200.2.231", "8080",0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("10.200.2.231", "5555",0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("10.200.1.146", "8080",0, NULL);
 
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8082",NULL,0, NULL);
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8083",NULL,0, NULL);
-INSERT INTO `AGENT` (`ip_address`,`port`,`capabilities`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8084",NULL,0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8082",0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8083",0, NULL);
+INSERT INTO `AGENT` (`ip_address`,`port`,`status`,`LAST_CHECKED`) VALUES ("127.0.0.1", "8084",0, NULL);
 
 -- Example Users
 INSERT INTO `USERDATA` (`email`,`password`,`name`,`registered_since`,`role`) VALUES ("john.doe@example.com", "john", "doe",CURDATE(), 1);

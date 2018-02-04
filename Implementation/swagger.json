@@ -489,6 +489,41 @@ paths:
           description: "If the project with the given id does not exist."
           schema:
             $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}/history/last:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Get state of latest execution."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Get state of latest execution.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            $ref: "#/definitions/PipelineHistory"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /login:
     post:
       tags: 
