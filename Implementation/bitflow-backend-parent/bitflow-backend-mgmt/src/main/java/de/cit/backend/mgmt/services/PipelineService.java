@@ -1,5 +1,6 @@
 package de.cit.backend.mgmt.services;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -103,6 +104,14 @@ public class PipelineService implements IPipelineService {
 		Hibernate.initialize(pipe.getPipelineHistory());
 		
 		return pipe.getPipelineHistory().get(0);
+	}
+
+	@Override
+	public void updatePipeline(int projectId, int pipelineId, PipelineDTO pipeline) throws BitflowException {
+		PipelineDTO pipe = this.loadPipelineFromProject(projectId, pipelineId);
+		pipe.setLastChanged(new Date());
+		pipe.setName(pipeline.getName());
+		// TODO set script? update pipeline steps?	
 	}
 
 }

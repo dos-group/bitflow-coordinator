@@ -14,5 +14,5 @@ public interface IPipelineService {
 	DeploymentInformation[] executePipeline(Integer projectId, Integer pipelineId) throws BitflowException;
 	List<PipelineHistoryDTO> loadPipelineHistory(Integer projectId, Integer pipelineId) throws BitflowException;
 	PipelineHistoryDTO loadPipelineHistoryLast(Integer projectId, Integer pipelineId) throws BitflowException;
-	
+	void updatePipeline(int projectId, int pipelineId, PipelineDTO pipeline) throws BitflowException;
 }

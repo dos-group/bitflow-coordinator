@@ -143,15 +143,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
-			pro = projectService.loadProject(projectId);
-			for (PipelineDTO pipeline : pro.getPipelines()) {
-				if (pipeline.getId().equals(pipelineId)) {
-					pipeline.setLastChanged(new Date());
-					pipeline.setName(body.getName());
-					// TODO set script? update pipeline steps?
-					break;
-				}
-			}
+			pipelineService.updatePipeline(projectId, pipelineId, converter.convertToBackend(body));		
 			return Response.ok().build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
