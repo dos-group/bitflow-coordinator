@@ -210,6 +210,41 @@ public abstract class AbstractPipelineTest {
 	}
 
 	/**
+	 *           o--o
+	 *          /    \
+	 *      o--o      o--o
+	 *     /    \    /
+	 * o--o      o--o
+	 *     \    
+	 *      o--o
+	 * @return
+	 */
+	protected PipelineDTO createTestPipeline2Sinks() {
+		PipelineDTO pipe = new PipelineDTO();
+		List<PipelineStepDTO> succ = new ArrayList<>();
+		
+		succ.add(createTestPipelineStep(FILE_SINK, StepTypeEnum.SINK, 11));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 10, succ.get(0)));
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 9, succ.get(1)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 8, succ.get(2)));
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 7, succ.get(1)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 6, succ.get(4)));
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 5, succ.get(3), succ.get(5)));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 4, succ.get(6)));
+		
+		succ.add(createTestPipelineStep(FILE_SINK, StepTypeEnum.SINK, 3));
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 2, succ.get(8)));
+		
+		succ.add(createTestPipelineStep(AVG_OPERATION, StepTypeEnum.OPERATION, 1, succ.get(7), succ.get(9)));
+		succ.add(createTestPipelineStep(LOCAL_PORT_SOURCE, StepTypeEnum.SOURCE, 0, succ.get(10)));
+		pipe.setPipelineSteps(succ);
+		return pipe;
+	}
+	
+	/**
 	 *     /\
 	 * o--o--o
 	 *

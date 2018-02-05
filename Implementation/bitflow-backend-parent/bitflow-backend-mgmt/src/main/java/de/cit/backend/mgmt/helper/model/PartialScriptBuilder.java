@@ -1,5 +1,6 @@
 package de.cit.backend.mgmt.helper.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,10 +14,13 @@ public class PartialScriptBuilder {
 	private static final String CLOSE_FORK = "}";
 	private static final String CLOSE_BRANCH = ";";
 	
+	private List<Integer> forkOnDifferentAgents;
+	
 	private Map<Integer, DeploymentInformation> partialScriptMap;
 
 	public PartialScriptBuilder() {
 		partialScriptMap = new HashMap<>();
+		forkOnDifferentAgents = new ArrayList<>();
 	}
 	
 	public void appendToScript(int agent, List<Integer> succAgents, String script){
@@ -38,6 +42,8 @@ public class PartialScriptBuilder {
 			deleteFromScript(agent, 2);
 			appendToScript(agent, null,"} ");
 		}
+		
+			forkOnDifferentAgents.add(forkSizeOverall - forkSizeOnDifferentAgents);			
 	}
 	
 	public void initIfNeeded(int agent){
@@ -64,9 +70,26 @@ public class PartialScriptBuilder {
 			i++;
 		}
 		
+		calculateTCPLimit(ret);
+		
 		return ret;
 	}
 	
+	private void calculateTCPLimit(DeploymentInformation[] infos) {
+		int countRef = 0;
+		int identifier = 0;
+		for(int i=0; i<infos.length; i++){
+			countRef = 0;
+			identifier = infos[i].getIdentifier();
+			for(DeploymentInformation info : infos){
+				if(info.getSuccessorAgents().contains(identifier)){
+					countRef++;
+				}
+			}
+			infos[i].setTcpLimit(countRef);
+		}
+	}
+
 	private void validateAndClean(){
 		for(DeploymentInformation info : partialScriptMap.values()){
 			validateAndClean(info.getScriptBuider());
@@ -86,5 +109,12 @@ public class PartialScriptBuilder {
 		}
 	}
 	
-	
+	public void closeParatheses(int agent){
+		int openForkcount = StringUtils.countMatches(partialScriptMap.get(agent).getScriptBuider(), OPEN_FORK);
+		int closeForkcount = StringUtils.countMatches(partialScriptMap.get(agent).getScriptBuider(), CLOSE_FORK);
+		
+		for(int i=0; i< openForkcount - closeForkcount; i++){
+			appendToScript(agent, null, " } ");
+		}
+	}
 }

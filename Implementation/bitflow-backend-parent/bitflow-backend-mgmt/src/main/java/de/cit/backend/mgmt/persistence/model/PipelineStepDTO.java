@@ -173,6 +173,6 @@ public class PipelineStepDTO extends BaseIdEntity implements java.io.Serializabl
 
 	@Override
 	public String toString() {
-		return "Step " + stepNumber;
+		return "Step " + stepNumber + "(" + agentAdvice + ")";
 	}
 }

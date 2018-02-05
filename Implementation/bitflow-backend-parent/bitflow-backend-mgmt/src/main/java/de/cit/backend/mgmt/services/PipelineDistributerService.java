@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -19,9 +18,13 @@ import de.cit.backend.agent.ApiException;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.PipelineApi;
 import de.cit.backend.agent.api.model.PipelineResponse;
+import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.helper.model.DeploymentInformation;
-import de.cit.backend.mgmt.helper.service.PartialScriptGenerator;
+import de.cit.backend.mgmt.helper.model.DeploymentResponse;
+import de.cit.backend.mgmt.helper.service.PartialScriptGeneratorSimple;
 import de.cit.backend.mgmt.helper.service.PipelineDistributer2;
+import de.cit.backend.mgmt.helper.service.PipelineDistributer3;
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
@@ -54,8 +57,6 @@ public class PipelineDistributerService {
 	private int proxyPort;
 	private int proxyTries;
 	
-	private boolean useLocalhost = true;//true;
-	private final String local = "127.0.0.1"; 
 	
 	@PostConstruct
 	public void init(){
@@ -67,11 +68,7 @@ public class PipelineDistributerService {
 	
 	private List<AgentDTO> reloadAvailableAgents(){
 		List<AgentDTO> list = persistence.findAgentsByState(AgentState.ONLINE);
-		if(useLocalhost){
-			return list.stream().filter((a) -> a.getIpAddress().contains(local)).collect(Collectors.toList());
-		}else{
-			return list.stream().filter((a) -> !a.getIpAddress().contains(local)).collect(Collectors.toList());
-		}
+		return list;
 	}
 	
 	public PipelineDTO suggestPipelineDistribution(PipelineDTO pipeline){
@@ -122,22 +119,139 @@ public class PipelineDistributerService {
 		return null;
 	}
 	
-	public DeploymentInformation[] distributedDeployment(PipelineDTO pipeline){
+	public DeploymentResponse distributedDeployment(PipelineDTO pipeline) throws BitflowException{
 		if(pipeline.getPipelineSteps().isEmpty()){
 			return null;
 		}
 		init();
-		suggestPipelineDistribution(pipeline);
-		DeploymentInformation[] deployment = PartialScriptGenerator.generateParallelScripts(pipeline);
+		//suggestPipelineDistribution(pipeline);
+		PipelineDistributer3 distributer;
+		if(idleAgents.size() < maxSplit){
+			distributer = new PipelineDistributer3(idleAgents.size());
+		}else{
+			distributer = new PipelineDistributer3(maxSplit);
+		}
 		
-		deployPipelines(deployment);
+		distributer.distributePipeline(pipeline);
+		PartialScriptGeneratorSimple scriptGen = new PartialScriptGeneratorSimple();
+		DeploymentInformation[] deployment = scriptGen.generateParallelScripts(pipeline);
+				//PartialScriptGenerator.generateParallelScripts(pipeline);
+		
+		try{
+			deployPipelines(deployment);
+		}catch (BitflowException ex) {
+			log.error(ex);
+			log.info("Doing complete deployment instead.");
+			deployment = deployOnSingleAgent(pipeline);
+		}
 		//assignAgentsToPipeline(pipeline);
 		
 		PipelineHistoryDTO hist = createPipelineHistory(pipeline);
 		
 		pipeMonitor.monitorPipeline(deployment, hist);
 		
-		return deployment;
+		return new DeploymentResponse(deployment, hist.getId());
+	}
+
+	private void deployPipelines(DeploymentInformation[] deployment) throws BitflowException {
+		
+		Map<Integer, String> agentMapping = new HashMap<>();
+		
+		for(DeploymentInformation info : deployment){
+			log.info(info);
+		}
+		
+		int i= 0;
+		while(i < deployment.length){
+			for(DeploymentInformation info : deployment){
+				if(agentMapping.containsKey(info.getIdentifier())){
+					continue;
+				}
+				if(allDependenciesFulfilled(agentMapping, info)){
+					String proxyAdress = findPortAndDeploy(info, agentMapping);
+					agentMapping.put(info.getIdentifier(), proxyAdress);
+				}
+			}
+			i++;
+		}
+	}
+
+	private boolean allDependenciesFulfilled(Map<Integer, String> agentMapping, DeploymentInformation info) {
+		for(int i : info.getSuccessorAgents()){
+			if(!agentMapping.containsKey(i)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private String findPortAndDeploy(DeploymentInformation info, Map<Integer, String> agentMapping) throws BitflowException {
+		String[] dependencies = new String[info.getSuccessorAgents().size()];
+		
+		for(int i=0;i<dependencies.length;i++){
+			dependencies[i] = agentMapping.get(info.getSuccessorAgents().get(i));
+		}
+		
+		info.deployOnAgent(idleAgents.get(0), proxyPort);
+		idleAgents.remove(0);
+		
+		return deployPipelineOn(info, dependencies);
+	}
+
+
+	private String deployPipelineOn(DeploymentInformation deploy, String[] sinkParams) throws BitflowException{
+		for(int i = 0; i < proxyTries; i++){
+			ApiClient conf = getApiClientConfig(deploy.getAgentAdress());
+			PipelineApi pipelineApi = new PipelineApi(conf);
+			
+			try {
+				log.info(deploy.getFormattedScript(i, sinkParams));
+				PipelineResponse resp = pipelineApi.pipelinePost(deploy.getFormattedScript(i, sinkParams), null, deploy.getTcpLimitFormatted());
+				log.info("Deployed with proxy " + deploy.getAdjustedTCPAdress(i));
+				deploy.setPipelineIdOnAgent(resp.getID());
+				deploy.deployedWithProxy(i, sinkParams);
+				return deploy.getAdjustedTCPAdress(i);
+			} catch (ApiException e) {
+				log.debug(String.format(PORT_ERROR, deploy.getAdjustedTCPAdress(i)));
+				if(e.getResponseBody() != null && e.getResponseBody().contains(String.format(PORT_ERROR, deploy.getAdjustedTCPAdress(i)))){
+					continue;					
+				}
+			}			
+		}
+		
+		throw new BitflowException(ExceptionConstants.DISTRIBUTED_DEPLOYMENT_FAILED_ERROR);
+	}
+	
+	private DeploymentInformation[] deployOnSingleAgent(PipelineDTO pipeline) throws BitflowException {
+		init();
+		if(idleAgents.isEmpty()){
+			throw new BitflowException(ExceptionConstants.NO_AGENT_ONLINE_ERROR);
+		}
+		
+		DeploymentInformation deployInfo = new DeploymentInformation(0);
+		deployInfo.deployOnAgent(idleAgents.get(0), proxyPort);
+		idleAgents.remove(0);
+		deployInfo.appendToScript(ScriptGenerator.generateScriptForPipeline(pipeline));
+		
+		ApiClient conf = getApiClientConfig(deployInfo.getAgentAdress());
+		PipelineApi pipelineApi = new PipelineApi(conf);
+		
+		PipelineResponse resp;
+		try {
+			resp = pipelineApi.pipelinePost(deployInfo.getScript(), null, null);
+			deployInfo.setPipelineIdOnAgent(resp.getID());
+			return new DeploymentInformation[]{deployInfo};
+		} catch (ApiException e) {
+			log.error(e);
+			throw new BitflowException(e);
+		}
+	}
+	
+	private ApiClient getApiClientConfig(String agendAdress){
+		ApiClient conf = Configuration.getDefaultApiClient();
+		conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
+		conf.setBasePath(agendAdress);
+		return conf;
 	}
 	
 	private PipelineHistoryDTO createPipelineHistory(PipelineDTO pipeline) {
@@ -149,71 +263,5 @@ public class PipelineDistributerService {
 		persistence.saveObject(hist);
 		persistence.flush();
 		return hist;
-	}
-
-	private void deployPipelines(DeploymentInformation[] deployment) {
-		
-		Map<Integer, String> agentMapping = new HashMap<>();
-		
-		int i= 0;
-		while(i < deployment.length){
-			for(DeploymentInformation info : deployment){
-				if(agentMapping.containsKey(info.getIdentifier())){
-					continue;
-				}
-				if(dependenciesFulfilled(agentMapping, info)){
-					agentMapping.put(info.getIdentifier(), findPortAndDeploy(info, agentMapping));
-				}
-			}
-			i++;
-		}
-	}
-
-	private boolean dependenciesFulfilled(Map<Integer, String> agentMapping, DeploymentInformation info) {
-		for(int i : info.getSuccessorAgents()){
-			if(!agentMapping.containsKey(i)){
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private String findPortAndDeploy(DeploymentInformation info, Map<Integer, String> agentMapping) {
-		String[] dependencies = new String[info.getSuccessorAgents().size()];
-		for(int i=0;i<dependencies.length;i++){
-			dependencies[i] = agentMapping.get(info.getSuccessorAgents().get(i));
-		}
-		
-		
-		
-		info.deployOnAgent(idleAgents.get(0), proxyPort);
-		idleAgents.remove(0);
-		
-		return deployPipelineOn(info, dependencies);
-	}
-
-
-	private String deployPipelineOn(DeploymentInformation deploy, String[] sinkParams){
-		for(int i = 0; i < proxyTries; i++){
-			ApiClient conf = Configuration.getDefaultApiClient();
-			conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
-			conf.setBasePath(deploy.getAgentAdress());
-
-			PipelineApi pipelineApi = new PipelineApi(conf);
-			try {
-				System.out.println(deploy.getFormattedScript(i));
-				PipelineResponse resp = pipelineApi.pipelinePost(deploy.getFormattedScript(i, sinkParams), null, PARAM_TCP_LIMIT);
-				System.out.println("Deployed on " + deploy.getAdjustedTCPAdress(i));
-				deploy.setPipelineIdOnAgent(resp.getID());
-				return deploy.getAdjustedTCPAdress(i);
-			} catch (ApiException e) {
-				System.out.println(String.format(PORT_ERROR, deploy.getAdjustedTCPAdress(i)));
-				if(e.getResponseBody() != null && e.getResponseBody().contains(String.format(PORT_ERROR, deploy.getAdjustedTCPAdress(i)))){
-					continue;					
-				}
-			}			
-		}
-		//FIXME starte gesamte Pipeline auf einem Agent
-		return null;
 	}
 }

@@ -15,12 +15,13 @@ import de.cit.backend.api.converter.DeploymentInfoConverter;
 import de.cit.backend.api.converter.PipelineConverter;
 import de.cit.backend.api.converter.PipelineHistoryConverter;
 import de.cit.backend.api.converter.ProjectConverter;
+import de.cit.backend.api.model.DeploymentInfo;
 import de.cit.backend.api.model.Pipeline;
 import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
-import de.cit.backend.mgmt.helper.model.DeploymentInformation;
+import de.cit.backend.mgmt.helper.model.DeploymentResponse;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
@@ -232,15 +233,14 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 
 		try {
-			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
-			DeploymentInformation[] deployment = pipelineService.executePipeline(projectId, pipelineId);
-			return Response.ok().entity(new DeploymentInfoConverter().convertToFrontend(deployment)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
+			DeploymentResponse deployment = pipelineService.executePipeline(projectId, pipelineId);
+			DeploymentInfo response = new DeploymentInfoConverter().convertToFrontend(deployment.getPartialDeployments());
+			response.setHistoryID(deployment.getHistoryId());
+			return Response.ok().entity(response).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -248,10 +248,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
     public Response projectProjectIdPipelinePipelineIdHistoryGet(Integer projectId,Integer pipelineId,SecurityContext securityContext)
     throws NotFoundException {
 		try{
-			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
-				final BitflowException e = new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-				return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
-			}
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
 			List<PipelineHistoryDTO> hist = pipelineService.loadPipelineHistory(projectId, pipelineId);
 			
 			return Response.ok().entity(new PipelineHistoryConverter().convertToFrontend(hist)).build();

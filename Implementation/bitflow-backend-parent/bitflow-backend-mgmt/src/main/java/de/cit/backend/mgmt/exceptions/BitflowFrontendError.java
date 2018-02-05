@@ -4,8 +4,12 @@ import java.io.Serializable;
 
 import javax.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
+
 public class BitflowFrontendError implements Serializable {
 
+	private static final Logger log = Logger.getLogger(BitflowFrontendError.class);
+	
 	private int errorCode;
 	private String errorMessage;
 	
@@ -35,6 +39,7 @@ public class BitflowFrontendError implements Serializable {
 			BitflowException be = (BitflowException)ex;
 			return Response.status(be.getHttpStatus()).entity(be.toFrontendFormat()).build();
 		}else{
+			log.error(ex);
 			return Response.status(400).entity(new BitflowException(ex).toFrontendFormat()).build();
 		}
 	}

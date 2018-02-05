@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
-import de.cit.backend.mgmt.helper.model.DeploymentInformation;
+import de.cit.backend.mgmt.helper.model.DeploymentResponse;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
@@ -76,7 +76,7 @@ public class PipelineService implements IPipelineService {
 	}
 
 	@Override
-	public DeploymentInformation[] executePipeline(Integer projectId, Integer pipelineId) throws BitflowException {
+	public DeploymentResponse executePipeline(Integer projectId, Integer pipelineId) throws BitflowException {
 		PipelineDTO pipeline = loadPipelineFromProject(projectId, pipelineId);	
 		
 		//pipelineDistributer.suggestPipelineDistribution(pipeline);
@@ -97,13 +97,8 @@ public class PipelineService implements IPipelineService {
 
 	@Override
 	public PipelineHistoryDTO loadPipelineHistoryLast(Integer projectId, Integer pipelineId) throws BitflowException {
-		PipelineDTO pipe = persistence.findPipeline(pipelineId);
-		if(pipe == null){
-			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PIPELINE_ERROR_OBJECT);
-		}
-		Hibernate.initialize(pipe.getPipelineHistory());
-		
-		return pipe.getPipelineHistory().get(0);
+		List<PipelineHistoryDTO> history = loadPipelineHistory(projectId, pipelineId);
+		return history.get(0);
 	}
 
 	@Override

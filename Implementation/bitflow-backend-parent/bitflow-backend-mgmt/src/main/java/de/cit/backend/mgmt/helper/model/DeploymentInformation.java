@@ -11,16 +11,20 @@ public class DeploymentInformation {
 	public static final String PLACEHOLDER_SINK = "%sink%";
 	public static final String HTTP_PREFIX = "http://";
 	public static final String LISTEN_PREFIX = "listen://";
+	public static final String TCP_LIMIT = "-tcp-limit ";
 	
 	private int identifier;
 	private String agentAdress;
 	private StringBuilder scriptBuilder;
 	private String tcpIP;
 	private int tcpPort;
+	private int tcpLimit;
 	private boolean withProxy;
 	private int numberOfProxySinks;
 	private List<Integer> successorAgents;
 	private int pipelineIdOnAgent = -1;
+	private int portIndex;
+	private String[] sinkParams;
 	
 	
 	public DeploymentInformation(int identifier) {
@@ -92,11 +96,17 @@ public class DeploymentInformation {
 	
 	public String getFormattedScript(int portIndex, String... sinks){
 		String script = getScript();
-		for(int i=0;i<sinks.length;i++){
-			script = script.replaceFirst(PLACEHOLDER_SINK, sinks[i]);
+		if(sinks != null){
+			for(int i=0;i<sinks.length;i++){
+				script = script.replaceFirst(PLACEHOLDER_SINK, sinks[i]);
+			}
 		}
 		script = script.replaceFirst(PLACEHOLDER_SOURCE, LISTEN_PREFIX + getAdjustedTCPAdress(portIndex));
 		return script;
+	}
+	
+	public String getFormattedScript(){
+		return getFormattedScript(this.portIndex, this.sinkParams);
 	}
 	
 	@Override
@@ -117,7 +127,6 @@ public class DeploymentInformation {
 				successorAgents.add(successor);
 			}
 		}
-		
 	}
 	
 	public void deployOnAgent(AgentDTO agentDto, int proxyPort){
@@ -126,4 +135,21 @@ public class DeploymentInformation {
 		this.tcpPort = proxyPort;
 	}
 	
+	public void deployedWithProxy(int portIndex, String... sinks){
+		this.portIndex = portIndex;
+		this.sinkParams = sinks;
+	}
+
+	public void setTcpLimit(int count) {
+		this.tcpLimit = count;
+	}
+	public int getTcpLimit() {
+		return this.tcpLimit;
+	}
+	public String getTcpLimitFormatted() {
+		if(getScript().contains(PLACEHOLDER_SOURCE)){
+			return TCP_LIMIT + this.tcpLimit;//-tcp-limit 1
+		}
+		return null;
+	}
 }

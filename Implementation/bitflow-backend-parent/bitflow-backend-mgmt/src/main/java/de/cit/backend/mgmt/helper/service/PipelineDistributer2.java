@@ -78,7 +78,7 @@ public class PipelineDistributer2 {
 		int agent = 0;
 		List<Integer> successors = new ArrayList<>();
 		for(PipelineStepDTO step : steps){
-			if(successors.contains(step.getStepNumber()) && (numberOfAgents < 0 || agent < numberOfAgents - 1 )){
+			if(canAssignNewAgent(step, successors, numberOfAgents, agent)){
 				agent++;
 			}
 			if(neverJoinedForks.contains(step.getStepNumber())){
@@ -86,6 +86,10 @@ public class PipelineDistributer2 {
 			}
 			step.setAgentAdvice(agent);
 		}
-		
+	}
+	
+	private static boolean canAssignNewAgent(PipelineStepDTO step, List<Integer> successors ,int numberOfAgents , int currentAgent){
+		return successors.contains(step.getStepNumber()) 
+				&& (numberOfAgents < 0 || currentAgent < numberOfAgents - 1);
 	}
 }

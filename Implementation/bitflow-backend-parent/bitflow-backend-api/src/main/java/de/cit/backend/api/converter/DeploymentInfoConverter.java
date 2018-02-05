@@ -23,7 +23,7 @@ public class DeploymentInfoConverter implements Converter<DeploymentInformation,
 		for(DeploymentInformation d : instanceToConvert){
 			PartialDeployment part = new PartialDeployment();
 			part.setAgentAdress(d.getAgentAdress());
-			part.setPartialScript(d.getScript());//FIXME
+			part.setPartialScript(d.getFormattedScript());
 			part.setPipelineIdOnAgent(d.getPipelineIdOnAgent());
 			
 			deployment.getPartialDeployments().add(part);

@@ -22,11 +22,12 @@ public class ForkStorage {
 		currentForkList.add(count + 1);
 	}
 	
-	public void closeFork(){
+	public int closeFork(){
 		forkSizeList.remove(size - 1);
 		forkJoinSteps.remove(size - 1);
 		currentForkList.remove(size - 1);
 		size--;
+		return size;
 	}
 	
 	public boolean isForkClosed(int stepnumber){

@@ -9,8 +9,11 @@ public enum ExceptionConstants {
 	OBJECT_NOT_FOUND_ERROR(5, "The %s you requested does not exist or could not be found.", 404),
     VALIDATION_ERROR(10,"Validation failed: %s", 400),
     UNAUTHORIZED_ERROR(21, "You are not authorized to execute the requested action.", 403),
-    PIPELINE_VALIDATION_ERROR(31, "The pipeline you provided seems to have some errors: %s", 400);
+    PIPELINE_VALIDATION_ERROR(31, "The pipeline you provided seems to have some errors: %s", 400),
 
+	NO_AGENT_ONLINE_ERROR(41, "There is no bitflow-agent online, the pipeline can not be started. Please make sure at least "
+			+ "one agent is available.", 500),
+	DISTRIBUTED_DEPLOYMENT_FAILED_ERROR(42, "Distributed deployment failed, most likely because the port allocation failed.", 500);
 	
 	private int code;
 	private String message;
