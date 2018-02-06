@@ -40,7 +40,7 @@ public class BitflowFrontendError implements Serializable {
 			return Response.status(be.getHttpStatus()).entity(be.toFrontendFormat()).build();
 		}else{
 			log.error(ex);
-			return Response.status(400).entity(new BitflowException(ex).toFrontendFormat()).build();
+			return Response.status(500).entity(new BitflowException(ex).toFrontendFormat()).build();
 		}
 	}
 }

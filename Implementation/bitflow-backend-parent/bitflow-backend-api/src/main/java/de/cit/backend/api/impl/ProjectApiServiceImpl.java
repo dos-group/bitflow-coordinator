@@ -1,6 +1,5 @@
 package de.cit.backend.api.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.naming.Context;
@@ -49,15 +48,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectIdGet(Integer id, SecurityContext securityContext) throws NotFoundException {
 		try {
-			if(!isMemberOfProject(id, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
+			
 			ProjectDTO project = projectService.loadProject(id);
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(project)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 	
@@ -65,15 +61,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectIdPost(Integer id, Project project, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
-			if(!isMemberOfProject(id, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
+			
 			ProjectDTO pro = projectService.updateProject(id, new ProjectConverter().convertToBackend(project));
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
-		} catch(BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();			
 		} catch(Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -82,10 +75,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		try {
 			ProjectDTO pro = projectService.createProject(new ProjectConverter().convertToBackend(project),securityContext.getUserPrincipal().getName());
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
-		} catch(BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();			
 		} catch(Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -94,12 +85,10 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 		try {
 			projectService.deletePipeline(pipelineId);
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+			return Response.ok().build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
-		return Response.ok().build();
 	}
 
 	@Override
@@ -107,15 +96,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 		PipelineDTO pipe;
 		try {
-			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
 			pipe = pipelineService.loadPipelineFromProject(projectId, pipelineId);
 			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipe, projectId)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -123,15 +109,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectIdPipelinePost(Pipeline body, Integer id, SecurityContext securityContext) throws NotFoundException {
 		PipelineConverter converter = new PipelineConverter();
 		try{
-			if(!isMemberOfProject(id, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
+			
 			PipelineDTO savedPipe = projectService.saveNewPipeline(converter.convertToBackend(body), id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 	
@@ -141,15 +124,12 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		PipelineConverter converter = new PipelineConverter();
 		ProjectDTO pro;
 		try {
-			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
 			pipelineService.updatePipeline(projectId, pipelineId, converter.convertToBackend(body));		
 			return Response.ok().build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -157,14 +137,11 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectIdUsersGet(Integer id, SecurityContext securityContext) throws NotFoundException {
 		ProjectDTO pro;
 		try {
-			if(!isMemberOfProject(id, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
+			
 			pro = projectService.loadProject(id);
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 		
 		return Response.ok().entity(new ProjectConverter().convertToFrontend(pro).getUsers()).build();
@@ -175,26 +152,21 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 		try {
 			projectService.removeUserFromProject(projectId, userId);
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+			return Response.ok().build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
-		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectProjectIdUsersUserIdPost(Integer projectId, Integer userId, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
-			if(!isMemberOfProject(projectId, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
 			projectService.assignUserToProject(projectId, userId);
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 		return Response.ok().build();
 	}
@@ -203,28 +175,23 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectIdDelete(Integer id, SecurityContext securityContext) throws NotFoundException {
 		try {
 			projectService.deleteProject(id);
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
+			return Response.ok().build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
-		return Response.ok().build();
 	}
 
 	@Override
 	public Response projectIdPipelinesGet(Integer id, SecurityContext securityContext) throws NotFoundException {
         ProjectDTO pro;
 		try {
-			if(!isMemberOfProject(id, securityContext.getUserPrincipal().getName())) {
-				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
-			}
+			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
+			
 			pro = projectService.loadProject(id);
 			List<PipelineDTO> pipes = pipelineService.loadPipelinesFromProject(id);
 			return Response.ok().entity(new PipelineConverter().convertToFrontend(pipes, id)).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -263,21 +230,13 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			SecurityContext securityContext) throws NotFoundException {
 		try {
 			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
+			
 			PipelineHistoryDTO hist = pipelineService.loadPipelineHistoryLast(projectId, pipelineId);
 
 			return Response.ok().entity(new PipelineHistoryConverter().convertToFrontend(hist)).build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
 		}
-	}
-
-	private boolean isMemberOfProject(final Integer projectId, final String username) throws BitflowException {
-		final ProjectDTO project = projectService.loadProject(projectId);
-		if(project.getUserdata().getName().equals(username)) return true;
-		for(UserDTO user : project.getProjectMembers()) {
-			if(user.getName().equals(username)) return true;
-		}
-		return false;
 	}
 	
 	private void checkIfProjectMember(Integer projectId, String username) throws BitflowException {
