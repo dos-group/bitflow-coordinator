@@ -45,7 +45,6 @@
 							{{ project.Name }}
 						</option>
 					</select>
-					<span>{{ selected }}</span>
 				</div>
 				<div class="row">
 				<ul class="pipeline-list list-group">
