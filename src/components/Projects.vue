@@ -90,12 +90,14 @@
             <span>
               <b-btn type="button" class="btn btn-success btn-md action-button"
                      @click="addUserToProject(selectedProject, user)"
-                     v-if="projectUsersIDs.indexOf(user.ID) === -1">
+                     v-if="projectUsersIDs.indexOf(user.ID) === -1"
+                     v-b-tooltip.hover title="Add User">
                 <i class="fa fa-plus" />
               </b-btn>
               <b-btn type="button" class="btn btn-md action-button"
                      @click="removeUserFromProject(selectedProject, user)"
-                     v-else>
+                     v-else
+                     v-b-tooltip.hover title="Remove User">
                 <i class="fa fa-minus" />
               </b-btn>
               {{ user.Name }} ({{ user.Email }})

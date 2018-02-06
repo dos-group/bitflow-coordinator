@@ -48,7 +48,7 @@
 			</b-tab>
 			<b-tab title="Running Pipelines">
 				<div class="row">
-					<select v-model="selected" class="form-control" @change="filterPipeline()">
+					<select v-model="selected" class="form-control project-drowdown" @change="filterPipeline()">
 						<option value="" disabled hidden>Filter according to project</option>
 						<option v-for="project in projects" v-bind:value="project.ID">
 							{{ project.Name }}
@@ -59,7 +59,7 @@
 				<ul class="pipeline-list list-group">
 					<li v-for="item in runningPipelines" :key="item.ID">
 						<div class="list-item list-group-item">
-							<div class="pipeline-box">
+							<div>
 								<!--TODO: item.Project is null for all test data -->
 								<router-link :to="{path: '/project/' + selected + '/pipelines/' + item.ID + '/editor'}"
 									class="list-item-link"
@@ -148,5 +148,10 @@ export default {
 	padding: 15px 0px 15px 0px;
 }
 	.row
-	{padding: 10px;}
+	{padding: 10px;
+	}
+	.project-drowdown
+	{
+		width: 30%;
+	}
 </style>
