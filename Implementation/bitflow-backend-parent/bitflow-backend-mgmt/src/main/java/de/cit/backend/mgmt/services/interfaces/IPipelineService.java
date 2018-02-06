@@ -9,6 +9,7 @@ import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 
 public interface IPipelineService {
 
+	PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer id) throws BitflowException;
 	List<PipelineDTO> loadPipelinesFromProject(int projectId) throws BitflowException;
 	PipelineDTO loadPipelineFromProject(int projectId, int pipelineId) throws BitflowException;
 	DeploymentResponse executePipeline(Integer projectId, Integer pipelineId) throws BitflowException;

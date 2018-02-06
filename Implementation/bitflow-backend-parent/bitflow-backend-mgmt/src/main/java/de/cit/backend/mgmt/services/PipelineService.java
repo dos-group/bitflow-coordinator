@@ -40,6 +40,39 @@ public class PipelineService implements IPipelineService {
 	}
 	
 	@Override
+	public PipelineDTO saveNewPipeline(PipelineDTO pipeline, Integer projectId) throws BitflowException {
+		ProjectDTO project = persistence.findProject(projectId);
+		if(project == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, ProjectService.PROJECT_ERROR_OBJECT);
+		}
+		pipeline.setLastChanged(new Date());
+		pipeline.getProjects().add(project);
+		project.getPipelines().add(pipeline);
+		persistence.saveObject(pipeline);
+		
+		setSuccessors(pipeline.getPipelineSteps());
+		return pipeline;
+	}
+
+	private void setSuccessors(List<PipelineStepDTO> pipelineSteps) throws BitflowException {
+		for(PipelineStepDTO step : pipelineSteps){
+			for(int succ : step.getSuccessorsFlat()){
+				step.getSuccessors().add(findPipelineStepByNumber(pipelineSteps, succ));
+			}
+		}
+	}
+	
+	private PipelineStepDTO findPipelineStepByNumber(List<PipelineStepDTO> pipelineSteps, int succ) throws BitflowException {
+		for(PipelineStepDTO step : pipelineSteps){
+			if(step.getStepNumber() == succ){
+				return step;
+			}
+		}
+		throw new BitflowException(ExceptionConstants.PIPELINE_VALIDATION_ERROR, 
+				"There is a stepnumber referenced, that is not assigned to any pipeline step!");
+	}
+	
+	@Override
 	public PipelineDTO loadPipelineFromProject(int projectId, int pipelineId) throws BitflowException {
 		ProjectDTO pro = persistence.findProject(projectId);
 
@@ -79,8 +112,6 @@ public class PipelineService implements IPipelineService {
 	public DeploymentResponse executePipeline(Integer projectId, Integer pipelineId) throws BitflowException {
 		PipelineDTO pipeline = loadPipelineFromProject(projectId, pipelineId);	
 		
-		//pipelineDistributer.suggestPipelineDistribution(pipeline);
-		//return pipelineDistributer.deployPipeline(pipeline);
 		return pipelineDistributer.distributedDeployment(pipeline);//.get(0);
 	}
 
@@ -105,8 +136,17 @@ public class PipelineService implements IPipelineService {
 	public void updatePipeline(int projectId, int pipelineId, PipelineDTO pipeline) throws BitflowException {
 		PipelineDTO pipe = this.loadPipelineFromProject(projectId, pipelineId);
 		pipe.setLastChanged(new Date());
-		pipe.setName(pipeline.getName());
-		// TODO set script? update pipeline steps?	
+		
+		pipeline.setLastChanged(new Date());
+		persistence.mergeObject(pipeline);
+		
+		for(PipelineStepDTO step : pipeline.getPipelineSteps()){
+			step.getSuccessors().clear();
+		}
+		//FIXME further testing and simplification
+		persistence.flush();
+		setSuccessors(pipeline.getPipelineSteps());
+		persistence.mergeObject(pipeline);
+		persistence.flush();
 	}
-
 }

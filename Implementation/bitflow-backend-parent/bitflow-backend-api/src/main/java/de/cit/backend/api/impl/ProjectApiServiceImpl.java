@@ -111,7 +111,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		try{
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
 			
-			PipelineDTO savedPipe = projectService.saveNewPipeline(converter.convertToBackend(body), id);
+			PipelineDTO savedPipe = pipelineService.saveNewPipeline(converter.convertToBackend(body), id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
