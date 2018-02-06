@@ -14,6 +14,7 @@ import de.cit.backend.mgmt.helper.model.PartialScriptBuilder;
 import de.cit.backend.mgmt.helper.model.SuccessorTracker;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 public class PartialScriptGeneratorSimple {
 
@@ -93,7 +94,12 @@ public class PartialScriptGeneratorSimple {
 				firstStepsAfterFork.addAll(succIndexes);
 				currentForkSize.add(succIndexes.size());
 				int forkOnDifferentAgents = countBranchesOnDifferentAgents(steps, succIndexes, agent);
-				scriptBuilder.forkDetected(agent, succIndexes.size(), forkOnDifferentAgents);
+				
+				if(steps.get(index).getType() == StepTypeEnum.SOURCE){
+					scriptBuilder.splitSourceToAgents(agent, succAgents, ScriptGenerator.generateScriptForPipelineStep(steps.get(index)));
+				}else{
+					scriptBuilder.forkDetected(agent, succIndexes.size(), forkOnDifferentAgents);					
+				}
 			}else if(succIndexes.size() == 0){
 				
 			}else{

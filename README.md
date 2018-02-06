@@ -28,11 +28,12 @@
 * POST project
 * POST project/{id}
 * GET capabilities
-* GET project/{id}/pipeline/{id}/history 
+* GET project/{id}/pipeline/{id}/history
+* GET project/{id}/pipeline/{id}/history/last 
+* POST project/{id}/pipeline/{id}/start (working with restrictions)
+
 
 # API-Methods not yet working
 
 * POST project/{id}/pipeline/{id} (update pipeline in project)
-* POST project/{id}/pipeline/{id}/start (execute pipeline)
-
 

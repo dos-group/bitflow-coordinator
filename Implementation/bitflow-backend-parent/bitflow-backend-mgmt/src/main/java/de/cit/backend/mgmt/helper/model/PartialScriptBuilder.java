@@ -15,7 +15,6 @@ public class PartialScriptBuilder {
 	private static final String CLOSE_BRANCH = ";";
 	
 	private List<Integer> forkOnDifferentAgents;
-	
 	private Map<Integer, DeploymentInformation> partialScriptMap;
 
 	public PartialScriptBuilder() {
@@ -31,19 +30,19 @@ public class PartialScriptBuilder {
 	private void deleteFromScript(int agent, int count){
 		partialScriptMap.get(agent).deleteFromScript(count);
 	}
-	
-	public void forkDetected(int agent, int forkSizeOverall, int forkSizeOnDifferentAgents){
+
+	public void forkDetected(Integer agent, int forkSizeOverall, int forkSizeOnDifferentAgents) {
 		partialScriptMap.get(agent).setNumberOfProxySinks(forkSizeOnDifferentAgents);
 		appendToScript(agent, null, " -> { ");
-		for(int i=0; i<forkSizeOnDifferentAgents;i++){
+		for (int i = 0; i < forkSizeOnDifferentAgents; i++) {
 			appendToScript(agent, null, DeploymentInformation.PLACEHOLDER_SINK + "; ");
 		}
-		if(forkSizeOnDifferentAgents == forkSizeOverall){
+		if (forkSizeOnDifferentAgents == forkSizeOverall) {
 			deleteFromScript(agent, 2);
-			appendToScript(agent, null,"} ");
+			appendToScript(agent, null, "} ");
 		}
-		
-			forkOnDifferentAgents.add(forkSizeOverall - forkSizeOnDifferentAgents);			
+
+		forkOnDifferentAgents.add(forkSizeOverall - forkSizeOnDifferentAgents);
 	}
 	
 	public void initIfNeeded(int agent){
@@ -116,5 +115,22 @@ public class PartialScriptBuilder {
 		for(int i=0; i< openForkcount - closeForkcount; i++){
 			appendToScript(agent, null, " } ");
 		}
+	}
+
+	public void splitSourceToAgents(int currentAgent, List<Integer> succAgents, String sourceDef) {
+		appendToScript(currentAgent, null, " -> ");
+		
+		for(int successorAgent : succAgents){
+			if(currentAgent != successorAgent){
+				if(partialScriptMap.containsKey(successorAgent)){
+					throw new IllegalStateException("The order seems to be messed up, please fix.");
+				}
+				partialScriptMap.put(successorAgent, new DeploymentInformation(successorAgent));
+				
+				partialScriptMap.get(successorAgent).appendToScript(sourceDef + " -> ");
+				
+			}
+		}
+		partialScriptMap.get(currentAgent).removeSuccessors(succAgents);
 	}
 }

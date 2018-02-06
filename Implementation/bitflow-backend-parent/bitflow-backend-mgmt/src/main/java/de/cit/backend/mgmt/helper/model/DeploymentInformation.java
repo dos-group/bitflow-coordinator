@@ -129,6 +129,14 @@ public class DeploymentInformation {
 		}
 	}
 	
+	public void removeSuccessors(List<Integer> succAgents) {
+		for(Integer successor : succAgents){
+			if(successorAgents.contains(successor)){
+				successorAgents.remove(successor);
+			}
+		}
+	}
+	
 	public void deployOnAgent(AgentDTO agentDto, int proxyPort){
 		this.agentAdress = agentDto.getIpAddress() + ":" + agentDto.getPort();
 		this.tcpIP = agentDto.getIpAddress();

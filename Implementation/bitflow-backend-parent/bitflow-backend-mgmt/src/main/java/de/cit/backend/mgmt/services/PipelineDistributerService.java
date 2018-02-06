@@ -192,6 +192,10 @@ public class PipelineDistributerService {
 			dependencies[i] = agentMapping.get(info.getSuccessorAgents().get(i));
 		}
 		
+		if(idleAgents.isEmpty()){
+			throw new BitflowException(ExceptionConstants.NO_AGENT_ONLINE_ERROR);
+		}
+		
 		info.deployOnAgent(idleAgents.get(0), proxyPort);
 		idleAgents.remove(0);
 		

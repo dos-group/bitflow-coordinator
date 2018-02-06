@@ -53,6 +53,12 @@ public class PipelineOrderTest extends AbstractPipelineTest{
 	}
 	
 	@Test
+	public void testSortPipelineSourceFork() throws IllegalStateException{
+		PipelineDTO testObj = createTestPipelineSourceFork();
+		checkOrder(testObj, "0456123789");
+	}
+	
+	@Test
 	public void testSortPipelineWithCycle() throws IllegalStateException{
 		PipelineDTO testObj = createTestPipelineWithCycle();
 		

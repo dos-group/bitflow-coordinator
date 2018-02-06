@@ -91,7 +91,20 @@ public class PartialScriptGeneratorTest2 extends AbstractPipelineTest{
 				"%source% -> avg(param1=value1, param2=value2) -> output.csv");
 	}
 	
-	
+	@Test
+	public void testPartialScriptGenerationSourceFork() throws BitflowException{
+		System.out.println("Building script for source fork");
+		PipelineDTO test = createTestPipelineSourceFork();
+		DeploymentInformation[] deploy = generateScripts(test);
+		printDeployment(deploy);
+		
+		Assert.assertEquals(deploy[0].getScript(),
+				"127.0.0.1 -> avg(param1=value1, param2=value2) -> avg(param1=value1, param2=value2) -> output.csv");
+		Assert.assertEquals(deploy[1].getScript(),
+				"127.0.0.1 -> avg(param1=value1, param2=value2) -> avg(param1=value1, param2=value2) -> output.csv");
+		Assert.assertEquals(deploy[2].getScript(),
+				"127.0.0.1 -> avg(param1=value1, param2=value2) -> avg(param1=value1, param2=value2) -> output.csv");
+	}
 	
 	private void printDeployment(DeploymentInformation[] deploy) {
 		for(DeploymentInformation info : deploy){
