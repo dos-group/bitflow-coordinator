@@ -20,25 +20,27 @@
                  class="btn btn-danger btn-md float-right action-button"
                  @click="selectedProject = item"
                  v-b-tooltip.hover title="Delete Project">
-            <icon name="trash" class="inline"/>
+            <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.edit-project-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedProject = item"
                  v-b-tooltip.hover title="Edit Project Details">
-            <icon name="edit" class="inline"/>
+            <i class="fa fa-edit" />
           </b-btn>
 
           <b-btn v-b-modal.project-users-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
-                 @click="selectedProject = item">
-            <icon name="user" class="inline"/>
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Manage Users">
+            <i class="fa fa-user" />
           </b-btn>
 
-          <div v-b-tooltip.hover title='Click name to see details'>
-            <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link">
+          <div >
+            <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link"
+                         v-b-tooltip.hover title="Click to see details" >
               {{ item.Name }}
             </router-link>
           </div>
@@ -89,12 +91,12 @@
               <b-btn type="button" class="btn btn-success btn-md action-button"
                      @click="addUserToProject(selectedProject, user)"
                      v-if="projectUsersIDs.indexOf(user.ID) === -1">
-                <icon name="plus" class="inline"/>
+                <i class="fa fa-plus" />
               </b-btn>
               <b-btn type="button" class="btn btn-md action-button"
                      @click="removeUserFromProject(selectedProject, user)"
                      v-else>
-                <icon name="minus" class="inline"/>
+                <i class="fa fa-minus" />
               </b-btn>
               {{ user.Name }} ({{ user.Email }})
             </span>
@@ -175,9 +177,9 @@ export default {
           const resp = await this.$backendCli.createProject(project);
           this.projects.push(resp.data);
           this.clearName();
-          this.$refs.createModal.hide();
           // add myself as user of the project
           await this.$backendCli.addUserToProject(resp.data.ID, loggedInUser.ID);
+          this.$refs.createModal.hide();
         } catch (e) {
           this.showModalErrorMessage(e);
         }
@@ -191,7 +193,8 @@ export default {
         try {
           let updatedProject = this.selectedProject;
           updatedProject.Name = this.name;
-          await this.$backendCli.updateProject(selectedProject.ID, updatedProject);
+          await this.$backendCli.updateProject(updatedProject.ID, updatedProject);
+          this.$refs.updateModal.hide();
         } catch (e) {
           this.showModalErrorMessage(e);
         }

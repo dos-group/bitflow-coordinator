@@ -93,13 +93,21 @@ export function getPipelines(projectId) {
 export async function getRunningPipelinesOfAllProjects() {
   const projects = await getProjects();
   const projectIDs = projects.data.map(project => project.ID);
-  var allPipelines = [];
+  var allPipelinesNested = [];
   for (let i = 0; i < projectIDs.length; i++) {
     const pipelinesOfProject = await getPipelines(projectIDs[i]);
-    allPipelines.push(pipelinesOfProject.data);
+    allPipelinesNested.push(pipelinesOfProject.data);
   }
-  return flatten(allPipelines);
-  //TODO: filter running ones, API not ready
+  const allPipelines =  flatten(allPipelinesNested);
+  var runningPipelines = [];
+  for (let i = 0; i < allPipelines.length; i++) {
+    const historyReponse = await getHistory(27/*allPipelines[i].Project*/, allPipelines[i].ID); //TODO: change
+    const history = historyReponse.data;
+    if (history[history.length - 1] == "running") {
+      runningPipelines.push(allPipelines[i]);
+    }
+  }
+  return runningPipelines;
 }
 export function getPipeline(projectId, pipelineId) {
   return axios.get("/project/" + projectId + "/pipeline/" + pipelineId);
@@ -115,6 +123,9 @@ export function startPipeline(projectId, pipelineId) {
 }
 export function deletePipeline(projectId, pipelineId) {
   return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
+}
+export function getHistory(projectId, pipelineId) {
+  return axios.get("/project/" + projectId + "/pipeline/" + pipelineId + "/history");
 }
 
 function flatten(arr) {

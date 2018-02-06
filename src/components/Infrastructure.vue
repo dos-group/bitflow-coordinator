@@ -17,18 +17,27 @@
 		<b-tabs>
 			<b-tab title="Agents" active>
 				<b-table striped responsive :items="agents" :fields="agentFields">
-					<template slot="tags" slot-scope="row">
+					<template slot="Tags" slot-scope="row">
 						<b-button size="sm" @click.stop="row.toggleDetails" class="mr-2">
 						{{ row.detailsShowing ? 'Hide' : 'Show'}} Tags
 						</b-button>
 					</template>
 					<template slot="row-details" slot-scope="row">
 						<b-card>
-							<b-row v-for="tag in row.item.Tags" :key="tag.Slots" class="mb-2">
-								<b-col sm="2" class="text-sm-right"><b>Resources:</b></b-col>
-								<b-col>{{ tag.Resources }}</b-col>
-								<b-col sm="2" class="text-sm-right"><b>Slots:</b></b-col>
-								<b-col>{{ tag.Slots }}</b-col>
+							<!-- TODO: reactivate!! 
+							<b-row v-for="tag in row.item.Tags" :key="tag.Slots" class="mb-2"> 
+							-->
+							<b-row v-for="tag in testTags" :key="testTags.indexOf(tag)" class="mb-2">
+								<b-col sm="2" class="text-sm-right">
+									<b-row v-for="tagKey in Object.keys(tag)" :key="Object.keys(tag).indexOf(tagKey)" class="mb-2">
+										<b>{{ tagKey }}</b>
+									</b-row>
+								</b-col>
+								<b-col sm="2" class="text-sm-right">
+									<b-row v-for="tagValue in Object.values(tag)" :key="Object.values(tag).indexOf(tagValue)" class="mb-2">
+										{{ tagValue }}
+									</b-row>
+								</b-col>
 							</b-row>
 						</b-card>
 					</template>
@@ -88,22 +97,22 @@ export default {
         { key: "NumProcs", label: "Procedures" },
         { key: "Goroutines", label: "Goroutines" }
 			],
-			runningPipelines: []
+			runningPipelines: [],
+			testTags: [{key1: "value1", key2: "value2"}] //TODO: remove
     };
   },
   async created() {
     try {
         const projectsResp = await this.$backendCli.getProjects();
         this.projects = projectsResp.data;
-		const infoResponse = await this.$backendCli.getInfo();
-		const info = infoResponse.data;
+			const infoResponse = await this.$backendCli.getInfo();
+			const info = infoResponse.data;
       this.numberOfAgents = info.NumberOfAgents == null ? "?" : String(info.NumberOfAgents);
       this.numberOfIdleAgents = info.NumberOfIdleAgents == null ? "?" : String(info.NumberOfIdleAgents);
 			this.runningPipelinesCount = "?"; //TODO: not provided by API yet
 			this.agents = info.Agents;
 			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
-			//TODO: add filter to backendCli function once API is ready to provide the state of pipelines	
-			console.log(this.runningPipelines[0].Project);
+			this.runningPipelinesCount = this.runningPipelines.length ? String(this.runningPipelines.length) : "0";
     } catch (e) {
       this.$notifyError(e);
     }

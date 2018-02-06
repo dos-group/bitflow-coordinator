@@ -20,25 +20,27 @@
                  class="btn btn-danger btn-md float-right action-button"
                  @click="selectedId = item.ID"
                  v-b-tooltip.hover title="Delete Pipeline">
-            <icon name="trash" class="inline"/>
+
+            <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedId = item.ID"
                  v-b-tooltip.hover title="Clone Pipeline">
-            <icon name="copy" class="inline"/>
+
+            <i class="fa fa-copy" />
           </b-btn>
           <b-btn
               type="button"
               class="btn btn-secondary btn-md float-right action-button"
               @click="startPipeline(item.ID)"
               v-b-tooltip.hover title="Start Pipeline">
-            <icon name="play" class="inline"/>
+            <i class="fa fa-play" />
           </b-btn>
-          <div v-b-tooltip.hover title="Click name to edit pipeline">
+          <div>
             <router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}"
-                         class="list-item-link"
+                         class="list-item-link" v-b-tooltip.hover title="Click to edit pipeline"
             >{{ item.Name }}
             </router-link>
           </div>
@@ -155,7 +157,7 @@ export default {
           template.PipelineSteps.forEach(step => step.Params.forEach(param => param.ID = null));
           template.Name = this.name;
           template.LastChanged = createCurrentTimeFormatted();
-          const resp = await this.$backendCli.createPipeline(this.projectId, template); //TODO: 400
+          const resp = await this.$backendCli.createPipeline(this.projectId, template);
           this.pipelines.push(resp.data);
           this.clearName;
           this.$refs.cloneModal.hide();
