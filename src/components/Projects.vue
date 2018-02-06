@@ -18,25 +18,29 @@
           <b-btn v-b-modal.delete-project-modal
                  type="button"
                  class="btn btn-danger btn-md float-right action-button"
-                 @click="selectedProject = item">
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Delete Project">
             <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.edit-project-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
-                 @click="selectedProject = item">
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Edit Project Details">
             <i class="fa fa-edit" />
           </b-btn>
 
           <b-btn v-b-modal.project-users-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
-                 @click="selectedProject = item">
+                 @click="selectedProject = item"
+                 v-b-tooltip.hover title="Manage Users">
             <i class="fa fa-user" />
           </b-btn>
 
-          <div>
-            <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link">
+          <div >
+            <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link"
+                         v-b-tooltip.hover title="Click to see details" >
               {{ item.Name }}
             </router-link>
           </div>
@@ -86,12 +90,14 @@
             <span>
               <b-btn type="button" class="btn btn-success btn-md action-button"
                      @click="addUserToProject(selectedProject, user)"
-                     v-if="projectUsersIDs.indexOf(user.ID) === -1">
+                     v-if="projectUsersIDs.indexOf(user.ID) === -1"
+                     v-b-tooltip.hover title="Add User">
                 <i class="fa fa-plus" />
               </b-btn>
               <b-btn type="button" class="btn btn-md action-button"
                      @click="removeUserFromProject(selectedProject, user)"
-                     v-else>
+                     v-else
+                     v-b-tooltip.hover title="Remove User">
                 <i class="fa fa-minus" />
               </b-btn>
               {{ user.Name }} ({{ user.Email }})

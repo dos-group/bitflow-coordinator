@@ -19,26 +19,28 @@
                  type="button"
                  class="btn btn-danger btn-md float-right action-button"
                  @click="selectedId = item.ID"
-          >
+                 v-b-tooltip.hover title="Delete Pipeline">
+
             <i class="fa fa-trash" />
           </b-btn>
           <b-btn v-b-modal.clone-pipeline-modal
                  type="button"
                  class="btn btn-secondary btn-md float-right action-button"
                  @click="selectedId = item.ID"
-          >
+                 v-b-tooltip.hover title="Clone Pipeline">
+
             <i class="fa fa-copy" />
           </b-btn>
           <b-btn
               type="button"
               class="btn btn-secondary btn-md float-right action-button"
               @click="startPipeline(item.ID)"
-          >
+              v-b-tooltip.hover title="Start Pipeline">
             <i class="fa fa-play" />
           </b-btn>
           <div>
             <router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}"
-                         class="list-item-link"
+                         class="list-item-link" v-b-tooltip.hover title="Click to edit pipeline"
             >{{ item.Name }}
             </router-link>
           </div>

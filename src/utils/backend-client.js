@@ -116,7 +116,7 @@ export function createPipeline(projectId, pipeline) {
   return axios.post("/project/" + projectId + "/pipeline", pipeline);
 }
 export function updatePipeline(projectId, pipeline) {
-  return axios.post("/project/" + projectId + "/pipeline/" + pipeline.id, pipeline);
+  return axios.post("/project/" + projectId + "/pipeline/" + pipeline.ID, pipeline);
 }
 export function startPipeline(projectId, pipelineId) {
   return axios.post("/project/" + projectId + "/pipeline/" + pipelineId + "/start", {});
