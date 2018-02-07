@@ -852,6 +852,9 @@ definitions:
       Duration:
         type: number
         format: double
+      Script:
+        type: string
+        example: "source -> avg() -> sink"
   User:
     type: object
     properties:

@@ -42,6 +42,7 @@ public class PipelineHistory   {
   private Date startedAt = null;
   private Date finishedAt = null;
   private Double duration = null;
+  private String script = null;
 
   /**
    **/
@@ -103,6 +104,14 @@ public class PipelineHistory   {
     this.duration = duration;
   }
 
+  @ApiModelProperty(value = "")
+  @JsonProperty("Script")
+  public String getScript() {
+    return script;
+  }
+  public void setScript(String script) {
+    this.script = script;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {

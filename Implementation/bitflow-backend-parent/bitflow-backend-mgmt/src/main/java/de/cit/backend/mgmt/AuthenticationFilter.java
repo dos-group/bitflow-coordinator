@@ -79,9 +79,9 @@ public class AuthenticationFilter implements ContainerRequestFilter
     @Override
     public void filter(ContainerRequestContext requestContext)
     {
-        System.out.println("AuthenticationFilter");
         Method method = resourceInfo.getResourceMethod();
         System.out.println("Method: "+method.getName());
+        System.out.println("Path: " + requestContext.getUriInfo().getPath());
         final AuthLevel authLevel = method.getDeclaredAnnotation(AuthLevel.class);
         // return if no authorization required
         
@@ -89,10 +89,6 @@ public class AuthenticationFilter implements ContainerRequestFilter
             System.out.println("No authentication required!");
             requestContext.setSecurityContext(GUEST_SECURITY_CONTEXT);
             return;
-        } else if (UserRoleEnum.STANDARD.equals(authLevel.value())) {
-            System.out.println("User authentication required!");
-        } else {
-            System.out.println("Admin authentication required!");
         }
         //Get request headers
         final MultivaluedMap<String, String> headers = requestContext.getHeaders();

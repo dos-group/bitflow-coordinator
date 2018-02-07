@@ -263,6 +263,7 @@ public class PipelineDistributerService {
 		hist.setStartedAt(new Date());
 		hist.setStatus(PipelineStateEnum.RUNNING);
 		hist.setPipeline(pipeline);
+		hist.setScript(ScriptGenerator.generateScriptForPipeline(pipeline));
 		
 		persistence.saveObject(hist);
 		persistence.flush();

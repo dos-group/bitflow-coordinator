@@ -17,6 +17,7 @@ public class PipelineHistoryConverter implements Converter<PipelineHistoryDTO, P
 		PipelineHistory hist = new PipelineHistory();
 		hist.setStartedAt(instanceToConvert.getStartedAt());
 		hist.setFinishedAt(instanceToConvert.getFinishedAt());
+		hist.setScript(instanceToConvert.getScript());
 		switch (instanceToConvert.getStatus()) {
         case RUNNING:  
         	hist.setStatus(StatusEnum.RUNNING);

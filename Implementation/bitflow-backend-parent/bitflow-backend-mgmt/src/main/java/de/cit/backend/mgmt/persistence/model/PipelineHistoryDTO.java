@@ -27,6 +27,7 @@ public class PipelineHistoryDTO extends BaseIdEntity implements java.io.Serializ
 	private Date startedAt;
 	private Date finishedAt;
 	private PipelineStateEnum status;
+	private String script;
 	
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -78,5 +79,14 @@ public class PipelineHistoryDTO extends BaseIdEntity implements java.io.Serializ
 
 	public void setStatus(PipelineStateEnum status) {
 		this.status = status;
+	}
+
+	@Column(name = "SCRIPT")
+	public String getScript() {
+		return script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
 	}
 }
