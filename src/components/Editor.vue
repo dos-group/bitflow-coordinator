@@ -6,7 +6,7 @@
 <template>
     <div class="page-content" style="margin-bottom: 5px">
         <div class="row">
-            <div class="col"><h4>Editor for pipeline: </h4></div>
+            <div class="col"><h4>Editor for pipeline: {{this.pipelineName ? this.pipelineName : "Unnamed Pipeline"}}</h4></div>
             <div class="col">
                 <b-btn class="btn btn-outline-success btn-md float-right action-button"
                        @click="updatePipeline()">
@@ -34,11 +34,11 @@
                         <p class="card-text">Content :</p>
                     </div>
                 </div>
-                <div v-on:click="createNode(step.Content)" class="card step"  v-for="step in allSteps">
-                    <div class="card-block">
+                <div class="card step"  v-for="step in allSteps">
+                    <div class="card-block" @click="steptoshare=step" v-b-modal.add-params-modal>
                         <h5 class="card-title">Operation</h5>
                         <p class="card-text">Name : {{step.Content}}</p>
-                            <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
+                        <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
                     </div>
                 </div>
                 <b-modal
@@ -60,6 +60,17 @@
                         @shown="clearModal">
                     <form @submit.stop.prevent="handleSubmit">
                         <b-form-input type="text" placeholder="Destination" v-model="destination"/>
+                        <span class="error-message">{{ modalErrorMessage }}</span>
+                    </form>
+                </b-modal>
+                <b-modal
+                        id="add-params-modal"
+                        ref="paramsModal"
+                        title="Enter the Parameters"
+                        @ok="createNode(steptoshare)"
+                        @shown="clearModal">
+                    <form @submit.stop.prevent="handleSubmit">
+                        <b-form-input type="text" placeholder="value" v-model="parameter"/>
                         <span class="error-message">{{ modalErrorMessage }}</span>
                     </form>
                 </b-modal>
@@ -145,22 +156,17 @@
             const blobs = true;
             const projectId = this.$router.history.current.fullPath.split('/')[2];
             const pipelineId = this.$router.history.current.fullPath.split('/')[4];
+            const pipelineName = '';
             const source= '';
             const destination= '';
-
             let countNumbers = 0;
-
             const allNodes = [];
-
             const coordinatesOfNodes = [];
-
             const allSteps = [];
-
             const allLines = [];
-
+            const parameter ='';
             let modalErrorMessage = "";
-
-            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage}
+            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage,pipelineName,parameter}
         },
         async created() {
             let here = this;
@@ -176,6 +182,19 @@
                         "Successors": []
                     })
             })
+                const pipeline = await this.$backendCli.getPipeline(this.projectId ,this.pipelineId );
+                this.pipelineName = pipeline.Name
+                pipeline.data.PipelineSteps.forEach(function (step) {
+                    here.allNodes.push({
+                        "ID":11,
+                        "Number": step.Number,
+                        "Typ": step.Typ,
+                        "Content": step.Content,
+                        "Params": step.Params,
+                        "Successors": step.Successors
+                    });
+                })
+                console.log(this.allNodes.length);
         }
             catch (e) {
                 this.$notifyError(e);
@@ -485,11 +504,15 @@
                     this.allNodes.push(endNode);
 
                 } else {
-
-                    const index = this.allSteps.findIndex(node => node.Content === nodeId);
+                    console.log(nodeId);
+                    const index = this.allSteps.findIndex(node => node.Content === nodeId.Content);
                     const changingNode = this.allSteps.slice(index, index + 1)[0];
                     const newNode = Object.assign({}, changingNode);
                     newNode.Number = this.countNumbers;
+                    const paramobj = {};
+                    paramobj[nodeId.Params[0]] = this.parameter;
+                    newNode.Params = [];
+                    newNode.Params.push(paramobj);
                     this.countNumbers += 1;
                     this.allNodes.push(newNode);
                     console.log(here.allNodes)
@@ -531,6 +554,7 @@
                         const pipeline = {
                             "ID": this.$router.history.current.fullPath.split('/')[4],
                             "LastChanged": createCurrentTimeFormatted(),
+                            "Name":this.pipelineName,
                             "PipelineSteps": this.allNodes
                         };
                         const resp = await this.$backendCli.updatePipeline(this.projectId, pipeline);
