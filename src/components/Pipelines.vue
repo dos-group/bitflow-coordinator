@@ -41,7 +41,7 @@
           <div>
             <router-link :to="{path: '/project/' + projectId + '/pipelines/' + item.ID + '/editor'}"
                          class="list-item-link" v-b-tooltip.hover title="Click to edit pipeline"
-            >{{ item.Name }}
+            >{{ item.Name ? item.Name : "Unnamed Pipeline"}}
             </router-link>
           </div>
           <div>last changed: {{ formatISODate(item.LastChanged) }}</div>

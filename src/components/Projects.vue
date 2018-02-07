@@ -41,7 +41,7 @@
           <div >
             <router-link :to="{path: '/project/' + item.ID + '/pipelines'}" class="list-item-link"
                          v-b-tooltip.hover title="Click to see details" >
-              {{ item.Name }}
+              {{ item.Name ? item.Name : "Unnamed Project"}}
             </router-link>
           </div>
           <div>created at: {{ formatISODate(item.CreatedAt) }}</div>
