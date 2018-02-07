@@ -662,7 +662,7 @@
 
     }
 </script>
-<style>
+<style scoped>
 
     .row.viewContainer {
         border: 2px solid rgb(66, 185, 131);

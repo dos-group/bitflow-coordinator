@@ -47,7 +47,7 @@
     }
   }
 </script>
-<style>
+<style scoped>
   .container {
     width: 50%;
     float: none;
