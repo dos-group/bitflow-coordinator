@@ -23,7 +23,6 @@
                 <div class="static step start" v-b-modal.add-source-modal>
                     <div class="card-block">
                         <h5 class="card-title">Default start of a pipeline </h5>
-                        <p class="card-title">Step Id : To be Discussed</p>
                         <p class="card-text">Typ : source</p>
                         <p class="card-text">Content :</p>
                     </div>
@@ -31,17 +30,15 @@
                 <div class="static step end" v-b-modal.add-sink-modal>
                     <div class="card-block">
                         <h5 class="card-title">Default end of a pipeline </h5>
-                        <p class="card-title">Step Id : To be Discussed</p>
                         <p class="card-text">Typ : sink</p>
                         <p class="card-text">Content :</p>
                     </div>
                 </div>
-                <div v-on:click="createNode(step.ID)" class="card step" v-for="step in allSteps">
+                <div v-on:click="createNode(step.Content)" class="card step"  v-for="step in allSteps">
                     <div class="card-block">
-                        <h5 class="card-title">Step Id : {{step.ID}}</h5>
-                        <p class="card-text">Step Number : {{step.Number}}</p>
-                        <p class="card-text">Content : {{step.Content}}</p>
-                        <p class="card-text">Typ : {{step.Typ}}</p>
+                        <h5 class="card-title">Operation</h5>
+                        <p class="card-text">Name : {{step.Content}}</p>
+                            <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
                     </div>
                 </div>
                 <b-modal
@@ -120,16 +117,8 @@
         data() {
 
             /*    TODO : let the blobs disappear when not needed
-                  v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
-            const blobs = true;
-            const projectId = this.$router.history.current.fullPath.split('/')[2];
-            const pipelineId = this.$router.history.current.fullPath.split('/')[4];
-            const source= '';
-            const destination= '';
 
-            let countNumbers = 0;
-
-            const allNodes = [{
+{
                 "ID": 1,
                 "Number": 0,
                 "Typ": "source",
@@ -150,56 +139,65 @@
                 "Content": "127.0.0.1:5555",
                 "Params": [],
                 "Successors": []
-            }];
+            }
+
+                  v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
+            const blobs = true;
+            const projectId = this.$router.history.current.fullPath.split('/')[2];
+            const pipelineId = this.$router.history.current.fullPath.split('/')[4];
+            const source= '';
+            const destination= '';
+
+            let countNumbers = 0;
+
+            const allNodes = [];
 
             const coordinatesOfNodes = [];
 
-            const allSteps = [{
-                "ID": 1,
-                "Number": 0,
-                "Typ": "source",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": []
-            }, {
-                "ID": 2,
-                "Number": 1,
-                "Typ": "sink",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": []
-            }, {
-                "ID": 3,
-                "Number": 2,
-                "Typ": "operation",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": []
-            }, {
-                "ID": 4,
-                "Number": 3,
-                "Typ": "operation",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": []
-            }, {
-                "ID": 5,
-                "Number": 4,
-                "Typ": "operation",
-                "Content": "127.0.0.1:5555",
-                "Params": [],
-                "Successors": []
-            }
-            ];
+            const allSteps = [];
 
             const allLines = [];
 
-            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId}
+            let modalErrorMessage = "";
+
+            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage}
+        },
+        async created() {
+            let here = this;
+            try {
+                const capabilities = await this.$backendCli.getCapabilities(1);
+                capabilities.data.forEach(function (capa){
+                    here.allSteps.push({
+                        "Number": "",
+                        "AgentId": "",
+                        "Typ": "operation",
+                        "Content": capa.Name,
+                        "Params": capa.RequiredParams,
+                        "Successors": []
+                    })
+            })
+        }
+            catch (e) {
+                this.$notifyError(e);
+            }
+            // get pipeline if empty its ok otherwise put steps into allNodes.
+            // count pipeline steps in existing pipeline set countNumbers = tohighestNumber
+            this.countNumbers = 10;
         },
         methods: {
             deleteLine: function (start, end) {
-                //TODO delete successor in model!!
                 let here = this;
+
+                here.allNodes.forEach(function (current) {
+                    current.Successors.forEach(function(succ) {
+                        if (succ == end){
+                        var posSuccer = current.Successors.indexOf(succ);
+                        current.Successors.splice(posSuccer,1)
+                    }
+                    })
+
+                })
+
                 here.allLines.forEach(function (line) {
                     if (line.start == start && line.end == end) {
                         here.allLines.splice(here.allLines.indexOf(line), 1);
@@ -393,6 +391,7 @@
                     here.coordinatesOfNodes.forEach(function (node) {
                         if ((d3.event.x + start <= (node.coords[0] + 15) && d3.event.x + start >= (node.coords[0] - 15)) && (d3.event.y + end <= (node.coords[1] + 15) && d3.event.y + end >= (node.coords[1] - 15))) {
                             const coor = {"start": numberOfNode, "end": node.Number}
+                            let FutureNode = node.Number;
                             var isIn = true;
                             here.allLines.forEach(function (line) {
                                 if (line.start == numberOfNode && line.end == node.Number) {
@@ -400,6 +399,11 @@
                                 }
                             })
                             if (isIn) {
+                                here.allNodes.forEach(function (nod) {
+                                    if (nod.Number == numberOfNode){
+                                        nod.Successors.push(FutureNode)
+                                    }
+                                })
                                 here.allLines.push(coor)
                                 setTimeout(here.drawLine(numberOfNode, node.Number), 100)
                                 //here.coordinatesOfNodes[vm.coordinatesOfNodes.findIndex(k => k === c)].start = [posX, posY];
@@ -425,6 +429,17 @@
                 });
 
                 var index = this.allNodes.indexOf(node);
+
+                here.allNodes.forEach(function (current) {
+                    current.Successors.forEach(function(succ) {
+                        if (succ == node.Number){
+                        var posSuccer = current.Successors.indexOf(succ);
+                        current.Successors.splice(posSuccer,1)
+                    }
+                    })
+
+                })
+
                 here.allNodes.splice(index, 1)
 
                 var length = here.allLines.length;
@@ -446,7 +461,6 @@
                 if (nodeId === "start") {
                     this.countNumbers += 1;
                     const startNode = {
-                        "ID": this.countNumbers,
                         "Number": this.countNumbers,
                         "Typ": "source",
                         "Content": this.source,
@@ -460,7 +474,6 @@
                 } else if (nodeId === "end") {
                     this.countNumbers += 1;
                     const endNode = {
-                        "ID": null,
                         "Number": this.countNumbers,
                         "Typ": "sink",
                         "Content": this.destination,
@@ -471,12 +484,13 @@
 
                 } else {
 
-                    const index = this.allSteps.findIndex(node => node.ID === nodeId);
+                    const index = this.allSteps.findIndex(node => node.Content === nodeId);
                     const changingNode = this.allSteps.slice(index, index + 1)[0];
                     const newNode = Object.assign({}, changingNode);
                     newNode.Number = this.countNumbers;
                     this.countNumbers += 1;
                     this.allNodes.push(newNode);
+                    console.log(here.allNodes)
                 }
 
 
@@ -553,20 +567,15 @@
                 this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
             },
         },
-        created: function () {
-            // get capabilities and build pipelinesteps from it.
-            // get pipeline if empty its ok otherwise put steps into allNodes.
-            // count pipeline steps in existing pipeline set countNumbers = tohighestNumber
-            this.countNumbers = 10;
-        },
         mounted: function () {
 
             const here = this;
 
-            const steps = document.getElementsByClassName('card step');
-            Array.from(steps).forEach(function (step) {
-                step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
-            });
+   //         const steps = document.getElementsByClassName('card step');
+     //       Array.from(steps).forEach(function (step) {
+       //         console.log(step)
+         //       step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
+           // });
 
             const nodes = document.getElementsByClassName('square');
             Array.from(nodes).forEach(function (node) {
@@ -700,6 +709,7 @@
     }
 
     .card.step {
+        background-color:rgba(152, 231, 82,1);
         margin-bottom: 5px;
         padding: 10px;
         border-radius: 10px;
@@ -721,6 +731,7 @@
     .card-text {
         margin-bottom: 0;
     }
+
 
     path.dragline {
         stroke: #000;

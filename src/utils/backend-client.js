@@ -48,8 +48,8 @@ export function getInfo() {
   return axios.get("/info");
 }
 
-export function getCapabilities() {
-  return axios.get("/capabilities");
+export function getCapabilities(agentId) {
+  return axios.get("/capabilities/" + agentId);
 }
 
 // Users
@@ -127,6 +127,9 @@ export function deletePipeline(projectId, pipelineId) {
 export function getHistory(projectId, pipelineId) {
   return axios.get("/project/" + projectId + "/pipeline/" + pipelineId + "/history");
 }
+
+
+
 
 function flatten(arr) {
   return arr.reduce(function (flat, toFlatten) {
