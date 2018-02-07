@@ -478,8 +478,10 @@
                         "Typ": "sink",
                         "Content": this.destination,
                         "Params": [],
-                        "Successors": null
+                        "Successors": []
                     };
+                    
+                    this.countNumbers += 1;
                     this.allNodes.push(endNode);
 
                 } else {
