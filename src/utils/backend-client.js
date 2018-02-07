@@ -70,9 +70,21 @@ export function removeUserFromProject(projectId, userId) {
 }
 
 // Projects
-export function getProjects() {
-  return axios.get("/projects");
+export async function getProjects() {
+  
+  let resp = await axios.get("/projects");
+  let seenIds = [];
+  const res = resp.data.filter(function(project){
+    if (!seenIds.includes(project.ID)){
+      seenIds.push(project.ID)
+      return true
+    }
+    return false
+  })
+  
+  return {data:res};
 }
+
 export function getProject(projectId) {
   return axios.get("/project/" + projectId);
 }
@@ -87,8 +99,18 @@ export function deleteProject(projectId) {
 }
 
 // Pipelines
-export function getPipelines(projectId) {
-  return axios.get("/project/" + projectId + "/pipelines");
+export async function getPipelines(projectId) {
+  let resp = await axios.get("/project/" + projectId + "/pipelines");
+  let seenIds = [];
+  const res = resp.data.filter(function(pipeline){
+    if (!seenIds.includes(pipeline.ID)){
+      seenIds.push(pipeline.ID)
+      return true
+    }
+    return false
+  })
+  return {data:res};
+  
 }
 export async function getRunningPipelinesOfAllProjects() {
   const projects = await getProjects();
