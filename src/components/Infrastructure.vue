@@ -6,8 +6,11 @@
 				<b-card :title="numberOfAgents">
 					<p class="card-text">Active Agents</p>
 				</b-card>
-				<b-card :title="numberOfIdleAgents">
-					<p class="card-text">Idle Agents</p>
+				<b-card :title="numberOfOnlineAgents">
+					<p class="card-text">Online Agents</p>
+				</b-card>
+				<b-card :title="numberOfOfflineAgents">
+					<p class="card-text">Offline Agents</p>
 				</b-card>
 				<b-card :title="runningPipelinesCount">
 					<p class="card-text">Running Pipelines</p>
@@ -24,7 +27,7 @@
 					</template>
 					<template slot="row-details" slot-scope="row">
 						<b-card>
-							<!-- TODO: reactivate!! 
+							<!-- TODO: for demo only. reactivate to show real data
 							<b-row v-for="tag in row.item.Tags" :key="tag.Slots" class="mb-2"> 
 							-->
 							<b-row v-for="tag in testTags" :key="testTags.indexOf(tag)" class="mb-2">
@@ -58,12 +61,9 @@
 				<ul class="list-items">
 					<li v-for="item in runningPipelines" :key="item.ID">
 						<div class="list-item">
-									<div>
-									<router-link :to="{path: '/project/' + selected + '/pipelines/' + item.ID + '/editor'}"
-												 class="list-item-link">
-										{{ item.Name }}
-									</router-link>
-									</div>
+							<router-link :to="{ path: '/project/' + selected + '/pipelines/' + item.ID + '/editor' }" class="list-item-link">
+								{{ item.Name ? item.Name : "Unnamed Pipeline" }}
+							</router-link>
 						</div>
 					</li>
 				</ul>
@@ -79,7 +79,8 @@ export default {
     return {
       title: "Infrastructure",
       numberOfAgents: null,
-      numberOfIdleAgents: null,
+			numberOfOnlineAgents: null,
+			numberOfOfflineAgents: null,
 		runningPipelinesCount: null,
         projects: [],
 		selected: '',
@@ -106,8 +107,8 @@ export default {
 			const infoResponse = await this.$backendCli.getInfo();
 			const info = infoResponse.data;
       this.numberOfAgents = info.NumberOfAgents == null ? "?" : String(info.NumberOfAgents);
-      this.numberOfIdleAgents = info.NumberOfIdleAgents == null ? "?" : String(info.NumberOfIdleAgents);
-			this.runningPipelinesCount = "?"; //TODO: not provided by API yet
+			this.numberOfOnlineAgents = info.NumberOfOnlineAgents == null ? "?" : String(info.NumberOfOnlineAgents);
+			this.numberOfOfflineAgents = info.NumberOfOfflineAgents == null ? "?" : String(info.NumberOfOfflineAgents);
 			this.agents = info.Agents;
 			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
 			this.runningPipelinesCount = this.runningPipelines.length ? String(this.runningPipelines.length) : "0";
@@ -115,18 +116,16 @@ export default {
       this.$notifyError(e);
     }
   },
-    methods:{
-        filterPipeline : async function () {
-          // to do Change the list of pipelines displayed.
-          try {
-              const resp = await this.$backendCli.getPipelines(this.selected);
-              this.runningPipelines = resp.data;
-              console.log("success");
-          }catch(e){
-              alert(e);
-		  }
-		  
-      }
+  methods:{
+    filterPipeline : async function () {
+			// to do Change the list of pipelines displayed.
+     	try {
+				const resp = await this.$backendCli.getPipelines(this.selected);
+        this.runningPipelines = resp.data;
+      } catch(e){
+      	alert(e);
+			}
+    }
 	}
 };
 </script>
@@ -145,9 +144,8 @@ export default {
 .pipeline-box {
 	padding: 15px 0px 15px 0px;
 }
-	.project-drowdown{
-		padding: 10px;
-		width: 30%;
-	}
-
+.project-drowdown{
+	padding: 10px;
+	width: 30%;
+}
 </style>
