@@ -10,7 +10,7 @@
             <div class="col">
                 <b-btn class="btn btn-outline-success btn-md float-right action-button"
                        @click="updatePipeline()">
-                    <i class="fa fa-floppy-o" aria-hidden="true"> Save</i>
+                    <i class="fa fa-upload" aria-hidden="true"> Save</i>
                 </b-btn>
                 <b-btn class="btn btn-outline-success btn-md float-right action-button"
                        @click="saveandstart()">
@@ -702,11 +702,11 @@
     .card.step {
         margin-bottom: 5px;
         padding: 10px;
-        border-radius: 25px;
+        border-radius: 10px;
     }
 
     .static.step{
-        border-radius: 40px;
+        border-radius: 10px;
         margin-bottom: 5px;
         padding: 10px;
     }

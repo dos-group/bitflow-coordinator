@@ -151,6 +151,8 @@
   .list-item {
     margin: 10px 0px 10px 0px;
     padding: 15px 20px 10px 20px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
   }
 
   .list-item-link {

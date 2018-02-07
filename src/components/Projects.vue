@@ -12,9 +12,9 @@
         </b-btn>
       </div>
     </div>
-    <ul class="list-items list-group">
+    <ul class="list-items">
       <li v-for="item in projects" :key="item.ID">
-        <div class="list-item list-group-item">
+        <div class="list-item">
           <b-btn v-b-modal.delete-project-modal
                  type="button"
                  class="btn btn-danger btn-md float-right action-button"

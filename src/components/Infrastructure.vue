@@ -55,9 +55,9 @@
 						</option>
 					</select>
 				</div>
-				<ul class="list-items list-group">
+				<ul class="list-items">
 					<li v-for="item in runningPipelines" :key="item.ID">
-						<div class="list-item list-group-item">
+						<div class="list-item">
 									<div>
 									<router-link :to="{path: '/project/' + selected + '/pipelines/' + item.ID + '/editor'}"
 												 class="list-item-link">
