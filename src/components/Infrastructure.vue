@@ -13,7 +13,6 @@
 					<p class="card-text">Offline Agents</p>
 				</b-card>
 				<b-card :title="runningPipelinesCount">
-					<!--TODO: change back to Running Pipelines-->
 					<p class="card-text">Pipelines</p>
 				</b-card>
 			</b-card-group>
@@ -112,7 +111,7 @@ export default {
 			this.numberOfOfflineAgents = info.NumberOfOfflineAgents == null ? "?" : String(info.NumberOfOfflineAgents);
 			this.agents = info.Agents;
 			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
-			this.runningPipelinesCount = this.runningPipelines.length ? String(this.runningPipelines.length) : "0";
+			this.runningPipelinesCount = this.runningPipelines ? String(this.runningPipelines.length) : "0";
     } catch (e) {
 //      this.$notifyError(e);
     }

@@ -123,7 +123,7 @@ export async function getRunningPipelinesOfAllProjects() {
   const allPipelines =  flatten(allPipelinesNested);
   var runningPipelines = [];
   for (let i = 0; i < allPipelines.length; i++) {
-    const historyReponse = await getHistory(27/*allPipelines[i].Project*/, allPipelines[i].ID); //TODO: change
+    const historyReponse = await getHistory(allPipelines[i].Project.ID, allPipelines[i].ID); //TODO: change
     const history = historyReponse.data;
     if (history[history.length - 1] == "running") {
       runningPipelines.push(allPipelines[i]);
