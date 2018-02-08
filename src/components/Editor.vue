@@ -672,22 +672,13 @@
 
             const here = this;
 
-   //         const steps = document.getElementsByClassName('card step');
-     //       Array.from(steps).forEach(function (step) {
-       //         console.log(step)
-         //       step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
-           // });
-
-
-
             const svg = d3.select("svg");
 
             const zoomed = function () {
                 d3.select(".wholeGraph")
                     .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
             };
-
-
+            
             const dragSvg = d3.zoom()
                 .on("zoom", function () {
                     zoomed.call(svg);
