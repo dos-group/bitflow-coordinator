@@ -6,7 +6,7 @@
 <template>
     <div class="page-content" style="margin-bottom: 5px">
         <div class="row">
-            <div class="col"><h4>Editor for pipeline: </h4></div>
+            <div class="col"><h4>Editor for pipeline: {{this.pipelineName ? this.pipelineName : "Unnamed Pipeline"}}</h4></div>
             <div class="col">
                 <b-btn class="btn btn-outline-success btn-md float-right action-button"
                        @click="updatePipeline()">
@@ -26,6 +26,17 @@
                         <p class="card-text">Typ : source</p>
                         <p class="card-text">Content :</p>
                     </div>
+                    <b-modal
+                            id="add-source-modal"
+                            ref="sourceModal"
+                            title="Pipeline Saved"
+                            @ok="createNode('start')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Source" v-model="source"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
                 </div>
                 <div class="static step end" v-b-modal.add-sink-modal>
                     <div class="card-block">
@@ -33,34 +44,39 @@
                         <p class="card-text">Typ : sink</p>
                         <p class="card-text">Content :</p>
                     </div>
+                    <b-modal
+                            id="add-sink-modal"
+                            ref="sinkModal"
+                            title="Pipeline Saved"
+                            @ok="createNode('end')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Destination" v-model="destination"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
                 </div>
-                <div v-on:click="createNode(step.Content)" class="card step"  v-for="step in allSteps">
-                    <div class="card-block">
+                <div class="card step"  v-for="step in allSteps">
+                    <div class="card-block" @click="steptest=step" v-b-modal.add-params-modal>
                         <h5 class="card-title">Operation</h5>
                         <p class="card-text">Name : {{step.Content}}</p>
-                            <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
+                        <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
                     </div>
                 </div>
                 <b-modal
-                        id="add-source-modal"
-                        ref="sourceModal"
-                        title="Pipeline Saved"
-                        @ok="createNode('start')"
+                        id="add-params-modal"
+                        ref="paramsModal"
+                        title="Enter the Parameters"
+                        v-modal="steptest"
+                        @ok="createNode(steptest)"
                         @shown="clearModal">
                     <form @submit.stop.prevent="handleSubmit">
-                        <b-form-input type="text" placeholder="Source" v-model="source"/>
-                        <span class="error-message">{{ modalErrorMessage }}</span>
-                    </form>
-                </b-modal>
-                <b-modal
-                        id="add-sink-modal"
-                        ref="sinkModal"
-                        title="Pipeline Saved"
-                        @ok="createNode('end')"
-                        @shown="clearModal">
-                    <form @submit.stop.prevent="handleSubmit">
-                        <b-form-input type="text" placeholder="Destination" v-model="destination"/>
-                        <span class="error-message">{{ modalErrorMessage }}</span>
+                        <p> Parameter : {{steptest}}</p>
+                        <div v-for="param in steptest.Params">
+                            <b-form-input type="text" v-bind:placeholder="param" v-model="paramWithval[param]"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </div>
+
                     </form>
                 </b-modal>
             </div>
@@ -84,8 +100,8 @@
                                       dy="4">
                                     &#xf1f8;
                                 </text>
-                                <text class="IDField" dx="1" dy="3" font-size="1.5px">
-                                    ID : {{node.ID}}
+                                <text dx="1" dy="3" font-size="1.5px">
+                                    Operation
                                 </text>
                                 <text dx="1" dy="6" font-size="1.5px">
                                     Number : {{node.Number}}
@@ -143,27 +159,25 @@
 
                   v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
             const blobs = true;
+            const steptest = {};
+            const paramWithval = {};
             const projectId = this.$router.history.current.fullPath.split('/')[2];
             const pipelineId = this.$router.history.current.fullPath.split('/')[4];
+            const pipelineName = '';
             const source= '';
             const destination= '';
-
             let countNumbers = 0;
-
             const allNodes = [];
-
             const coordinatesOfNodes = [];
-
             const allSteps = [];
-
             const allLines = [];
-
+            const parameter ='';
             let modalErrorMessage = "";
-
-            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage}
+            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage,pipelineName,parameter,steptest, paramWithval}
         },
         async created() {
             let here = this;
+            let highestNumber = 0;
             try {
                 const capabilities = await this.$backendCli.getCapabilities(1);
                 capabilities.data.forEach(function (capa){
@@ -175,16 +189,98 @@
                         "Params": capa.RequiredParams,
                         "Successors": []
                     })
-            })
+            });
+                const pipeline = await this.$backendCli.getPipeline(this.projectId ,this.pipelineId );
+                this.pipelineName = pipeline.data.Name
+                pipeline.data.PipelineSteps.forEach(function (step) {
+                    here.allNodes.push(step);
+                    if (step.Number > highestNumber){
+                      highestNumber= step.Number;
+                    }
+                });
+              here.$nextTick(() => this.ArrangeNodes());
+             // console.log(this.allNodes.length);
         }
             catch (e) {
                 this.$notifyError(e);
             }
-            // get pipeline if empty its ok otherwise put steps into allNodes.
-            // count pipeline steps in existing pipeline set countNumbers = tohighestNumber
-            this.countNumbers = 10;
+            this.countNumbers = highestNumber+1;
         },
         methods: {
+          ArrangeNodes: function () {
+            let here = this;
+            const nodes = document.getElementsByClassName('square');
+            Array.from(nodes).forEach(function (node) {
+              node.childNodes[0].style.fill = here.getColor(node.childNodes[8].textContent.toString());
+            });
+
+            let arrangeNodes = function (_callback) {
+              let nodeLevel = 0;
+              //let allNumber = 5;
+
+              here.allNodes.forEach(function (node) {
+                nodeLevel += 1;
+                let yLevel = 0;
+                let endLevel= 1;
+
+
+                if (node.Successors.length == 0) {
+                  const squares = document.getElementsByClassName('square');
+                  Array.from(squares).forEach(function (square) {
+                    let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                    if (squareId == node.Number) {
+                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + ((endLevel * 50) + 7.5)+ ')');
+                    }
+                  })
+                  here.coordinatesOfNodes.push({
+                    "Number": node.Number,
+                    "coords": [(nodeLevel * 50) + 20, (endLevel * 50) + 15]
+                  });
+                }
+
+                node.Successors.forEach(function (succer) {
+                  yLevel += 1;
+                  let nodeS = false;
+                  const Number = node.Number;
+                  here.coordinatesOfNodes.forEach(function (c) {
+                    if (c.Number == Number) {
+                      nodeS = true;
+                    }
+                  });
+                  if (!nodeS) {
+                    const squares = document.getElementsByClassName('square');
+                    Array.from(squares).forEach(function (square) {
+                      let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                      if (squareId == node.Number) {
+                        let x = (nodeLevel * 50) + 10;
+                        let y = (yLevel * 50) + 7.5;
+                        d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
+                      }
+                    });
+
+                    here.coordinatesOfNodes.push({
+                      "Number": Number,
+                      "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
+                    });
+                  }
+                  here.allLines.push({"start": node.Number, "end": succer})
+                })
+              });
+              _callback();
+            };
+
+            let paintLines = function () {
+              here.allLines.forEach(function (line) {
+                here.drawLine(line.start, line.end)
+              })
+              here.updateLines();
+              here.updateNodes();
+            }
+
+            arrangeNodes(() => paintLines());
+
+            //console.log(this.allNodes);
+          },
             deleteLine: function (start, end) {
                 let here = this;
 
@@ -480,19 +576,23 @@
                         "Params": [],
                         "Successors": []
                     };
-                    
+
                     this.countNumbers += 1;
                     this.allNodes.push(endNode);
 
                 } else {
-
-                    const index = this.allSteps.findIndex(node => node.Content === nodeId);
+                    //console.log(nodeId);
+                    const index = this.allSteps.findIndex(node => node.Content === nodeId.Content);
                     const changingNode = this.allSteps.slice(index, index + 1)[0];
                     const newNode = Object.assign({}, changingNode);
                     newNode.Number = this.countNumbers;
                     this.countNumbers += 1;
+
+                    newNode.Params = [];
+                    newNode.Params.push(this.paramWithval);
+                    this.paramWithval = {};
+
                     this.allNodes.push(newNode);
-                    console.log(here.allNodes)
                 }
 
 
@@ -531,39 +631,41 @@
                         const pipeline = {
                             "ID": this.$router.history.current.fullPath.split('/')[4],
                             "LastChanged": createCurrentTimeFormatted(),
+                            "Name":this.pipelineName,
                             "PipelineSteps": this.allNodes
                         };
                         const resp = await this.$backendCli.updatePipeline(this.projectId, pipeline);
                         if (resp.statusText == "OK")
                         {
-                            alert("Pipeline successfully Saved.")
+                            this.$notifyInfo("Pipeline successfully Saved.")
                         }
                         return true;
                     } catch (e) {
-                        alert(e);
+                        this.$notifyError(e);
                     }
                 }
             },
             saveandstart: async function () {
                 const done = await this.updatePipeline();
                 if (done ) {
-                    console.log("Pipeline updated");
+                    //console.log("Pipeline updated");
                     await this.startPipeline();
                 }
             },
             startPipeline: async function () {
                 try {
-                    console.log(this.pipelineId)
+                   // console.log(this.pipelineId)
                     const resp = await this.$backendCli.startPipeline(this.projectId, this.pipelineId);
-                    alert(resp);
-                    console.log(resp);
+                  this.$notifyInfo("Pipeline started")
+                  // console.log(resp);
                 } catch (e) {
-                    alert(e); //TODO: 400
+                    this.$notifyError("Pipeline started")
                 }
             },
             clearModal: function(){
                 this.source = "";
                 this.destination = "";
+                this.paramWithval = {};
             },
             showModalErrorMessage: function(messageOrError){
                 this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
@@ -573,90 +675,12 @@
 
             const here = this;
 
-   //         const steps = document.getElementsByClassName('card step');
-     //       Array.from(steps).forEach(function (step) {
-       //         console.log(step)
-         //       step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
-           // });
-
-            const nodes = document.getElementsByClassName('square');
-            Array.from(nodes).forEach(function (node) {
-                node.childNodes[0].style.fill = here.getColor(node.childNodes[8].textContent.toString());
-            });
-
-
-            let arrangeNodes = function (_callback) {
-                let nodeLevel = 0;
-                //let allNumber = 5;
-
-                here.allNodes.forEach(function (node) {
-                    nodeLevel += 1;
-                    let yLevel = -1;
-
-
-                    if (node.Successors.length == 0) {
-                        const squares = document.getElementsByClassName('square');
-                        Array.from(squares).forEach(function (square) {
-                            let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
-                            if (squareId == node.Number) {
-                                d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + (50) + ')');
-                            }
-                        })
-                        here.coordinatesOfNodes.push({
-                            "Number": node.Number,
-                            "coords": [(nodeLevel * 50) + 20, (50 + 15)]
-                        });
-                    }
-
-                    node.Successors.forEach(function (succer) {
-                        yLevel += 1;
-
-                        let nodeS = false;
-                        const Number = node.Number;
-                        here.coordinatesOfNodes.forEach(function (c) {
-                            if (c.Number == Number) {
-                                nodeS = true;
-                            }
-                        });
-                        if (!nodeS) {
-
-                            const squares = document.getElementsByClassName('square');
-                            Array.from(squares).forEach(function (square) {
-                                let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
-                                if (squareId == node.Number) {
-                                    let x = (nodeLevel * 50) + 10;
-                                    let y = (yLevel * 50) + 7.5;
-                                    d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
-                                }
-                            })
-
-                            here.coordinatesOfNodes.push({
-                                "Number": Number,
-                                "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
-                            });
-                        }
-                        here.allLines.push({"start": node.Number, "end": succer})
-                    })
-                });
-                _callback();
-            };
-
-            let paintLines = function () {
-                here.allLines.forEach(function (line) {
-                    here.drawLine(line.start, line.end)
-                })
-            }
-
-            arrangeNodes(() => paintLines());
-
-
             const svg = d3.select("svg");
 
             const zoomed = function () {
                 d3.select(".wholeGraph")
                     .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
             };
-
 
             const dragSvg = d3.zoom()
                 .on("zoom", function () {
