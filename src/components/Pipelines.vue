@@ -132,7 +132,7 @@ export default {
           this.clearName;
           this.$refs.createModal.hide();
         } catch (e) {
-          showModalErrorMessage(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
@@ -162,7 +162,7 @@ export default {
           this.clearName;
           this.$refs.cloneModal.hide();
         } catch (e) {
-          showModalErrorMessage(e);
+          this.showModalErrorMessage(e);
         }
       }
     },
