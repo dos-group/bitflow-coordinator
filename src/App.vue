@@ -22,8 +22,8 @@
     </transition>
     <transition v-if="!loggedInUser" name="fade" mode="out-in">
       <div style="text-align: center;">
-        username: "john", password: "doe"<br>
-        username: "tester", password: "test"
+        <!--username: "john", password: "doe"<br>-->
+        <!--username: "tester", password: "test"-->
         <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
       </div>
     </transition>
