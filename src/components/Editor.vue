@@ -625,7 +625,21 @@
                     return 'rgba(152, 231, 82,1)'
             },
             updatePipeline: async function () {
+
+              function isEmpty(obj) {
+                for(var key in obj) {
+                  if(obj.hasOwnProperty(key))
+                    return false;
+                }
+                return true;
+              }
+
                 {
+                  this.allNodes.forEach(function (Node) {
+                    if(isEmpty(Node.Params[0])){
+                      Node.Params=[];
+                    }
+                  });
                     try {
                         const pipeline = {
                             "ID": this.$router.history.current.fullPath.split('/')[4],
