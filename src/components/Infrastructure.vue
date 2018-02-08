@@ -113,14 +113,14 @@ export default {
 			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
 			this.runningPipelinesCount = this.runningPipelines ? String(this.runningPipelines.length) : "0";
     } catch (e) {
-//      this.$notifyError(e);
+      this.$notifyError(e);
     }
   },
   methods:{
     filterPipeline : async function () {
 			// to do Change the list of pipelines displayed.
      	try {
-				const resp = await this.$backendCli.getPipelines(this.selected);
+				const resp = await this.$backendCli.getRunning(this.selected);
         this.runningPipelines = resp.data;
       } catch(e){
 
