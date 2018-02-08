@@ -125,7 +125,7 @@ export async function getRunningPipelinesOfAllProjects() {
   for (let i = 0; i < allPipelines.length; i++) {
     const historyReponse = await getHistory(allPipelines[i].Project.ID, allPipelines[i].ID); //TODO: change
     const history = historyReponse.data;
-    if (history[history.length - 1] == "running") {
+    if (history.length > 0 && history[0].Status == "running") {
       runningPipelines.push(allPipelines[i]);
     }
   }

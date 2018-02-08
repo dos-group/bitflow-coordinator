@@ -13,7 +13,7 @@
 					<p class="card-text">Offline Agents</p>
 				</b-card>
 				<b-card :title="runningPipelinesCount">
-					<p class="card-text">Pipelines</p>
+					<p class="card-text">Running Pipelines</p>
 				</b-card>
 			</b-card-group>
 		</div>
