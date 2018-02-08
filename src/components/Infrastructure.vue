@@ -120,7 +120,7 @@ export default {
     filterPipeline : async function () {
 			// to do Change the list of pipelines displayed.
      	try {
-				const resp = await this.$backendCli.getRunning(this.selected);
+				const resp = await this.$backendCli.getPipelines(this.selected);
         this.runningPipelines = resp.data;
       } catch(e){
 
@@ -128,7 +128,7 @@ export default {
     }
 	}
 };
-</script>
+</script>[
 
 <style scoped>
 .top-content {
