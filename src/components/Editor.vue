@@ -194,7 +194,8 @@
                         "Successors": step.Successors
                     });
                 })
-                console.log(this.allNodes.length);
+              here.$nextTick(() => this.ArrangeNodes());
+             // console.log(this.allNodes.length);
         }
             catch (e) {
                 this.$notifyError(e);
@@ -204,6 +205,77 @@
             this.countNumbers = 10;
         },
         methods: {
+          ArrangeNodes: function () {
+            let here = this;
+            const nodes = document.getElementsByClassName('square');
+            Array.from(nodes).forEach(function (node) {
+              node.childNodes[0].style.fill = here.getColor(node.childNodes[8].textContent.toString());
+            });
+
+            let arrangeNodes = function (_callback) {
+              let nodeLevel = 0;
+              //let allNumber = 5;
+
+              here.allNodes.forEach(function (node) {
+                nodeLevel += 1;
+                let yLevel = -1;
+
+
+                if (node.Successors.length == 0) {
+                  const squares = document.getElementsByClassName('square');
+                  Array.from(squares).forEach(function (square) {
+                    let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                    if (squareId == node.Number) {
+                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + (50) + ')');
+                    }
+                  })
+                  here.coordinatesOfNodes.push({
+                    "Number": node.Number,
+                    "coords": [(nodeLevel * 50) + 20, (50 + 15)]
+                  });
+                }
+
+                node.Successors.forEach(function (succer) {
+                                    let nodeS = false;
+                  const Number = node.Number;
+                  here.coordinatesOfNodes.forEach(function (c) {
+                    if (c.Number == Number) {
+                      nodeS = true;
+                    }
+                  });
+                  if (!nodeS) {
+                    yLevel += 1;
+                    const squares = document.getElementsByClassName('square');
+                    Array.from(squares).forEach(function (square) {
+                      let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                      if (squareId == node.Number) {
+                        let x = (nodeLevel * 50) + 10;
+                        let y = (yLevel * 50) + 7.5;
+                        d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
+                      }
+                    });
+
+                    here.coordinatesOfNodes.push({
+                      "Number": Number,
+                      "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
+                    });
+                  }
+                  here.allLines.push({"start": node.Number, "end": succer})
+                })
+              });
+              _callback();
+            };
+
+            let paintLines = function () {
+              here.allLines.forEach(function (line) {
+                here.drawLine(line.start, line.end)
+              })
+            }
+
+            arrangeNodes(() => paintLines());
+
+            //console.log(this.allNodes);
+          },
             deleteLine: function (start, end) {
                 let here = this;
 
@@ -499,12 +571,12 @@
                         "Params": [],
                         "Successors": []
                     };
-                    
+
                     this.countNumbers += 1;
                     this.allNodes.push(endNode);
 
                 } else {
-                    console.log(nodeId);
+                    //console.log(nodeId);
                     const index = this.allSteps.findIndex(node => node.Content === nodeId.Content);
                     const changingNode = this.allSteps.slice(index, index + 1)[0];
                     const newNode = Object.assign({}, changingNode);
@@ -515,7 +587,7 @@
                     newNode.Params.push(paramobj);
                     this.countNumbers += 1;
                     this.allNodes.push(newNode);
-                    console.log(here.allNodes)
+                    //console.log(here.allNodes)
                 }
 
 
@@ -571,16 +643,16 @@
             saveandstart: async function () {
                 const done = await this.updatePipeline();
                 if (done ) {
-                    console.log("Pipeline updated");
+                    //console.log("Pipeline updated");
                     await this.startPipeline();
                 }
             },
             startPipeline: async function () {
                 try {
-                    console.log(this.pipelineId)
+                   // console.log(this.pipelineId)
                     const resp = await this.$backendCli.startPipeline(this.projectId, this.pipelineId);
                     alert(resp);
-                    console.log(resp);
+                   // console.log(resp);
                 } catch (e) {
                     alert(e); //TODO: 400
                 }
@@ -603,75 +675,6 @@
          //       step.style.backgroundColor = here.getColor(step.childNodes[0].childNodes[6].textContent.toString());
            // });
 
-            const nodes = document.getElementsByClassName('square');
-            Array.from(nodes).forEach(function (node) {
-                node.childNodes[0].style.fill = here.getColor(node.childNodes[8].textContent.toString());
-            });
-
-
-            let arrangeNodes = function (_callback) {
-                let nodeLevel = 0;
-                //let allNumber = 5;
-
-                here.allNodes.forEach(function (node) {
-                    nodeLevel += 1;
-                    let yLevel = -1;
-
-
-                    if (node.Successors.length == 0) {
-                        const squares = document.getElementsByClassName('square');
-                        Array.from(squares).forEach(function (square) {
-                            let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
-                            if (squareId == node.Number) {
-                                d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + (50) + ')');
-                            }
-                        })
-                        here.coordinatesOfNodes.push({
-                            "Number": node.Number,
-                            "coords": [(nodeLevel * 50) + 20, (50 + 15)]
-                        });
-                    }
-
-                    node.Successors.forEach(function (succer) {
-                        yLevel += 1;
-
-                        let nodeS = false;
-                        const Number = node.Number;
-                        here.coordinatesOfNodes.forEach(function (c) {
-                            if (c.Number == Number) {
-                                nodeS = true;
-                            }
-                        });
-                        if (!nodeS) {
-
-                            const squares = document.getElementsByClassName('square');
-                            Array.from(squares).forEach(function (square) {
-                                let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
-                                if (squareId == node.Number) {
-                                    let x = (nodeLevel * 50) + 10;
-                                    let y = (yLevel * 50) + 7.5;
-                                    d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
-                                }
-                            })
-
-                            here.coordinatesOfNodes.push({
-                                "Number": Number,
-                                "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
-                            });
-                        }
-                        here.allLines.push({"start": node.Number, "end": succer})
-                    })
-                });
-                _callback();
-            };
-
-            let paintLines = function () {
-                here.allLines.forEach(function (line) {
-                    here.drawLine(line.start, line.end)
-                })
-            }
-
-            arrangeNodes(() => paintLines());
 
 
             const svg = d3.select("svg");
