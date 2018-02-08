@@ -71,7 +71,6 @@
                         @ok="createNode(steptest)"
                         @shown="clearModal">
                     <form @submit.stop.prevent="handleSubmit">
-                        <p> Parameter : {{steptest}}</p>
                         <div v-for="param in steptest.Params">
                             <b-form-input type="text" v-bind:placeholder="param" v-model="paramWithval[param]"/>
                             <span class="error-message">{{ modalErrorMessage }}</span>
