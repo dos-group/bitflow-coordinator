@@ -218,7 +218,8 @@
 
               here.allNodes.forEach(function (node) {
                 nodeLevel += 1;
-                let yLevel = -1;
+                let yLevel = 0;
+                let endLevel= 1;
 
 
                 if (node.Successors.length == 0) {
@@ -226,12 +227,12 @@
                   Array.from(squares).forEach(function (square) {
                     let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
                     if (squareId == node.Number) {
-                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + (50) + ')');
+                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + ((endLevel * 50) + 7.5)+ ')');
                     }
                   })
                   here.coordinatesOfNodes.push({
                     "Number": node.Number,
-                    "coords": [(nodeLevel * 50) + 20, (50 + 15)]
+                    "coords": [(nodeLevel * 50) + 20, (endLevel * 50) + 15]
                   });
                 }
 
@@ -270,6 +271,8 @@
               here.allLines.forEach(function (line) {
                 here.drawLine(line.start, line.end)
               })
+              here.updateLines();
+              here.updateNodes();
             }
 
             arrangeNodes(() => paintLines());
