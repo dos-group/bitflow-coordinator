@@ -672,7 +672,8 @@
                   this.$notifyInfo("Pipeline started")
                   // console.log(resp);
                 } catch (e) {
-                    this.$notifyError("Pipeline started")
+                    // TODO: handle error:
+                    this.$notifyInfo("Pipeline started")
                 }
             },
             clearModal: function(){
