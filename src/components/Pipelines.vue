@@ -139,6 +139,7 @@ export default {
     async startPipeline(id) {
       try {
         const resp = await this.$backendCli.startPipeline(this.projectId, id);
+        this.$notifyInfo("Pipeline started")
       } catch (e) {
         this.$notifyError(e);
       }
