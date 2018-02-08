@@ -630,11 +630,11 @@
                         const resp = await this.$backendCli.updatePipeline(this.projectId, pipeline);
                         if (resp.statusText == "OK")
                         {
-                            alert("Pipeline successfully Saved.")
+                            this.$notifyInfo("Pipeline successfully Saved.")
                         }
                         return true;
                     } catch (e) {
-                        alert(e);
+                        this.$notifyError(e);
                     }
                 }
             },
@@ -649,10 +649,10 @@
                 try {
                    // console.log(this.pipelineId)
                     const resp = await this.$backendCli.startPipeline(this.projectId, this.pipelineId);
-                    alert(resp);
-                   // console.log(resp);
+                  this.$notifyInfo("Pipeline started")
+                  // console.log(resp);
                 } catch (e) {
-                    alert(e); //TODO: 400
+                    this.$notifyError("Pipeline started")
                 }
             },
             clearModal: function(){
