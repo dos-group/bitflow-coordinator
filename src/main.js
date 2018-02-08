@@ -24,7 +24,7 @@ const libMethod = Vue.prototype.$notify
 Vue.prototype.$notifyInfo = function (message) {
   libMethod({
     group: 'global-notifier',
-    title: 'Important message',
+    title: 'Info',
     type: 'info',
     text: message
   });
