@@ -29,7 +29,7 @@
                     <b-modal
                             id="add-source-modal"
                             ref="sourceModal"
-                            title="Pipeline Saved"
+                            title="Please insert a source:"
                             @ok="createNode('start')"
                             @shown="clearModal">
                         <form @submit.stop.prevent="handleSubmit">
@@ -47,7 +47,7 @@
                     <b-modal
                             id="add-sink-modal"
                             ref="sinkModal"
-                            title="Pipeline Saved"
+                            title="Please insert a destination:"
                             @ok="createNode('end')"
                             @shown="clearModal">
                         <form @submit.stop.prevent="handleSubmit">
@@ -100,7 +100,7 @@
                                     &#xf1f8;
                                 </text>
                                 <text dx="1" dy="3" font-size="1.5px">
-                                    Operation
+                                    Pipeline step
                                 </text>
                                 <text dx="1" dy="6" font-size="1.5px">
                                     Number : {{node.Number}}
