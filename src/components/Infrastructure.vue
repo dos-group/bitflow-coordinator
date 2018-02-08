@@ -13,7 +13,8 @@
 					<p class="card-text">Offline Agents</p>
 				</b-card>
 				<b-card :title="runningPipelinesCount">
-					<p class="card-text">Running Pipelines</p>
+					<!--TODO: change back to Running Pipelines-->
+					<p class="card-text">Pipelines</p>
 				</b-card>
 			</b-card-group>
 		</div>
@@ -49,7 +50,7 @@
 					</template>
 				</b-table>
 			</b-tab>
-			<b-tab title="Running Pipelines">
+			<b-tab title="Pipelines">
 				<div class="project-drowdown">
 					<select v-model="selected" class="form-control " @change="filterPipeline()">
 						<option value="" disabled hidden>Filter according to project</option>
@@ -113,7 +114,7 @@ export default {
 			this.runningPipelines = await this.$backendCli.getRunningPipelinesOfAllProjects();
 			this.runningPipelinesCount = this.runningPipelines.length ? String(this.runningPipelines.length) : "0";
     } catch (e) {
-      this.$notifyError(e);
+//      this.$notifyError(e);
     }
   },
   methods:{
@@ -123,7 +124,7 @@ export default {
 				const resp = await this.$backendCli.getPipelines(this.selected);
         this.runningPipelines = resp.data;
       } catch(e){
-      	alert(e);
+
 			}
     }
 	}
