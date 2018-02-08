@@ -183,16 +183,9 @@
                     })
             })
                 const pipeline = await this.$backendCli.getPipeline(this.projectId ,this.pipelineId );
-                this.pipelineName = pipeline.Name
+                this.pipelineName = pipeline.data.Name
                 pipeline.data.PipelineSteps.forEach(function (step) {
-                    here.allNodes.push({
-                        "ID":11,
-                        "Number": step.Number,
-                        "Typ": step.Typ,
-                        "Content": step.Content,
-                        "Params": step.Params,
-                        "Successors": step.Successors
-                    });
+                    here.allNodes.push(step);
                 })
               here.$nextTick(() => this.ArrangeNodes());
              // console.log(this.allNodes.length);
