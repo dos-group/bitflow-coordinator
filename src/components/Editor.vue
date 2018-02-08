@@ -26,6 +26,17 @@
                         <p class="card-text">Typ : source</p>
                         <p class="card-text">Content :</p>
                     </div>
+                    <b-modal
+                            id="add-source-modal"
+                            ref="sourceModal"
+                            title="Pipeline Saved"
+                            @ok="createNode('start')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Source" v-model="source"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
                 </div>
                 <div class="static step end" v-b-modal.add-sink-modal>
                     <div class="card-block">
@@ -33,6 +44,17 @@
                         <p class="card-text">Typ : sink</p>
                         <p class="card-text">Content :</p>
                     </div>
+                    <b-modal
+                            id="add-sink-modal"
+                            ref="sinkModal"
+                            title="Pipeline Saved"
+                            @ok="createNode('end')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Destination" v-model="destination"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
                 </div>
                 <div class="card step"  v-for="step in allSteps">
                     <div class="card-block" @click="steptoshare=step" v-b-modal.add-params-modal>
@@ -41,28 +63,6 @@
                         <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
                     </div>
                 </div>
-                <b-modal
-                        id="add-source-modal"
-                        ref="sourceModal"
-                        title="Pipeline Saved"
-                        @ok="createNode('start')"
-                        @shown="clearModal">
-                    <form @submit.stop.prevent="handleSubmit">
-                        <b-form-input type="text" placeholder="Source" v-model="source"/>
-                        <span class="error-message">{{ modalErrorMessage }}</span>
-                    </form>
-                </b-modal>
-                <b-modal
-                        id="add-sink-modal"
-                        ref="sinkModal"
-                        title="Pipeline Saved"
-                        @ok="createNode('end')"
-                        @shown="clearModal">
-                    <form @submit.stop.prevent="handleSubmit">
-                        <b-form-input type="text" placeholder="Destination" v-model="destination"/>
-                        <span class="error-message">{{ modalErrorMessage }}</span>
-                    </form>
-                </b-modal>
                 <b-modal
                         id="add-params-modal"
                         ref="paramsModal"
@@ -95,8 +95,8 @@
                                       dy="4">
                                     &#xf1f8;
                                 </text>
-                                <text class="IDField" dx="1" dy="3" font-size="1.5px">
-                                    ID : {{node.ID}}
+                                <text dx="1" dy="3" font-size="1.5px">
+                                    Operation
                                 </text>
                                 <text dx="1" dy="6" font-size="1.5px">
                                     Number : {{node.Number}}
@@ -170,6 +170,7 @@
         },
         async created() {
             let here = this;
+            let highestNumber = 0;
             try {
                 const capabilities = await this.$backendCli.getCapabilities(1);
                 capabilities.data.forEach(function (capa){
@@ -181,21 +182,22 @@
                         "Params": capa.RequiredParams,
                         "Successors": []
                     })
-            })
+            });
                 const pipeline = await this.$backendCli.getPipeline(this.projectId ,this.pipelineId );
                 this.pipelineName = pipeline.data.Name
                 pipeline.data.PipelineSteps.forEach(function (step) {
                     here.allNodes.push(step);
-                })
+                    if (step.Number > highestNumber){
+                      highestNumber= step.Number;
+                    }
+                });
               here.$nextTick(() => this.ArrangeNodes());
              // console.log(this.allNodes.length);
         }
             catch (e) {
                 this.$notifyError(e);
             }
-            // get pipeline if empty its ok otherwise put steps into allNodes.
-            // count pipeline steps in existing pipeline set countNumbers = tohighestNumber
-            this.countNumbers = 10;
+            this.countNumbers = highestNumber+1;
         },
         methods: {
           ArrangeNodes: function () {
@@ -230,7 +232,8 @@
                 }
 
                 node.Successors.forEach(function (succer) {
-                                    let nodeS = false;
+                  yLevel += 1;
+                  let nodeS = false;
                   const Number = node.Number;
                   here.coordinatesOfNodes.forEach(function (c) {
                     if (c.Number == Number) {
@@ -238,7 +241,6 @@
                     }
                   });
                   if (!nodeS) {
-                    yLevel += 1;
                     const squares = document.getElementsByClassName('square');
                     Array.from(squares).forEach(function (square) {
                       let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
@@ -671,7 +673,7 @@
                 d3.select(".wholeGraph")
                     .attr('transform', 'translate(' + d3.event.transform.x + ',' + d3.event.transform.y + ') scale(' + d3.event.transform.k + ')');
             };
-            
+
             const dragSvg = d3.zoom()
                 .on("zoom", function () {
                     zoomed.call(svg);
