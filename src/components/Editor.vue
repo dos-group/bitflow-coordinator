@@ -57,7 +57,7 @@
                     </b-modal>
                 </div>
                 <div class="card step"  v-for="step in allSteps">
-                    <div class="card-block" @click="steptoshare=step" v-b-modal.add-params-modal>
+                    <div class="card-block" @click="steptest=step" v-b-modal.add-params-modal>
                         <h5 class="card-title">Operation</h5>
                         <p class="card-text">Name : {{step.Content}}</p>
                         <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
@@ -67,11 +67,16 @@
                         id="add-params-modal"
                         ref="paramsModal"
                         title="Enter the Parameters"
-                        @ok="createNode(steptoshare)"
+                        v-modal="steptest"
+                        @ok="createNode(steptest)"
                         @shown="clearModal">
                     <form @submit.stop.prevent="handleSubmit">
-                        <b-form-input type="text" placeholder="value" v-model="parameter"/>
-                        <span class="error-message">{{ modalErrorMessage }}</span>
+                        <p> Parameter : {{steptest}}</p>
+                        <div v-for="param in steptest.Params">
+                            <b-form-input type="text" v-bind:placeholder="param" v-model="paramWithval[param]"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </div>
+
                     </form>
                 </b-modal>
             </div>
@@ -154,6 +159,8 @@
 
                   v-on:mouseout="blobs = !blobs" v-on:mouseover="blobs = !blobs"*/
             const blobs = true;
+            const steptest = {};
+            const paramWithval = {};
             const projectId = this.$router.history.current.fullPath.split('/')[2];
             const pipelineId = this.$router.history.current.fullPath.split('/')[4];
             const pipelineName = '';
@@ -166,7 +173,7 @@
             const allLines = [];
             const parameter ='';
             let modalErrorMessage = "";
-            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage,pipelineName,parameter}
+            return {allSteps, allNodes, blobs, allLines, coordinatesOfNodes, countNumbers, projectId, pipelineId,destination,source,modalErrorMessage,pipelineName,parameter,steptest, paramWithval}
         },
         async created() {
             let here = this;
@@ -579,13 +586,13 @@
                     const changingNode = this.allSteps.slice(index, index + 1)[0];
                     const newNode = Object.assign({}, changingNode);
                     newNode.Number = this.countNumbers;
-                    const paramobj = {};
-                    paramobj[nodeId.Params[0]] = this.parameter;
-                    newNode.Params = [];
-                    newNode.Params.push(paramobj);
                     this.countNumbers += 1;
+
+                    newNode.Params = [];
+                    newNode.Params.push(this.paramWithval);
+                    this.paramWithval = {};
+
                     this.allNodes.push(newNode);
-                    //console.log(here.allNodes)
                 }
 
 
@@ -658,6 +665,7 @@
             clearModal: function(){
                 this.source = "";
                 this.destination = "";
+                this.paramWithval = {};
             },
             showModalErrorMessage: function(messageOrError){
                 this.modalErrorMessage = messageOrError.message || messageOrError.errorMessage || messageOrError;
