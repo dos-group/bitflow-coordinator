@@ -27,6 +27,7 @@ import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.services.interfaces.IPipelineService;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
+import de.cit.backend.mgmt.validation.Validator;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
 public class ProjectApiServiceImpl extends ProjectApiService {
@@ -62,8 +63,9 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			throws NotFoundException {
 		try {
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
-			
-			ProjectDTO pro = projectService.updateProject(id, new ProjectConverter().convertToBackend(project));
+			ProjectDTO pro = new ProjectConverter().convertToBackend(project);
+			List<BitflowFrontendError> errors = Validator.validate(Validator.getProjectValidators(pro));
+			pro = projectService.updateProject(id, pro);
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
 		} catch(Exception e) {
 			return BitflowFrontendError.handleException(e);
@@ -73,7 +75,9 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	@Override
 	public Response projectPost(Project project, SecurityContext securityContext) throws NotFoundException {
 		try {
-			ProjectDTO pro = projectService.createProject(new ProjectConverter().convertToBackend(project),securityContext.getUserPrincipal().getName());
+			ProjectDTO pro = new ProjectConverter().convertToBackend(project);
+			List<BitflowFrontendError> errors = Validator.validate(Validator.getProjectValidators(pro));
+			pro = projectService.createProject(pro,securityContext.getUserPrincipal().getName());
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
 		} catch(Exception e) {
 			return BitflowFrontendError.handleException(e);
@@ -110,8 +114,10 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		PipelineConverter converter = new PipelineConverter();
 		try{
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
-			
-			PipelineDTO savedPipe = pipelineService.saveNewPipeline(converter.convertToBackend(body), id);
+
+			PipelineDTO pip = converter.convertToBackend(body);
+			List<BitflowFrontendError> errors = Validator.validate(Validator.getPipelineValidators(pip));
+			PipelineDTO savedPipe = pipelineService.saveNewPipeline(pip, id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
@@ -125,8 +131,10 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		ProjectDTO pro;
 		try {
 			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
-			
-			pipelineService.updatePipeline(projectId, pipelineId, converter.convertToBackend(body));		
+
+			PipelineDTO pip = converter.convertToBackend(body);
+			List<BitflowFrontendError> errors = Validator.validate(Validator.getPipelineValidators(pip));
+			pipelineService.updatePipeline(projectId, pipelineId, pip);
 			return Response.ok().build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);

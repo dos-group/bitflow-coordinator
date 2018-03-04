@@ -16,6 +16,7 @@ import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
+import de.cit.backend.mgmt.validation.Validator;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2017-12-04T15:16:54.751+01:00")
 public class UserApiServiceImpl extends UserApiService {
@@ -43,6 +44,8 @@ public class UserApiServiceImpl extends UserApiService {
 			if(!securityContext.isUserInRole(UserRoleEnum.ADMIN.name()) && !securityContext.getUserPrincipal().getName().equals(target.getName())) {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
+			target.setPassword(body.getNewPassword());
+			Validator.getUserValidators(target, true);
 			userService.changePassword(id, securityContext.getUserPrincipal().getName(), body.getOldPassword(), body.getNewPassword());
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
@@ -87,8 +90,9 @@ public class UserApiServiceImpl extends UserApiService {
 	public Response userIdPost(User body, Integer id, SecurityContext securityContext) throws NotFoundException {
 		try {
 			checkAuthorization(securityContext, body);
-
-			UserDTO user = userService.updateUser(id, new UserConverter().convertToBackend(body));
+			UserDTO user = new UserConverter().convertToBackend(body);
+			Validator.getUserValidators(user, true);
+			user = userService.updateUser(id, user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
@@ -101,7 +105,11 @@ public class UserApiServiceImpl extends UserApiService {
 	public Response userPost(User body, SecurityContext securityContext) throws NotFoundException {
 		try {
 			UserDTO user = new UserConverter().convertToBackend(body);
+			if(body.getPassword()==null) {
+				throw new IllegalArgumentException("Password must be set.");
+			}
 			user.setPassword(body.getPassword());
+			Validator.getUserValidators(user, true);
 			user = userService.createUser(user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (Exception e) {
