@@ -37,11 +37,16 @@
 
 * POST project/{id}/pipeline/{id} (update pipeline in project)
 
-# description of implemented features
+# Description of implemented features
 
-see Implementation/swagger.json
+* see Implementation/swagger.json
 
-# installation instructions
+# Installation instructions
 
-see Implementation/README.md for Wildfly setup instructions
-see Infrastructure/README.md for Openstack setup as well as MySQL database set up
+for Wildfly setup instructions  
+
+* see Implementation/README.md  
+
+for Openstack setup as well as MySQL database set up
+
+* see Infrastructure/README.md   
