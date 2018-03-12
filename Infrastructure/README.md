@@ -14,7 +14,7 @@ Use instead the file 'Unix-setup.bat' to setpu the environment variables.
 
 ### Creating a network
 
-TODO
+see https://docs.openstack.org/horizon/latest/user/create-networks.html
 
 ### Creating a security group
 
@@ -100,8 +100,26 @@ sudo mysql service restart
 
 You should now be able to access your database remotely.
 
+### Setting up process agents
 
+To install the process agents:
 
+First install the bitflow-pipeline tool following the instructions here: https://gitlab.tubit.tu-berlin.de/cit-master-project/go-bitflow-pipeline  
+Then you should have Go installed and can install the process agent with: go get github.com/antongulenko/bitflow-process-agent
+
+To allow traffic from the specific port they need to be added to the specific Openstack security group
+
+To run process agent:
+
+```shell
+bitflow-process-agent -h :<port-number>
+```
+
+To update the process agents:
+
+```shell
+go get -u -v github.com/antongulenko/bitflow-process-agent
+```
 
 
 
