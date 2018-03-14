@@ -1,0 +1,115 @@
+    <div class="page-content" style="margin-bottom: 5px">
+        <div class="row">
+            <div class="col"><h4>Editor for pipeline: {{this.pipelineName ? this.pipelineName : "Unnamed Pipeline"}}</h4></div>
+            <div class="col">
+                <b-btn class="btn btn-outline-success btn-md float-right action-button"
+                       @click="updatePipeline()">
+                    <i class="fa fa-upload" aria-hidden="true"> Save</i>
+                </b-btn>
+                <b-btn class="btn btn-outline-success btn-md float-right action-button"
+                       @click="saveandstart()">
+                    <i class="fa fa-play" aria-hidden="true"> Save & Start</i>
+                </b-btn>
+            </div>
+        </div>
+        <div class="row viewContainer">
+            <div class="contain list-group col-lg-2 col-md-auto col-sm-auto">
+                <div class="static step start" v-b-modal.add-source-modal>
+                    <div class="card-block">
+                        <h5 class="card-title">Default start of a pipeline </h5>
+                        <p class="card-text">Typ : source</p>
+                        <p class="card-text">Content :</p>
+                    </div>
+                    <b-modal
+                            id="add-source-modal"
+                            ref="sourceModal"
+                            title="Please insert a source:"
+                            @ok="createNode('start')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Source" v-model="source"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
+                </div>
+                <div class="static step end" v-b-modal.add-sink-modal>
+                    <div class="card-block">
+                        <h5 class="card-title">Default end of a pipeline </h5>
+                        <p class="card-text">Typ : sink</p>
+                        <p class="card-text">Content :</p>
+                    </div>
+                    <b-modal
+                            id="add-sink-modal"
+                            ref="sinkModal"
+                            title="Please insert a destination:"
+                            @ok="createNode('end')"
+                            @shown="clearModal">
+                        <form @submit.stop.prevent="handleSubmit">
+                            <b-form-input type="text" placeholder="Destination" v-model="destination"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </form>
+                    </b-modal>
+                </div>
+                <div class="card step"  v-for="step in allSteps">
+                    <div class="card-block" @click="steptest=step" v-b-modal.add-params-modal>
+                        <h5 class="card-title">Operation</h5>
+                        <p class="card-text">Name : {{step.Content}}</p>
+                        <p class="card-text" v-for="param in step.Params"> Parameter : {{param}}</p>
+                    </div>
+                </div>
+                <b-modal
+                        id="add-params-modal"
+                        ref="paramsModal"
+                        title="Enter the Parameters"
+                        v-modal="steptest"
+                        @ok="createNode(steptest)"
+                        @shown="clearModal">
+                    <form @submit.stop.prevent="handleSubmit">
+                        <div v-for="param in steptest.Params">
+                            <b-form-input type="text" v-bind:placeholder="param" v-model="paramWithval[param]"/>
+                            <span class="error-message">{{ modalErrorMessage }}</span>
+                        </div>
+
+                    </form>
+                </b-modal>
+            </div>
+            <div class="svg-container col-lg-10 col-md-auto col-sm-auto">
+                <svg preserveAspectRatio="xMidYMid meet" class="svg-content" viewBox="0 0 200 100">
+                    <defs>
+                        <marker id="Triangle" viewBox="0 0 10 10" refX="1" refY="5"
+                                markerWidth="4" markerHeight="4" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                        </marker>
+                    </defs>
+                    <g class="wholeGraph">
+                        <path hidden d="m0,0 l 0,0" class="dragline" style="marker-end: url(#Triangle)"></path>
+                        <g class="lines">
+                        </g>
+                        <g id="markers" class="markers"></g>
+                        <g class="recs">
+                            <g class="square" transform="translate(70,50)" v-for="node in allNodes" :key="node.Number">
+                                <rect width="20" height="15" rx="1" ry="1" style="opacity: 1"></rect>
+                                <text font-family="FontAwesome" font-size="0.2em" dx="16" v-on:click="deleteNode(node)"
+                                      dy="4">
+                                    &#xf1f8;
+                                </text>
+                                <text dx="1" dy="3" font-size="1.5px">
+                                    Pipeline step
+                                </text>
+                                <text dx="1" dy="6" font-size="1.5px">
+                                    Number : {{node.Number}}
+                                </text>
+                                <text dx="1" dy="9" font-size="1.5px">
+                                    Typ : {{node.Typ}}
+                                </text>
+                                <text dx="1" dy="12" font-size="1.5px">
+                                    Content : {{node.Content}}
+                                </text>
+                                <circle v-if="blobs" r="1" cx="21" cy="7.5"></circle>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>

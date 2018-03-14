@@ -1,0 +1,92 @@
+    .row.viewContainer {
+        border: 2px solid rgb(66, 185, 131);
+        border-radius: 0.5em;
+        padding: 5px;
+    }
+
+    .contain {
+        max-height: 600px !important;
+    }
+
+    .active rect {
+        stroke: #000;
+        stroke-width: 0.3px;
+    }
+
+    .svg-container {
+        max-height: 600px !important;
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        vertical-align: top;
+        overflow: hidden;
+    }
+
+    .svg-content {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-left: 2px solid rgb(66, 185, 131);
+        margin-left: 15px;
+        padding-bottom: 25px;
+        padding-right: 30px;
+    }
+
+    .card.step {
+        background-color:rgba(152, 231, 82,1);
+        margin-bottom: 5px;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .static.step{
+        border-radius: 10px;
+        margin-bottom: 5px;
+        padding: 10px;
+    }
+    .start {
+        background-color: rgba(255, 135, 91, 1);
+    }
+
+    .end {
+        background-color: rgba(69, 131, 174, 1);
+    }
+
+    .card-text {
+        margin-bottom: 0;
+    }
+
+
+    path.dragline {
+        stroke: #000;
+        stroke-width: 1px;
+        cursor: default;
+    }
+
+    path.normalLine {
+        stroke: #000;
+        stroke-width: 0px;
+        cursor: default;
+    }
+
+    .list-group {
+        padding: 15px;
+        display: inline-block;
+        position: relative;
+        max-height: 750px;
+        overflow: scroll;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .markers {
+        font-size: 5px;
+        fill: black;
+        dominant-baseline: central
+    }
+
+    .markers #delete {
+        font-size: 5px;
+        fill: red;
+    }
