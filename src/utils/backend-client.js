@@ -56,22 +56,26 @@ export function getCapabilities(agentId) {
 export function getUsers() {
   return axios.get("/users");
 }
+
 export function getUser(userId) {
   return axios.get("/user/" + userId);
 }
+
 export function getUsersInProject(projectId) {
   return axios.get("/project/" + projectId + "/users");
 }
+
 export function addUserToProject(projectId, userId) {
   return axios.post("/project/" + projectId + "/users/" + userId);
 }
+
 export function removeUserFromProject(projectId, userId) {
   return axios.delete("/project/" + projectId + "/users/" + userId);
 }
 
 // Projects
 export async function getProjects() {
-  
+
   let resp = await axios.get("/projects");
   let seenIds = [];
   const res = resp.data.filter(function(project){
@@ -81,19 +85,22 @@ export async function getProjects() {
     }
     return false
   })
-  
+
   return {data:res};
 }
 
 export function getProject(projectId) {
   return axios.get("/project/" + projectId);
 }
+
 export function createProject(project) {
   return axios.post("/project", project);
 }
+
 export function updateProject(projectId, updatedProject) {
   return axios.post("/project/" + projectId, updatedProject);
 }
+
 export function deleteProject(projectId) {
   return axios.delete("/project/" + projectId);
 }
@@ -110,51 +117,41 @@ export async function getPipelines(projectId) {
     return false
   })
   return {data:res};
-  
 }
-export async function getRunningPipelinesOfAllProjects() {
-  const projects = await getProjects();
-  const projectIDs = projects.data.map(project => project.ID);
-  var allPipelinesNested = [];
-  for (let i = 0; i < projectIDs.length; i++) {
-    const pipelinesOfProject = await getPipelines(projectIDs[i]);
-    allPipelinesNested.push(pipelinesOfProject.data);
-  }
-  const allPipelines =  flatten(allPipelinesNested);
-  var runningPipelines = [];
-  for (let i = 0; i < allPipelines.length; i++) {
-    const historyReponse = await getHistory(allPipelines[i].Project.ID, allPipelines[i].ID); //TODO: change
-    const history = historyReponse.data;
-    if (history.length > 0 && history[0].Status == "running") {
-      runningPipelines.push(allPipelines[i]);
-    }
-  }
-  return runningPipelines;
-}
+
 export function getPipeline(projectId, pipelineId) {
   return axios.get("/project/" + projectId + "/pipeline/" + pipelineId);
 }
+
 export function createPipeline(projectId, pipeline) {
   return axios.post("/project/" + projectId + "/pipeline", pipeline);
 }
+
 export function updatePipeline(projectId, pipeline) {
   return axios.post("/project/" + projectId + "/pipeline/" + pipeline.ID, pipeline);
 }
+
 export function startPipeline(projectId, pipelineId) {
   return axios.post("/project/" + projectId + "/pipeline/" + pipelineId + "/start", {});
 }
+
 export function deletePipeline(projectId, pipelineId) {
   return axios.delete("/project/" + projectId + "/pipeline/" + pipelineId);
 }
-export function getHistory(projectId, pipelineId) {
-  return axios.get("/project/" + projectId + "/pipeline/" + pipelineId + "/history");
-}
 
+export async function getLastExecutionDateForPipelinesInProject(projectId) {
+  let pipelinesResp = await getPipelines(projectId);
+  var executionDates = {};
 
-
-
-function flatten(arr) {
-  return arr.reduce(function (flat, toFlatten) {
-    return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-  }, []);
+  for (let i = 0; i < pipelinesResp.data.length; i++) {
+    const pipId = String(pipelinesResp.data[i].ID);
+    const historyResp = await axios.get("/project/" + projectId + "/pipeline/" + pipId + "/history");
+    if (historyResp.data[0] == undefined) {
+      executionDates[pipId] = "no data";
+    } else {
+      const firstHistoryEntry = historyResp.data[0].StartedAt;
+      executionDates[pipId] = firstHistoryEntry;
+    }
+  }
+  return executionDates;
 }
