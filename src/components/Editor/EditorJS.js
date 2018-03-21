@@ -70,7 +70,7 @@
 
             // arranges the steps to be visual accessable
             let arrangeNodes = function (_callback) {
-              let nodeLevel = 0;
+              let nodeLevel = -1;
               let endNodes = [];
               let positionedNodes = [];
 
