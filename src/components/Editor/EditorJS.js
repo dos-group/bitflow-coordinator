@@ -61,6 +61,7 @@
         methods: {
           ArrangeNodes: function () {
             let here = this;
+
             // fill the squares with color 
             const nodes = document.getElementsByClassName('square');
             Array.from(nodes).forEach(function (node) {
@@ -70,56 +71,102 @@
             // arranges the steps to be visual accessable
             let arrangeNodes = function (_callback) {
               let nodeLevel = 0;
+              let endNodes = [];
+              let positionedNodes = [];
+
+               here.allNodes.forEach(function (node) {
+                if (node.Successors.length === 0) {
+                	if(!endNodes.includes(node.Number)){
+                	endNodes.push(node.Number);	
+                	}
+                }
+            })
+
 
               here.allNodes.forEach(function (node) {
-                nodeLevel += 1;
-                let yLevel = 0;
-                let endLevel= 1;
 
+              	let yLevel = 0;
 
-                if (node.Successors.length == 0) {
-                  const squares = document.getElementsByClassName('square');
-                  Array.from(squares).forEach(function (square) {
-                    let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
-                    if (squareId == node.Number) {
-                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 50) + ',' + ((endLevel * 50) + 7.5)+ ')');
-                    }
-                  })
-                  here.coordinatesOfNodes.push({
-                    "Number": node.Number,
-                    "coords": [(nodeLevel * 50) + 20, (endLevel * 50) + 15]
-                  });
-                }
-
-                node.Successors.forEach(function (succer) {
-                  yLevel += 1;
-                  let nodeS = false;
-                  const Number = node.Number;
-                  here.coordinatesOfNodes.forEach(function (c) {
-                    if (c.Number == Number) {
-                      nodeS = true;
-                    }
-                  });
-                  if (!nodeS) {
-                    const squares = document.getElementsByClassName('square');
+              	if(!positionedNodes.includes(node.Number)&&!endNodes.includes(node.Number)){
+              		nodeLevel += 1;
+              		const squares = document.getElementsByClassName('square');
                     Array.from(squares).forEach(function (square) {
                       let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
                       if (squareId == node.Number) {
-                        let x = (nodeLevel * 50) + 10;
-                        let y = (yLevel * 50) + 7.5;
+                        let x = (nodeLevel * 60) + 10;
+                        let y = (yLevel * 20 * node.Successors.length) + 7.5;
                         d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
                       }
                     });
 
                     // we need to save the position of the steps in order to keep track of them
                     here.coordinatesOfNodes.push({
-                      "Number": Number,
-                      "coords": [(nodeLevel * 50) + 20, (yLevel * 50) + 15]
+                      "Number": node.Number,
+                      "coords": [(nodeLevel * 60) + 20, (yLevel * 20 * node.Successors.length) + 15]
                     });
+                	positionedNodes.push(node.Number)
+			 	}
+  			 
+
+                let firstSuccessor = true;
+
+                node.Successors.forEach(function (succer) {
+
+				here.allLines.push({"start": node.Number, "end": succer})
+
+               	if(!positionedNodes.includes(succer)&&!endNodes.includes(succer)){
+               	  if(firstSuccessor){
+               	  nodeLevel += 1;	
+               	  firstSuccessor = false
+               	  }
+                  yLevel = yLevel + 1;
+                  const Number = node.Number;
+                
+                    const squares = document.getElementsByClassName('square');
+                    Array.from(squares).forEach(function (square) {
+                      let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                      if (squareId == succer) {
+                        let x = (nodeLevel * 60) + 10;
+                        let y = (yLevel * 20) + 7.5;
+                        d3.select(square).attr('transform', 'translate(' + x + ',' + y + ')');
+                      }
+                    });
+
+                    // we need to save the position of the steps in order to keep track of them
+                    here.coordinatesOfNodes.push({
+                      "Number": succer,
+                      "coords": [(nodeLevel * 60) + 20, (yLevel * 20) + 15]
+                    });
+
+                  	positionedNodes.push(succer)
+
                   }
-                  here.allLines.push({"start": node.Number, "end": succer})
+
+                  	
                 })
-              });
+
+			});
+
+
+            let endLevel = 1;
+              nodeLevel +=1;
+
+            endNodes.forEach(function (endnode){
+                  const squares = document.getElementsByClassName('square');
+                  Array.from(squares).forEach(function (square) {
+                    let squareId = square.childNodes[6].textContent.match(/\d+/)[0];
+                    if (squareId == endnode) {
+                      d3.select(square).attr('transform', 'translate(' + (nodeLevel * 60) + ',' + ((endLevel * 20) + 7.5)+ ')');
+                    }
+                  })
+
+                  here.coordinatesOfNodes.push({
+                    "Number": endnode,
+                    "coords": [(nodeLevel * 60) + 20, (endLevel * 20) + 15]
+                  });
+                  endLevel +=1;
+              	})
+
               _callback();
             };
 
@@ -134,7 +181,6 @@
 
             arrangeNodes(() => paintLines());
 
-            //console.log(this.allNodes);
           },
           //function to delete existing connections
             deleteLine: function (start, end) {
@@ -188,6 +234,7 @@
             ,
             // draws a connection between a start and an end node
             drawLine: function (start, end) {
+
                 const here = this;
                 const svg = d3.select("svg");
                 var startNode = "empty";
@@ -534,17 +581,14 @@
             saveandstart: async function () {
                 const done = await this.updatePipeline();
                 if (done ) {
-                    //console.log("Pipeline updated");
                     await this.startPipeline();
                 }
             },
             //start a created pipeline
             startPipeline: async function () {
                 try {
-                   // console.log(this.pipelineId)
                     const resp = await this.$backendCli.startPipeline(this.projectId, this.pipelineId);
                   this.$notifyInfo("Pipeline started")
-                  // console.log(resp);
                 } catch (e) {
                     // TODO: handle error:
                     this.$notifyInfo("Pipeline started")
