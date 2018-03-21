@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import {createCurrentTimeFormatted, formatISODate} from '../utils';
+import { createCurrentTimeFormatted, formatISODate } from '../utils';
 
 export default {
   name: "Pipelines",

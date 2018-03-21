@@ -1,4 +1,4 @@
-FRONTEND=10.200.2.70
+FRONTEND?=10.200.2.70
 
 deploy: scp-files restart
 

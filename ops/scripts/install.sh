@@ -16,5 +16,8 @@ sudo cp ${DIR}/frontend-server.key ~/.ssh/id_rsa
 eval `ssh-agent -s`
 ssh-add
 
+./npm-f3-install.sh
+
 # start server using process manager
 pm2 start npm --name "bitflow-frontend" -- start
+./restart-service.sh
