@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
@@ -24,6 +25,7 @@ import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
 import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
+@Ignore
 public class PersistenceAccessTest {
 
 	private static EntityManager em;
@@ -52,7 +54,7 @@ public class PersistenceAccessTest {
 	
 	@Test
 	public void findPipelineTest() {
-		PipelineDTO pipe = em.find(PipelineDTO.class, 1);
+		PipelineDTO pipe = em.find(PipelineDTO.class, 13);
 		System.out.println("Pipeline:");
 		System.out.println(ScriptGenerator.generateScriptForPipeline(pipe));
 		for(PipelineStepDTO step : pipe.getPipelineSteps()){
@@ -79,7 +81,13 @@ public class PersistenceAccessTest {
 	}
 	
 	@Test
-//	@Ignore
+	public void loadPipelineHistoryTest(){
+		PipelineHistoryDTO hist = em.find(PipelineHistoryDTO.class, 26);
+		System.out.println(hist.getScript());
+		Assert.assertNotNull(hist.getScript());
+	}
+	
+	@Test
 	public void savePipelineHistoryTest(){
 		PipelineDTO pipeline = new PipelineDTO();
 		pipeline.setLastChanged(new Date());
@@ -90,6 +98,7 @@ public class PersistenceAccessTest {
 		hist.setStatus(PipelineStateEnum.RUNNING);
 		hist.setStartedAt(new Date());
 		hist.setPipeline(pipeline);
+		hist.setScript("source -> avg() -> sink");
 		
 		pipeline.getPipelineHistory().add(hist);
 		

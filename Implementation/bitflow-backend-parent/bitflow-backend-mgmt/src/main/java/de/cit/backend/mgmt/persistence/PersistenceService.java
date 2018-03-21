@@ -37,16 +37,17 @@ public class PersistenceService {
 	}
 
 	public UserDTO findUser(String username){
-		String sqlQuery = "SELECT * FROM USERDATA WHERE name=\""+username.replaceAll("\"","\\\"")+"\"";
-		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+		String hql = "select user from UserDTO user where user.name = :name";
+		Query query = entityManager.createQuery(hql);
+		query.setParameter("name", username);
+		
 		List<UserDTO> results = query.getResultList();
-		UserDTO user = results.size() != 1 ? null : results.get(0);
-		return user;
+		return results.size() != 1 ? null : results.get(0);
 	}
 
 	public List<UserDTO> findUsers(){
-		String sqlQuery = "SELECT * FROM USERDATA";
-		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+		String hqlQuery = "SELECT user FROM UserDTO user";
+		Query query = entityManager.createQuery(hqlQuery);
 
 		return (List<UserDTO>) query.getResultList();
 	}	

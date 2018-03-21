@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
@@ -24,7 +24,7 @@ public class UserService implements IUserService {
 	private static final Logger log = Logger.getLogger(UserService.class);
 	public static final String USER_ERROR_OBJECT = "User";
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
 	@PostConstruct

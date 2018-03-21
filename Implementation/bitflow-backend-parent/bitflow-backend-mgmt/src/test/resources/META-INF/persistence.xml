@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	
+	<persistence-unit name="bitflow-backend-mgmt-test" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<class>de.cit.backend.mgmt.persistence.model.UserDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.PipelineDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.PipelineParameterDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.PipelineStepDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.PipelineStepSuccessorsDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.ProjectDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.AgentDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.CapabilityDTO</class>
+
+		<properties>
+			<!-- Configuring JDBC properties -->
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test;INIT=CREATE SCHEMA IF NOT EXISTS citBitDB" />
+			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+
+			<!-- Hibernate properties -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="hibernate.format_sql" value="false" />
+			<property name="hibernate.show_sql" value="false" />
+		</properties>
+
+	</persistence-unit>
+</persistence>
