@@ -25,7 +25,8 @@ import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
 import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
-@Ignore
+@Deprecated
+@Ignore("This test class still uses the production database instead of the local in-memory db.")
 public class PersistenceAccessTest {
 
 	private static EntityManager em;

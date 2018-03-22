@@ -8,21 +8,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.ejb.*;
+import javax.ejb.Local;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
 
-import de.cit.backend.agent.api.model.Info;
-import de.cit.backend.mgmt.services.interfaces.IAgentMonitoringService;
 import org.jboss.logging.Logger;
 
 import de.cit.backend.agent.ApiClient;
 import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.InfosApi;
+import de.cit.backend.agent.api.model.Info;
 import de.cit.backend.mgmt.converter.CapabilityConverter;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.enums.AgentState;
+import de.cit.backend.mgmt.services.interfaces.IAgentMonitoringService;
 
 @Singleton
 @Startup
@@ -33,10 +37,10 @@ public class AgentMonitoringService implements IAgentMonitoringService{
 	
 	private static final Logger log = Logger.getLogger(AgentMonitoringService.class);
 	
-	@EJB
+	@Inject
 	private ConfigurationService config;
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 
 	private final Map<Integer, Info> agentInfos = new HashMap<>();

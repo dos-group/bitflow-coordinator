@@ -139,8 +139,13 @@ public class PersistenceService {
 		entityManager.remove(project);
 	}
 
-	public void deletePipeline(int pipelineId) {
-		entityManager.remove(this.findPipeline(pipelineId));
+	public void deletePipeline(PipelineDTO pipeline) {
+		for(ProjectDTO pro : pipeline.getProjects()){
+			pro.getPipelines().remove(pipeline);
+		}
+		
+		pipeline.getProjects().clear();
+		entityManager.remove(pipeline);
 	}
 
 	public List<AgentDTO> findAgentsByState(AgentState state) {

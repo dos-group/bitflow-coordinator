@@ -1,29 +1,21 @@
 package de.cit.backend.mgmt.services;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
 
-import de.cit.backend.agent.ApiClient;
-import de.cit.backend.agent.Configuration;
-import de.cit.backend.agent.api.InfosApi;
-import de.cit.backend.mgmt.converter.CapabilityConverter;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
-import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 import de.cit.backend.mgmt.services.interfaces.IInfoService;
 
 @Stateless
@@ -33,7 +25,7 @@ public class InfoService implements IInfoService {
 	private static final Logger log = Logger.getLogger(InfoService.class);
 	public static final String AGENT_ERROR_OBJECT = "Agent";
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
 	@PostConstruct

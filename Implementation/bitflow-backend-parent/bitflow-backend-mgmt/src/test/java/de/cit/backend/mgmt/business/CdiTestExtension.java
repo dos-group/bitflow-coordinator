@@ -29,6 +29,7 @@ public class CdiTestExtension implements Extension {
     public static final String FIELD_NAME_ENTITYMANAGER = "entityManager";
     
     public static final String CLASS_NAME_PERSISTENCE_SERVICE = "PersistenceService";
+    public static final String CLASS_NAME_CONFIG_SERVICE = "ConfigurationService";
     
     /**
      * Singleton eines EntityManagers
@@ -125,6 +126,6 @@ public class CdiTestExtension implements Extension {
     }
 
     private boolean isEntityManagerInjection(String name) {
-        return name.endsWith(CLASS_NAME_PERSISTENCE_SERVICE);
+        return name.endsWith(CLASS_NAME_PERSISTENCE_SERVICE) || name.endsWith(CLASS_NAME_CONFIG_SERVICE);
     }
 }

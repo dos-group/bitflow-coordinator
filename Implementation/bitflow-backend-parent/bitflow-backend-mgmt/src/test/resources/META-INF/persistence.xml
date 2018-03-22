@@ -12,6 +12,7 @@
 		<class>de.cit.backend.mgmt.persistence.model.ProjectDTO</class>
 		<class>de.cit.backend.mgmt.persistence.model.AgentDTO</class>
 		<class>de.cit.backend.mgmt.persistence.model.CapabilityDTO</class>
+		<class>de.cit.backend.mgmt.persistence.model.ConfigurationDTO</class>
 
 		<properties>
 			<!-- Configuring JDBC properties -->
