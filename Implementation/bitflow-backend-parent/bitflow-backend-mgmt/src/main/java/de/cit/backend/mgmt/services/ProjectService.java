@@ -5,9 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
@@ -28,7 +28,7 @@ public class ProjectService implements IProjectService {
 	public static final String PROJECT_ERROR_OBJECT = "Project";
 	
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
 	@PostConstruct
@@ -114,7 +114,8 @@ public class ProjectService implements IProjectService {
 		if(pipeline == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PipelineService.PIPELINE_ERROR_OBJECT);
 		}
-		persistence.deletePipeline(pipelineId);
+
+		persistence.deletePipeline(pipeline);
 	}
 
 	@Override

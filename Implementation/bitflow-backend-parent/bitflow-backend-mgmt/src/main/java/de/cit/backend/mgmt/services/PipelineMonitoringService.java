@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
@@ -27,7 +27,7 @@ public class PipelineMonitoringService {
 	private static final Logger log = Logger.getLogger(PipelineMonitoringService.class);
 	private static final int QUERY_PERIOD = 30000;
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
 	@Asynchronous

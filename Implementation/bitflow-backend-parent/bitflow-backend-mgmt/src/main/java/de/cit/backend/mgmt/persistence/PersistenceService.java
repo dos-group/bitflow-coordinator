@@ -13,9 +13,11 @@ import org.jboss.logging.Logger;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
+import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.persistence.model.enums.AgentState;
+import de.cit.backend.mgmt.persistence.model.enums.StepTypeEnum;
 
 @Stateless
 public class PersistenceService {
@@ -35,16 +37,17 @@ public class PersistenceService {
 	}
 
 	public UserDTO findUser(String username){
-		String sqlQuery = "SELECT * FROM USERDATA WHERE name=\""+username.replaceAll("\"","\\\"")+"\"";
-		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+		String hql = "select user from UserDTO user where user.name = :name";
+		Query query = entityManager.createQuery(hql);
+		query.setParameter("name", username);
+		
 		List<UserDTO> results = query.getResultList();
-		UserDTO user = results.size() != 1 ? null : results.get(0);
-		return user;
+		return results.size() != 1 ? null : results.get(0);
 	}
 
 	public List<UserDTO> findUsers(){
-		String sqlQuery = "SELECT * FROM USERDATA";
-		Query query = entityManager.createNativeQuery(sqlQuery, UserDTO.class);
+		String hqlQuery = "SELECT user FROM UserDTO user";
+		Query query = entityManager.createQuery(hqlQuery);
 
 		return (List<UserDTO>) query.getResultList();
 	}	
@@ -59,6 +62,10 @@ public class PersistenceService {
 	public AgentDTO findAgent(int agentId) {
 		return entityManager.find(AgentDTO.class, agentId);
 	}
+
+	public CapabilityDTO findCapability(int capabilityId){
+		return entityManager.find(CapabilityDTO.class, capabilityId);
+	}
 	
 	public CapabilityDTO findCapability(CapabilityDTO capa){
 		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name=? and is_fork=? and description like ?";
@@ -69,6 +76,37 @@ public class PersistenceService {
 		List<CapabilityDTO> results = query.getResultList();
 		CapabilityDTO cap = results.size() != 1 ? null : results.get(0);
 		return cap;
+	}
+	
+	public CapabilityDTO findCapability(String name){
+		String sqlQuery = "SELECT * FROM CAPABILITY WHERE name like ?";
+		Query query = entityManager.createNativeQuery(sqlQuery,CapabilityDTO.class);
+		query.setParameter(1, name);
+		List<CapabilityDTO> results = query.getResultList();
+		CapabilityDTO cap = results.size() != 0 ? results.get(0) : null;
+		return cap;
+	}
+	
+	public List<AgentDTO> filterAgents(PipelineDTO pipeline) {
+		List<AgentDTO> agents = findAgentsByState(AgentState.ONLINE);
+		return filterAgents(agents,pipeline);
+	}
+	
+	public List<AgentDTO> filterAgents(List<AgentDTO> availableAgents,PipelineDTO pipeline) {
+		CapabilityDTO capa;
+		for(PipelineStepDTO step : pipeline.getPipelineSteps())
+		{
+			if (step.getType().equals(StepTypeEnum.OPERATION)) 
+			{
+				// improvable when Content of Pipeline Step contains Capability ID
+				capa = this.findCapability(step.getContent());
+				if (capa != null)
+				{
+					availableAgents.retainAll(capa.getAgents());
+				}
+			}
+		}
+		return availableAgents;
 	}
 	
 	public void deleteUser(int userId) {
@@ -101,8 +139,13 @@ public class PersistenceService {
 		entityManager.remove(project);
 	}
 
-	public void deletePipeline(int pipelineId) {
-		entityManager.remove(this.findPipeline(pipelineId));
+	public void deletePipeline(PipelineDTO pipeline) {
+		for(ProjectDTO pro : pipeline.getProjects()){
+			pro.getPipelines().remove(pipeline);
+		}
+		
+		pipeline.getProjects().clear();
+		entityManager.remove(pipeline);
 	}
 
 	public List<AgentDTO> findAgentsByState(AgentState state) {

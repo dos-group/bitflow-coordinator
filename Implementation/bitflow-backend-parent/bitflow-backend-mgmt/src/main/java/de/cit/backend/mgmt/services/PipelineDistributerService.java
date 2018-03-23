@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
@@ -43,13 +43,13 @@ public class PipelineDistributerService {
 	private static final String PORT_ERROR = "listen tcp %s: bind: Normalerweise";
 	private static final String PARAM_TCP_LIMIT = "-tcp-limit 1";
 	
-	@EJB
+	@Inject
 	private ConfigurationService config;
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
-	@EJB
+	@Inject
 	private PipelineMonitoringService pipeMonitor;
 	
 	private List<AgentDTO> idleAgents = new ArrayList<>();

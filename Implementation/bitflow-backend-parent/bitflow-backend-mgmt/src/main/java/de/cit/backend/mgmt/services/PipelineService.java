@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import org.hibernate.Hibernate;
 import org.jboss.logging.Logger;
@@ -28,10 +28,10 @@ public class PipelineService implements IPipelineService {
 	private static final Logger log = Logger.getLogger(PipelineService.class);
 	public static final String PIPELINE_ERROR_OBJECT = "Pipeline";
 	
-	@EJB
+	@Inject
 	private PipelineDistributerService pipelineDistributer;
 	
-	@EJB
+	@Inject
 	private PersistenceService persistence;
 	
 	@PostConstruct
