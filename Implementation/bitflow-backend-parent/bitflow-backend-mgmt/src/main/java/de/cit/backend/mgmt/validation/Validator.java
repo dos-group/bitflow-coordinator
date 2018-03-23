@@ -104,15 +104,9 @@ public abstract class Validator {
 		return validators;
 	}
 	
-	public static List<BitflowFrontendError> validate(List<Validator> validators){
-		List<BitflowFrontendError> errors = new ArrayList<>();
+	public static void validate(List<Validator> validators) throws BitflowException {
 		for(Validator val : validators){
-			try {
-				val.validate();
-			} catch (BitflowException e) {
-				errors.add(e.toFrontendFormat());
-			}
+			val.validate();
 		}
-		return errors;
 	}
 }

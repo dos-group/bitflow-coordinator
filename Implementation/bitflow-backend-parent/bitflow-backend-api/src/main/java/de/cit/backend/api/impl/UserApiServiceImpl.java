@@ -109,6 +109,13 @@ public class UserApiServiceImpl extends UserApiService {
 				throw new IllegalArgumentException("Password must be set.");
 			}
 			user.setPassword(body.getPassword());
+			try {
+				userService.loadUser(user.getName());
+				// no exception thrown so user was found
+				throw new IllegalArgumentException("Specified username is already registered.");
+			} catch (BitflowException e) {
+				// user was not found
+			}
 			Validator.getUserValidators(user, true);
 			user = userService.createUser(user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();

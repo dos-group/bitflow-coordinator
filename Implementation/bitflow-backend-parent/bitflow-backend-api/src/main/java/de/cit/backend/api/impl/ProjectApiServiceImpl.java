@@ -64,7 +64,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 		try {
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
 			ProjectDTO pro = new ProjectConverter().convertToBackend(project);
-			List<BitflowFrontendError> errors = Validator.validate(Validator.getProjectValidators(pro));
+			Validator.validate(Validator.getProjectValidators(pro));
 			pro = projectService.updateProject(id, pro);
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
 		} catch(Exception e) {
@@ -76,7 +76,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 	public Response projectPost(Project project, SecurityContext securityContext) throws NotFoundException {
 		try {
 			ProjectDTO pro = new ProjectConverter().convertToBackend(project);
-			List<BitflowFrontendError> errors = Validator.validate(Validator.getProjectValidators(pro));
+			Validator.validate(Validator.getProjectValidators(pro));
 			pro = projectService.createProject(pro,securityContext.getUserPrincipal().getName());
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
 		} catch(Exception e) {
@@ -116,7 +116,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
 
 			PipelineDTO pip = converter.convertToBackend(body);
-			List<BitflowFrontendError> errors = Validator.validate(Validator.getPipelineValidators(pip));
+			Validator.validate(Validator.getPipelineValidators(pip));
 			PipelineDTO savedPipe = pipelineService.saveNewPipeline(pip, id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
 		} catch (Exception e) {
@@ -133,7 +133,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
 
 			PipelineDTO pip = converter.convertToBackend(body);
-			List<BitflowFrontendError> errors = Validator.validate(Validator.getPipelineValidators(pip));
+			Validator.validate(Validator.getPipelineValidators(pip));
 			pipelineService.updatePipeline(projectId, pipelineId, pip);
 			return Response.ok().build();
 		} catch (Exception e) {
