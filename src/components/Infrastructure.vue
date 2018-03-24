@@ -24,10 +24,10 @@
           </template>
           <template slot="row-details" slot-scope="row">
             <b-card>
-              <!-- TODO: for demo only. reactivate to show real data
               <b-row v-for="tag in row.item.Tags" :key="tag.Slots" class="mb-2">
-            -->
-            <b-row v-for="tag in testTags" :key="testTags.indexOf(tag)" class="mb-2">
+              <!-- For demo purposes only. Backend does not send tags at the moment.
+              <b-row v-for="tag in testTags" :key="testTags.indexOf(tag)" class="mb-2">
+              -->
               <b-col sm="2" class="text-sm-right">
                 <b-row v-for="tagKey in Object.keys(tag)" :key="Object.keys(tag).indexOf(tagKey)" class="mb-2">
                   <b>{{ tagKey }}</b>
@@ -61,7 +61,7 @@
             <router-link :to="{ path: '/project/' + selectedProject + '/pipelines/' + item.ID + '/editor' }" class="list-item-link">
               {{ item.Name ? item.Name : "Unnamed Pipeline" }}
             </router-link>
-            <div>last execution: {{ pipelineExecutionDates[item.ID] }}</div>
+            <div>last execution: {{ formatISODate(pipelineExecutionDates[item.ID]) }}</div>
           </div>
         </li>
       </ul>
@@ -96,7 +96,7 @@ export default {
         { key: "NumProcs", label: "Procedures" },
         { key: "Goroutines", label: "Goroutines" }
       ],
-      testTags: [{key1: "value1", key2: "value2"}] //TODO: remove
+      testTags: [{key1: "value1", key2: "value2"}] // Test data for demo purposes only!
     };
   },
   async created() {
@@ -118,11 +118,14 @@ export default {
       try {
         const pipelineResp = await this.$backendCli.getPipelines(this.selectedProject);
         this.pipelines = pipelineResp.data;
-        const exeDatesResp = await this.$backendCli.getLastExecutionDateForPipelinesInProject(this.selectedProject);
-        this.pipelineExecutionDates = exeDatesResp;
+        const exeDateResp = await this.$backendCli.getLastExecutionDateForPipelinesInProject(this.selectedProject);
+        this.pipelineExecutionDates = exeDateResp;
       } catch (e) {
         this.$notifyError(e);
       }
+    },
+    formatISODate(date) {
+      return formatISODate(date);
     }
   }
 };

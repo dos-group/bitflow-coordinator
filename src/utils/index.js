@@ -7,7 +7,11 @@ export function createCurrentTimeFormatted() {
 
 export function formatISODate(date) {
   if (date == null) { return "?" };
-  const dateAndTime = date.split("T");
-  const time = dateAndTime[1].split(".")[0];
-  return dateAndTime[0] + " " + time;
+  try {
+    const dateAndTime = date.split("T");
+    const time = dateAndTime[1].split(".")[0];
+    return dateAndTime[0] + " " + time;
+  } catch(e) {
+    return date;
+  }
 }
