@@ -15,4 +15,5 @@ public interface IInfoService {
 	List<AgentDTO> loadInfos();
 	Set<CapabilityDTO> loadAgentCapabilities(int agentId) throws BitflowException;
 	void registerAgent(String ip, int port) throws BitflowException;
+	List<CapabilityDTO> loadAvailableCapabilities() throws BitflowException;
 }
