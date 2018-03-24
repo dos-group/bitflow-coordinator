@@ -44,7 +44,6 @@ Vue.prototype.$notifyError = function (error) {
   });
 }
 Vue.prototype.$notify = Vue.prototype.$notifyInfo;
-//Vue.component('icon', Icon);
 
 /* eslint-disable no-new */
 new Vue({

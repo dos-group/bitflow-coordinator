@@ -22,8 +22,6 @@
     </transition>
     <transition v-if="!loggedInUser" name="fade" mode="out-in">
       <div style="text-align: center;">
-        <!--username: "john", password: "doe"<br>-->
-        <!--username: "tester", password: "test"-->
         <Login v-on:userHasLoggedIn="updateLoggedInUser"></Login>
       </div>
     </transition>
@@ -162,11 +160,6 @@
 
   .action-button {
     margin: 5px 5px 10px 5px;
-  }
-
-  .clickable-area {
-    margin-left: 1em;
-    cursor: pointer;
   }
 
   .error-message {
