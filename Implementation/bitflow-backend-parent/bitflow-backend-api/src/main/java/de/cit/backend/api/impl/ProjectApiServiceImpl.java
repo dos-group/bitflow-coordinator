@@ -20,6 +20,7 @@ import de.cit.backend.api.model.Project;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
+import de.cit.backend.mgmt.exceptions.ValidationException;
 import de.cit.backend.mgmt.helper.model.DeploymentResponse;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
@@ -67,6 +68,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			Validator.validate(Validator.getProjectValidators(pro));
 			pro = projectService.updateProject(id, pro);
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch(Exception e) {
 			return BitflowFrontendError.handleException(e);
 		}
@@ -79,6 +82,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			Validator.validate(Validator.getProjectValidators(pro));
 			pro = projectService.createProject(pro,securityContext.getUserPrincipal().getName());
 			return Response.ok().entity(new ProjectConverter().convertToFrontend(pro)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch(Exception e) {
 			return BitflowFrontendError.handleException(e);
 		}
@@ -117,8 +122,18 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 
 			PipelineDTO pip = converter.convertToBackend(body);
 			Validator.validate(Validator.getPipelineValidators(pip));
+			PipelineDTO tmp = null;
+			try {
+				tmp = pipelineService.loadPipelineByName(pip.getName());
+
+			} catch (BitflowException e) {
+				// pipeline was not found
+			}
+			if(tmp!=null) throw new ValidationException("A Pipeline with identical name does already exist.");
 			PipelineDTO savedPipe = pipelineService.saveNewPipeline(pip, id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
 		}
@@ -136,6 +151,8 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			Validator.validate(Validator.getPipelineValidators(pip));
 			pipelineService.updatePipeline(projectId, pipelineId, pip);
 			return Response.ok().build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
 		}

@@ -116,9 +116,18 @@ public class PersistenceService {
 	public ProjectDTO findProject(int projectId) {
 		return entityManager.find(ProjectDTO.class, projectId);
 	}
-	
+
 	public PipelineDTO findPipeline(int pipelineId) {
 		return entityManager.find(PipelineDTO.class, pipelineId);
+	}
+
+	public PipelineDTO findPipeline(String name) {
+		String hql = "select pipeline from PipelineDTO pipeline where pipeline.name = :name";
+		Query query = entityManager.createQuery(hql);
+		query.setParameter("name", name);
+
+		List<PipelineDTO> results = query.getResultList();
+		return results.size() != 1 ? null : results.get(0);
 	}
 
 	@Deprecated

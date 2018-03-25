@@ -2,6 +2,7 @@ package de.cit.backend.mgmt.validation;
 
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
+import de.cit.backend.mgmt.exceptions.ValidationException;
 
 public class PositiveNumberOrNullValidator extends Validator {
 
@@ -10,9 +11,9 @@ public class PositiveNumberOrNullValidator extends Validator {
 	}
 
 	@Override
-	public void validate() throws BitflowException {
+	public void validate() throws ValidationException {
 		if(this.objectToValidate != null && (Integer) this.objectToValidate < 0){
-			throw new BitflowException(ExceptionConstants.VALIDATION_ERROR, this.message);
+			throw new ValidationException(this.message);
 		}
 	}
 

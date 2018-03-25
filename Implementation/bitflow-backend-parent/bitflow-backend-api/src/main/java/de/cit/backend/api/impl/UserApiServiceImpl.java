@@ -13,6 +13,7 @@ import de.cit.backend.api.model.ChangePassword;
 import de.cit.backend.api.model.User;
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
+import de.cit.backend.mgmt.exceptions.ValidationException;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
 import de.cit.backend.mgmt.persistence.model.enums.UserRoleEnum;
 import de.cit.backend.mgmt.services.interfaces.IUserService;
@@ -45,7 +46,7 @@ public class UserApiServiceImpl extends UserApiService {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
 			target.setPassword(body.getNewPassword());
-			Validator.getUserValidators(target, true);
+			Validator.validate(Validator.getUserValidators(target, true));
 			userService.changePassword(id, securityContext.getUserPrincipal().getName(), body.getOldPassword(), body.getNewPassword());
 		} catch (BitflowException e) {
 			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
@@ -91,7 +92,7 @@ public class UserApiServiceImpl extends UserApiService {
 		try {
 			checkAuthorization(securityContext, body);
 			UserDTO user = new UserConverter().convertToBackend(body);
-			Validator.getUserValidators(user, true);
+			Validator.validate(Validator.getUserValidators(user, true));
 			user = userService.updateUser(id, user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (BitflowException e) {
@@ -109,16 +110,18 @@ public class UserApiServiceImpl extends UserApiService {
 				throw new IllegalArgumentException("Password must be set.");
 			}
 			user.setPassword(body.getPassword());
+			UserDTO tmp = null;
 			try {
-				userService.loadUser(user.getName());
-				// no exception thrown so user was found
-				throw new IllegalArgumentException("Specified username is already registered.");
+				tmp = userService.loadUser(user.getName());
 			} catch (BitflowException e) {
 				// user was not found
 			}
-			Validator.getUserValidators(user, true);
+			if(tmp!=null) throw new ValidationException("Specified username is already registered.");
+			Validator.validate(Validator.getUserValidators(user, true));
 			user = userService.createUser(user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
+		} catch (BitflowException e) {
+			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
 			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
 		}

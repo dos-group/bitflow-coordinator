@@ -1,10 +1,12 @@
 package de.cit.backend.mgmt.validation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
+import de.cit.backend.mgmt.exceptions.ValidationException;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.persistence.model.ConfigurationDTO;
@@ -24,7 +26,7 @@ public abstract class Validator {
 		this.objectToValidate = obj;
 	}
 	
-	public abstract void validate() throws BitflowException;
+	public abstract void validate() throws ValidationException;
 	
 	public static List<Validator> getUserValidators(UserDTO user, boolean validatePwd){
 		List<Validator> validators = new ArrayList<>();
@@ -104,9 +106,21 @@ public abstract class Validator {
 		return validators;
 	}
 	
-	public static void validate(List<Validator> validators) throws BitflowException {
+	public static void validate(List<Validator> validators) throws ValidationException {
+		final List<ValidationException> exceptions = new LinkedList<>();
 		for(Validator val : validators){
-			val.validate();
+			try {
+				val.validate();
+			} catch (final ValidationException e) {
+				exceptions.add(e);
+			}
 		}
+		if(exceptions.isEmpty()) {
+			return;
+		}
+		if(exceptions.size()==1) {
+			throw exceptions.get(0);
+		}
+		throw new ValidationException(exceptions);
 	}
 }

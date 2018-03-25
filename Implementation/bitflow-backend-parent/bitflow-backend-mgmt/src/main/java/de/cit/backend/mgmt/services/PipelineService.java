@@ -71,7 +71,7 @@ public class PipelineService implements IPipelineService {
 		throw new BitflowException(ExceptionConstants.PIPELINE_VALIDATION_ERROR, 
 				"There is a stepnumber referenced, that is not assigned to any pipeline step!");
 	}
-	
+
 	@Override
 	public PipelineDTO loadPipelineFromProject(int projectId, int pipelineId) throws BitflowException {
 		ProjectDTO pro = persistence.findProject(projectId);
@@ -83,7 +83,7 @@ public class PipelineService implements IPipelineService {
 		if(pipe == null){
 			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, PIPELINE_ERROR_OBJECT);
 		}
-		
+
 		for (PipelineStepDTO step : pipe.getPipelineSteps()) {
 			Hibernate.initialize(step.getSuccessors());
 		}
@@ -92,6 +92,15 @@ public class PipelineService implements IPipelineService {
 		} else {
 			throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 		}
+	}
+
+	@Override
+	public PipelineDTO loadPipelineByName(String name) throws BitflowException {
+		PipelineDTO pip = persistence.findPipeline(name);
+		if(pip == null){
+			throw new BitflowException(ExceptionConstants.OBJECT_NOT_FOUND_ERROR, ProjectService.PROJECT_ERROR_OBJECT);
+		}
+		return pip;
 	}
 
 	@Override

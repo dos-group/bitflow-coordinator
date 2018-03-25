@@ -1,6 +1,10 @@
 package de.cit.backend.mgmt.exceptions;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -12,10 +16,17 @@ public class BitflowFrontendError implements Serializable {
 	
 	private int errorCode;
 	private String errorMessage;
+
+	private List<String> validationErrors;
 	
 	BitflowFrontendError(BitflowException exception){
 		this.errorCode = exception.getErrorCode();
 		this.errorMessage = exception.getMessage();
+		if(exception instanceof ValidationException) {
+			System.out.println("is ValidationException");
+			log.warn("is ValidationException");
+			this.validationErrors = Arrays.asList(((ValidationException) exception).getValidationMessages());
+		}
 	}
 
 	public int getErrorCode() {
@@ -32,6 +43,15 @@ public class BitflowFrontendError implements Serializable {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+
+	public List<String> getValidationErrors() {
+		return this.validationErrors;
+	}
+
+	public void setValidationErrors(final List<String> validationErrors) {
+		this.validationErrors = validationErrors;
 	}
 	
 	public static Response handleException(Exception ex){
