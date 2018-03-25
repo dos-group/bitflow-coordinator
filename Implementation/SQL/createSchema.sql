@@ -134,3 +134,10 @@ Create Table CONFIGURATION(
 	PRIMARY KEY (ID),
 	UNIQUE (CONFIG_KEY)
 );
+
+-- Configuration
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Basically the port range for the proxy tcp sockets.", "BITFLOW_PROXY_PORT_RETRY", "100");
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("The port on wich to begin to deploy the proxy tcp sockets", "BITFLOW_PROXY_PORT", "60001");
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Maximum number of agents, a pipeline can be distributed on", "BITFLOW_MAX_AGENT_DIST", "1");
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the agents availability (in seconds)", "BITFLOW_MONITOR_INTERVAL", "30");
+INSERT INTO `CONFIGURATION` (`description`, `config_key`, `config_value`) VALUES ("Interval for checking the status of a pipeline exectution", "BITFLOW_PIPELINE_MONITOR_INTERVAL", "30");

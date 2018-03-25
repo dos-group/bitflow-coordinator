@@ -13,7 +13,7 @@ import de.cit.backend.api.CapabilitiesApiService;
 import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.converter.CapabilityConverter;
 import de.cit.backend.api.model.Capability;
-import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
 import de.cit.backend.mgmt.services.interfaces.IInfoService;
 
@@ -38,10 +38,8 @@ public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
 			List<CapabilityDTO> capa = infoService.loadAvailableCapabilities();
 			List<Capability> frontendcapa = new CapabilityConverter().convertToFrontend(capa);
 			return Response.ok().entity(frontendcapa).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(500).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 
@@ -51,10 +49,8 @@ public class CapabilitiesApiServiceImpl extends CapabilitiesApiService {
 			Set<CapabilityDTO> capa = infoService.loadAgentCapabilities(id);
 			List<Capability> frontendcapa = new CapabilityConverter().convertToFrontend(capa);
 			return Response.ok().entity(frontendcapa).build();
-		} catch (BitflowException e) {
-			return Response.status(e.getHttpStatus()).entity(e.toFrontendFormat()).build();
 		} catch (Exception e) {
-			return Response.status(500).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 }

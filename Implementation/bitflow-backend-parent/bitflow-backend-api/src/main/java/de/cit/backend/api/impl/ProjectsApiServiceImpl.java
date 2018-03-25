@@ -12,7 +12,7 @@ import de.cit.backend.api.NotFoundException;
 import de.cit.backend.api.ProjectsApiService;
 import de.cit.backend.api.converter.ProjectConverter;
 import de.cit.backend.api.model.Project;
-import de.cit.backend.mgmt.exceptions.BitflowException;
+import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.services.interfaces.IProjectService;
 
@@ -38,7 +38,7 @@ public class ProjectsApiServiceImpl extends ProjectsApiService {
 			List<Project> frontendProjects = new ProjectConverter().convertToFrontend(pros);
 			return Response.ok().entity(frontendProjects).build();
 		} catch (Exception e) {
-			return Response.status(400).entity(new BitflowException(e).toFrontendFormat()).build();
+			return BitflowFrontendError.handleException(e);
 		}
 	}
 }

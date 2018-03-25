@@ -1,11 +1,8 @@
 package de.cit.backend.mgmt.validation;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import de.cit.backend.mgmt.exceptions.BitflowException;
-import de.cit.backend.mgmt.exceptions.BitflowFrontendError;
 import de.cit.backend.mgmt.exceptions.ValidationException;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
@@ -107,7 +104,7 @@ public abstract class Validator {
 	}
 	
 	public static void validate(List<Validator> validators) throws ValidationException {
-		final List<ValidationException> exceptions = new LinkedList<>();
+		final List<ValidationException> exceptions = new ArrayList<>();
 		for(Validator val : validators){
 			try {
 				val.validate();

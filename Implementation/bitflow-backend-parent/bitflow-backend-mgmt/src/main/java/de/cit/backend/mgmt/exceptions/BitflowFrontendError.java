@@ -1,9 +1,7 @@
 package de.cit.backend.mgmt.exceptions;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;

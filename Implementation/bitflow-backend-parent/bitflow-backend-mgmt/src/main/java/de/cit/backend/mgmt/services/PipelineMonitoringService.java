@@ -16,6 +16,7 @@ import de.cit.backend.agent.Configuration;
 import de.cit.backend.agent.api.PipelineApi;
 import de.cit.backend.agent.api.model.PipelineResponse;
 import de.cit.backend.mgmt.helper.model.DeploymentInformation;
+import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
 import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
@@ -25,23 +26,12 @@ import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
 public class PipelineMonitoringService {
 
 	private static final Logger log = Logger.getLogger(PipelineMonitoringService.class);
-	private static final int QUERY_PERIOD = 30000;
+	private static final int QUERY_PERIOD = 30;
 	
 	@Inject
 	private PersistenceService persistence;
-	
-	@Asynchronous
-	public void monitorPipeline(int id){
-		for(int i = 0; i<20; i++){
-			try {
-				Thread.sleep(10000);
-				log.info("Monitor " + id);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
+	@Inject
+	private ConfigurationService config;
 
 	@Asynchronous
 	public void monitorPipeline(DeploymentInformation[] deployment, PipelineHistoryDTO hist) {
@@ -78,7 +68,8 @@ public class PipelineMonitoringService {
 			}
 			
 			try {
-				Thread.sleep(QUERY_PERIOD);
+				int sleepSeconds = (int) config.getConfigByKey(ConfigurationService.CONFIG_PIPELINE_MONITOR_INTERVAL, QUERY_PERIOD);
+				Thread.sleep(sleepSeconds * 1000);
 			} catch (InterruptedException e) {
 				log.error(e);
 			}

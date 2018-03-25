@@ -153,7 +153,7 @@ public class PersistenceAccessTest {
 	public void getConfigTest(){
 		String hqlQuery = "SELECT conf FROM ConfigurationDTO conf WHERE conf.configKey = :key";
 		Query query = em.createQuery(hqlQuery);
-		query.setParameter("key", ConfigurationService.CONFIG_MONITOR_INTERVAL);
+		query.setParameter("key", ConfigurationService.CONFIG_AGENT_MONITOR_INTERVAL);
 		
 		System.out.println(((ConfigurationDTO)query.getSingleResult()).getConfigValue());
 	}
