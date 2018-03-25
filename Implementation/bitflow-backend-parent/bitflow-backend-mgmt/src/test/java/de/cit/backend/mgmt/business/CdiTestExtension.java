@@ -17,30 +17,22 @@ import javax.persistence.Persistence;
 
 
 /**
- * Klasse ist eine CDI-Erweiterung, die einen EntityManager erzeugt und in alle DAOs injiziert. Auf diese Weise koennen die Services ausserhalb des EJB-Containers getestet werden.
+ * CDI extension to intercept the injection of the entitymanager.
+ * This way we inject a costum entitymanager representing a local in-memory database instead of the production db.
  * 
  * @author Sven Carlin
  * 
  */
 public class CdiTestExtension implements Extension {
 
-    public static final String CONN_URI = "jdbc:h2:mem:test";
     public static final String PERSISTENCE_UNIT_NAME = "bitflow-backend-mgmt-test";
     public static final String FIELD_NAME_ENTITYMANAGER = "entityManager";
     
     public static final String CLASS_NAME_PERSISTENCE_SERVICE = "PersistenceService";
     public static final String CLASS_NAME_CONFIG_SERVICE = "ConfigurationService";
     
-    /**
-     * Singleton eines EntityManagers
-     */
     private static EntityManager emInstance;
     
-    /**
-     * Liefert einen EntityManger, erzeugt ggf. diesen zuvor.
-     * 
-     * @return den EintityManager
-     */
     public EntityManager getEntityManager() {
         synchronized (CdiTestExtension.class) {
             if (emInstance == null) {
@@ -54,7 +46,7 @@ public class CdiTestExtension implements Extension {
     <X> void processInjectionTarget(@Observes ProcessInjectionTarget<X> pit) {
 
         String name = pit.getAnnotatedType().getJavaClass().getName();
-        if(isEntityManagerInjection(name)){
+        if(needsEntityManagerInjection(name)){
             injectEntityManager(pit);
         }
     }
@@ -67,12 +59,11 @@ public class CdiTestExtension implements Extension {
             final Field field = at.getJavaClass().getDeclaredField(FIELD_NAME_ENTITYMANAGER);
             final Object value = getEntityManager();
             field.setAccessible(true);
-            //Feld holen, entityManager erzeugen un target wrappen
             
             pit.setInjectionTarget(getInjectionTarget(it, field, value));
             
         } catch (NoSuchFieldException nsfe) {
-            //wenn kein Feld mit Name 'entityManager' existiert, wird auch keiner injiziert, aber auch kein Fehler geworfen
+            //if there is on field 'entityManager', do not throw an exception
         }
     }
 
@@ -125,7 +116,7 @@ public class CdiTestExtension implements Extension {
         return wrapped;
     }
 
-    private boolean isEntityManagerInjection(String name) {
+    private boolean needsEntityManagerInjection(String name) {
         return name.endsWith(CLASS_NAME_PERSISTENCE_SERVICE) || name.endsWith(CLASS_NAME_CONFIG_SERVICE);
     }
 }

@@ -62,4 +62,9 @@ public class InfoService implements IInfoService {
 		persistence.saveObject(agent);
 	}
 
+	@Override
+	public List<CapabilityDTO> loadAvailableCapabilities() throws BitflowException {
+		return persistence.loadAvailableCapabilities();
+	}
+
 }

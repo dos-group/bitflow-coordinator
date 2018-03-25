@@ -63,6 +63,13 @@ public class PersistenceService {
 		return entityManager.find(AgentDTO.class, agentId);
 	}
 
+	public List<CapabilityDTO> loadAvailableCapabilities() {
+		String hqlQuery = "SELECT cap FROM CapabilityDTO cap";
+		Query query = entityManager.createQuery(hqlQuery,CapabilityDTO.class);
+		List<CapabilityDTO> results = query.getResultList();
+		return results;
+	}
+	
 	public CapabilityDTO findCapability(int capabilityId){
 		return entityManager.find(CapabilityDTO.class, capabilityId);
 	}

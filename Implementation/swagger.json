@@ -719,6 +719,28 @@ paths:
           description: "Common infos"
           schema:
             $ref: "#/definitions/Info"
+  /capabilities:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query all available capabilities"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns information about the capabilities.'
+      responses:
+        200:
+          description: "Available capabilities"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Capability"
+        500:
+          description: "If an unexpected error occurs."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
   /capabilities/{id}:
     get:
       tags: 

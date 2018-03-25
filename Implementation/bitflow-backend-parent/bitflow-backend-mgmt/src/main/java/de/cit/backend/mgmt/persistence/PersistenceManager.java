@@ -4,6 +4,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+/**
+ * Use PersistenceService instead
+ * 
+ * @author Sven
+ *
+ */
 @Deprecated
 public class PersistenceManager {
 
