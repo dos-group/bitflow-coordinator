@@ -105,6 +105,8 @@ public class PipelineApiTest {
 	@Test
 	public void testDeploymentScript(){
 		DeploymentInformation deploy = new DeploymentInformation(1);
+		deploy.deployOnAgent(getTestAgent(), 60000);
+		
 		String script = "127.0.0.1 -> avg() -> output.csv";
 		deploy.appendToScript(script);
 		
@@ -113,16 +115,19 @@ public class PipelineApiTest {
 	
 	@Test
 	public void testDeploymentScript2(){
-		AgentDTO agent = new AgentDTO();
-		agent.setIpAddress("127.0.0.1");
-		agent.setPort((short)8082);
-		
 		DeploymentInformation deploy = new DeploymentInformation(1);
 		String script = DeploymentInformation.PLACEHOLDER_SOURCE + " -> avg() -> " + DeploymentInformation.PLACEHOLDER_SINK;
 		deploy.appendToScript(script);
-		deploy.deployOnAgent(agent, 60000);
+		deploy.deployOnAgent(getTestAgent(), 60000);
 		
 		Assert.assertEquals("listen://127.0.0.1:60001 -> avg() -> proxyIP", deploy.getFormattedScript(1, "proxyIP"));
+	}
+	
+	private AgentDTO getTestAgent(){
+		AgentDTO agent = new AgentDTO();
+		agent.setIpAddress("127.0.0.1");
+		agent.setPort((short)8082);
+		return agent;
 	}
 	
 }

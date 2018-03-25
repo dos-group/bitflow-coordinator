@@ -7,6 +7,7 @@ import de.cit.backend.mgmt.persistence.model.AgentDTO;
 
 public class DeploymentInformation {
 
+	public static final String LOCAL_IP = "127.0.0.1";
 	public static final String PLACEHOLDER_SOURCE = "%source%";
 	public static final String PLACEHOLDER_SINK = "%sink%";
 	public static final String HTTP_PREFIX = "http://";
@@ -94,17 +95,30 @@ public class DeploymentInformation {
 		return tcpIP + ":" + (tcpPort + i);
 	}
 	
+	public String getLocalTCPAdress(int i){
+		return LOCAL_IP + ":" + (tcpPort + i);
+	}
+	
+	private String getSinkDef(String sinkIpAndPort) {
+		if(sinkIpAndPort.contains(this.tcpIP)){
+			//this pipeline step runs on same machine as the successor
+			return LOCAL_IP + ":" + extractPort(sinkIpAndPort);
+		}else{
+			return sinkIpAndPort;
+		}
+	}
+
 	public String getFormattedScript(int portIndex, String... sinks){
 		String script = getScript();
 		if(sinks != null){
 			for(int i=0;i<sinks.length;i++){
-				script = script.replaceFirst(PLACEHOLDER_SINK, sinks[i]);
+				script = script.replaceFirst(PLACEHOLDER_SINK, getSinkDef(sinks[i]));
 			}
 		}
-		script = script.replaceFirst(PLACEHOLDER_SOURCE, LISTEN_PREFIX + getAdjustedTCPAdress(portIndex));
+		script = script.replaceFirst(PLACEHOLDER_SOURCE, LISTEN_PREFIX + getLocalTCPAdress(portIndex));
 		return script;
 	}
-	
+
 	public String getFormattedScript(){
 		return getFormattedScript(this.portIndex, this.sinkParams);
 	}
@@ -159,5 +173,9 @@ public class DeploymentInformation {
 			return TCP_LIMIT + this.tcpLimit;//-tcp-limit 1
 		}
 		return null;
+	}
+	
+	public static String extractPort(String ipAndPort) {
+		return ipAndPort.substring(ipAndPort.indexOf(":") + 1);
 	}
 }
