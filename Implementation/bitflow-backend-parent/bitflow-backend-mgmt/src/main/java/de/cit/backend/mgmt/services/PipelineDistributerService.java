@@ -22,16 +22,14 @@ import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ExceptionConstants;
 import de.cit.backend.mgmt.helper.model.DeploymentInformation;
 import de.cit.backend.mgmt.helper.model.DeploymentResponse;
-import de.cit.backend.mgmt.helper.service.PartialScriptGeneratorSimple;
-import de.cit.backend.mgmt.helper.service.PipelineDistributer2;
-import de.cit.backend.mgmt.helper.service.PipelineDistributer3;
+import de.cit.backend.mgmt.helper.service.PartialScriptGenerator;
+import de.cit.backend.mgmt.helper.service.PipelineDistributer;
 import de.cit.backend.mgmt.helper.service.ScriptGenerator;
 import de.cit.backend.mgmt.persistence.ConfigurationService;
 import de.cit.backend.mgmt.persistence.PersistenceService;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineHistoryDTO;
-import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.enums.AgentState;
 import de.cit.backend.mgmt.persistence.model.enums.PipelineStateEnum;
 
@@ -71,71 +69,30 @@ public class PipelineDistributerService {
 		return list;
 	}
 	
-	public PipelineDTO suggestPipelineDistribution(PipelineDTO pipeline){
-		if(idleAgents.size() < maxSplit){
-			PipelineDistributer2.distributePipeline(pipeline, idleAgents.size());
-		}else{
-			PipelineDistributer2.distributePipeline(pipeline, maxSplit);
-		}
-		assignAgentsToPipeline(pipeline);
-		return pipeline;
-	}
-	
-	private void assignAgentsToPipeline(PipelineDTO pipeline){
-		Map<Integer, Integer> agentMap = new HashMap<>();
-		int index = 0;
-		for(PipelineStepDTO step : pipeline.getPipelineSteps()){
-			if(!agentMap.keySet().contains(step.getAgentAdvice())){
-				agentMap.put(step.getAgentAdvice(), index);
-				index++;
-			}
-			step.setAgent(idleAgents.get(agentMap.get(step.getAgentAdvice())));
-		}
-		agentMap.clear();
-	}
-	
-	public PipelineResponse deployPipeline(PipelineDTO pipeline){
-		if(pipeline.getPipelineSteps().isEmpty()){
-			return null;
-		}
-		AgentDTO agent = pipeline.getPipelineSteps().get(0).getAgent();
-		if(agent == null){
-			log.error("No agent seems to be assigned to this pipeline!");
-		}
-		
-		ApiClient conf = Configuration.getDefaultApiClient();
-		conf.getHttpClient().setConnectTimeout(10, TimeUnit.SECONDS);
-		conf.setBasePath("http://" + agent.getIpAddress() + ":" + agent.getPort());
-		
-		PipelineApi pipelineApi = new PipelineApi(conf);
-		log.debug("Requesting agent at " + conf.getBasePath());
-		
-		try {
-			PipelineResponse resp = pipelineApi.pipelinePost(ScriptGenerator.generateScriptForPipeline(pipeline), null, null);
-			return resp;
-		} catch (ApiException e) {
-			log.error(e);
-		}
-		return null;
-	}
-	
+	/**
+	 * Deploys the given Pipeline. If possible the pipeline will be distributed onto multiple agents.
+	 * 
+	 * @param pipeline
+	 * @return
+	 * @throws BitflowException
+	 */
 	public DeploymentResponse distributedDeployment(PipelineDTO pipeline) throws BitflowException{
 		if(pipeline.getPipelineSteps().isEmpty()){
 			return null;
 		}
 		init();
-		//suggestPipelineDistribution(pipeline);
-		PipelineDistributer3 distributer;
+
+		PipelineDistributer distributer;
 		if(idleAgents.size() < maxSplit){
-			distributer = new PipelineDistributer3(idleAgents.size());
+			distributer = new PipelineDistributer(idleAgents.size());
 		}else{
-			distributer = new PipelineDistributer3(maxSplit);
+			distributer = new PipelineDistributer(maxSplit);
 		}
-		
+		//calculate a distribution
 		distributer.distributePipeline(pipeline);
-		PartialScriptGeneratorSimple scriptGen = new PartialScriptGeneratorSimple();
+		//generate partial scripts for this distribution
+		PartialScriptGenerator scriptGen = new PartialScriptGenerator();
 		DeploymentInformation[] deployment = scriptGen.generateParallelScripts(pipeline);
-				//PartialScriptGenerator.generateParallelScripts(pipeline);
 		
 		try{
 			deployPipelines(deployment);
@@ -144,7 +101,6 @@ public class PipelineDistributerService {
 			log.info("Doing complete deployment instead.");
 			deployment = deployOnSingleAgent(pipeline);
 		}
-		//assignAgentsToPipeline(pipeline);
 		
 		PipelineHistoryDTO hist = createPipelineHistory(pipeline);
 		
@@ -154,7 +110,6 @@ public class PipelineDistributerService {
 	}
 
 	private void deployPipelines(DeploymentInformation[] deployment) throws BitflowException {
-		
 		Map<Integer, String> agentMapping = new HashMap<>();
 		
 		for(DeploymentInformation info : deployment){
@@ -163,10 +118,13 @@ public class PipelineDistributerService {
 		
 		int i= 0;
 		while(i < deployment.length){
+			
 			for(DeploymentInformation info : deployment){
 				if(agentMapping.containsKey(info.getIdentifier())){
 					continue;
 				}
+				//only assign a pipeline step to an agent, if all its dependencies are already assigned
+				//dependencies meaning its successors
 				if(allDependenciesFulfilled(agentMapping, info)){
 					String proxyAdress = findPortAndDeploy(info, agentMapping);
 					agentMapping.put(info.getIdentifier(), proxyAdress);
