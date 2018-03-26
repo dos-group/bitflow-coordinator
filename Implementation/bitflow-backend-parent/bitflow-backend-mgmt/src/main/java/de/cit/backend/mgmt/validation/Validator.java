@@ -3,6 +3,7 @@ package de.cit.backend.mgmt.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.cit.backend.mgmt.exceptions.BitflowException;
 import de.cit.backend.mgmt.exceptions.ValidationException;
 import de.cit.backend.mgmt.persistence.model.AgentDTO;
 import de.cit.backend.mgmt.persistence.model.CapabilityDTO;
@@ -12,6 +13,7 @@ import de.cit.backend.mgmt.persistence.model.PipelineParameterDTO;
 import de.cit.backend.mgmt.persistence.model.PipelineStepDTO;
 import de.cit.backend.mgmt.persistence.model.ProjectDTO;
 import de.cit.backend.mgmt.persistence.model.UserDTO;
+import de.cit.backend.mgmt.services.interfaces.IPipelineService;
 
 public abstract class Validator {
 
@@ -25,7 +27,7 @@ public abstract class Validator {
 	
 	public abstract void validate() throws ValidationException;
 	
-	public static List<Validator> getUserValidators(UserDTO user, boolean validatePwd){
+	public static List<Validator> getUserValidators(UserDTO user, boolean validatePwd, boolean mustNotExist){
 		List<Validator> validators = new ArrayList<>();
 		//validators.add(new NotNullValidator(user.getRegisteredSince(), "Registration date must be set."));
 		//validators.add(new NotNullValidator(user.getRole(), "User role must be set."));
@@ -37,7 +39,9 @@ public abstract class Validator {
 			validators.add(new NotEmptyValidator(user.getPassword(), "Password must be provided."));
 			validators.add(new StringLengthValidator(user.getPassword(), "Limit for password is 128 characters.", 128));
 		}
-
+		if(mustNotExist) {
+			validators.add(new UniqueUsernameValidator(user.getName(), "Specified username is already registered."));
+		}
 		return validators;
 	}
 
@@ -68,10 +72,13 @@ public abstract class Validator {
 		return validators;
 	}
 
-	public static List<Validator> getPipelineValidators(PipelineDTO pipeline){
+	public static List<Validator> getPipelineValidators(PipelineDTO pipeline, boolean mustNotExist){
 		List<Validator> validators = new ArrayList<>();
 		validators.add(new StringLengthValidator(pipeline.getName(), "Limit for name is 256 characters.", 256));
 		validators.add(new StringLengthValidator(pipeline.getStatus(), "Limit for status is 32 characters.", 32));
+		if(mustNotExist) {
+			validators.add(new UniquePipelineNameValidator(pipeline.getName(), "A Pipeline with identical name does already exist."));
+		}
 		return validators;
 	}
 

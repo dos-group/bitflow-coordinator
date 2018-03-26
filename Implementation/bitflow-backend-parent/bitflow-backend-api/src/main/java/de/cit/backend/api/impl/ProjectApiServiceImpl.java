@@ -117,15 +117,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			checkIfProjectMember(id, securityContext.getUserPrincipal().getName());
 
 			PipelineDTO pip = converter.convertToBackend(body);
-			Validator.validate(Validator.getPipelineValidators(pip));
-			PipelineDTO tmp = null;
-			try {
-				tmp = pipelineService.loadPipelineByName(pip.getName());
-
-			} catch (BitflowException e) {
-				// pipeline was not found
-			}
-			if(tmp!=null) throw new ValidationException("A Pipeline with identical name does already exist.");
+			Validator.validate(Validator.getPipelineValidators(pip, true));
 			PipelineDTO savedPipe = pipelineService.saveNewPipeline(pip, id);
 			return Response.ok().entity(converter.convertToFrontend(savedPipe, id)).build();
 		} catch (Exception e) {
@@ -142,7 +134,7 @@ public class ProjectApiServiceImpl extends ProjectApiService {
 			checkIfProjectMember(projectId, securityContext.getUserPrincipal().getName());
 
 			PipelineDTO pip = converter.convertToBackend(body);
-			Validator.validate(Validator.getPipelineValidators(pip));
+			Validator.validate(Validator.getPipelineValidators(pip, false));
 			pipelineService.updatePipeline(projectId, pipelineId, pip);
 			return Response.ok().build();
 		} catch (Exception e) {

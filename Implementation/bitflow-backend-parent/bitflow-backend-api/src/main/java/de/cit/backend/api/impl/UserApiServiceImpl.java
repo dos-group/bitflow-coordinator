@@ -45,7 +45,7 @@ public class UserApiServiceImpl extends UserApiService {
 				throw new BitflowException(ExceptionConstants.UNAUTHORIZED_ERROR);
 			}
 			target.setPassword(body.getNewPassword());
-			Validator.validate(Validator.getUserValidators(target, true));
+			Validator.validate(Validator.getUserValidators(target, true, false));
 			userService.changePassword(id, securityContext.getUserPrincipal().getName(), body.getOldPassword(), body.getNewPassword());
 		} catch (Exception e) {
 			return BitflowFrontendError.handleException(e);
@@ -83,7 +83,7 @@ public class UserApiServiceImpl extends UserApiService {
 		try {
 			checkAuthorization(securityContext, body);
 			UserDTO user = new UserConverter().convertToBackend(body);
-			Validator.validate(Validator.getUserValidators(user, true));
+			Validator.validate(Validator.getUserValidators(user, true, false));
 			user = userService.updateUser(id, user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (Exception e) {
@@ -97,14 +97,7 @@ public class UserApiServiceImpl extends UserApiService {
 			UserDTO user = new UserConverter().convertToBackend(body);
 			
 			user.setPassword(body.getPassword());
-			UserDTO tmp = null;
-			try {
-				tmp = userService.loadUser(user.getName());
-			} catch (BitflowException e) {
-				// user was not found
-			}
-			if(tmp!=null) throw new ValidationException("Specified username is already registered.");
-			Validator.validate(Validator.getUserValidators(user, true));
+			Validator.validate(Validator.getUserValidators(user, true, true));
 			user = userService.createUser(user);
 			return Response.ok().entity(new UserConverter().convertToFrontend(user)).build();
 		} catch (Exception e) {

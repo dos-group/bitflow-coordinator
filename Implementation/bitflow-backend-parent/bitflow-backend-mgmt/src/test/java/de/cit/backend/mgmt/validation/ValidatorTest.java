@@ -18,26 +18,26 @@ public class ValidatorTest {
 	@Test
 	public void testValidUser() throws ValidationException {
 		final UserDTO user = createTestUser("TestAdmin", "test@test.com", "pwd");
-		Validator.validate(Validator.getUserValidators(user, true));
+		Validator.validate(Validator.getUserValidators(user, true, false));
 	}
 
 	@Test(expected = ValidationException.class)
 	public void testUserWithEmptyUsername() throws ValidationException {
 		final UserDTO user = createTestUser("", "test@test.com", "pwd");
-		Validator.validate(Validator.getUserValidators(user, true));
+		Validator.validate(Validator.getUserValidators(user, true, false));
 	}
 
 	@Test(expected = ValidationException.class)
 	public void testUserWithEmptyPassword() throws ValidationException {
 		final UserDTO user = createTestUser("TestAdmin", "test@test.com", "");
-		Validator.validate(Validator.getUserValidators(user, true));
+		Validator.validate(Validator.getUserValidators(user, true, false));
 	}
 
 	@Test
 	public void testUserWithEmptyUsernameAndEmptyPassword() throws ValidationException {
 		try {
 			final UserDTO user = createTestUser("", "test@test.com", "");
-			Validator.validate(Validator.getUserValidators(user, true));
+			Validator.validate(Validator.getUserValidators(user, true, false));
 		} catch (final ValidationException e) {
 			Assert.assertTrue(e.getValidationMessages().length==2);
 			return;
@@ -49,7 +49,7 @@ public class ValidatorTest {
 	public void testUserWithNullMainAndTooLongPassword() throws ValidationException {
 		try {
 			final UserDTO user = createTestUser("TestAdmin", null, LONG_STRING);
-			Validator.validate(Validator.getUserValidators(user, true));
+			Validator.validate(Validator.getUserValidators(user, true, false));
 		} catch (final ValidationException e) {
 			Assert.assertTrue(e.getValidationMessages().length==2);
 			return;
