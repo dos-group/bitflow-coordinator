@@ -1,0 +1,19 @@
+{  
+  "name": "Max Mustermann",
+  "email": "foo@bar.de",
+  "registeredSince": "149800"
+}
+
+{  
+  "name": "A fancy test project",
+  "creatorId": 0,
+  "createdAt": "149801",
+  "users": [{}]
+}
+
+{  
+  "name": "A fancy test pipeline",
+  "projectId": 0,
+  "lastChanged": "149802",
+  "pipelineSteps": [{}]
+}
