@@ -1,0 +1,1070 @@
+swagger: '2.0'
+info:
+  description: "This file defines all possible communication between bitflow frontend and backend."
+  version: 1.0.0
+  title: "Bitflow Backend API"
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    email: "sven.carlin@campus.tu-berlin.de"
+  license:
+    name: "Apache 2.0"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: "tba"
+basePath: "/bitflow"
+tags:
+- name: "project"
+  description: "Operations about projects"
+- name: "pipeline"
+  description: "Operations about pipelines"
+- name: "infos"
+  description: "Common operations"
+- name: "users"
+  description: "Operations regarding user managment"  
+schemes:
+- "http"
+securityDefinitions:
+  BasicAuth:
+    type: basic
+security:
+  - BasicAuth: []
+paths:
+  /projects:
+    get:
+      tags: 
+      - "project"
+      summary: "Query all projects assigned to the requesting user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query all projects assigned to the requesting user.'
+      responses:
+        200:
+          description: "Projects"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Project"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project:
+    post:
+      tags: 
+      - "project"
+      summary: "Create a new project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Create a new project.'
+      parameters:
+        - in: "body"
+          name: "project"
+          required: true
+          schema:
+            $ref: "#/definitions/Project"
+      responses:
+        200:
+          description: "Newly created project."
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "If the project validation failed"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{id}:
+    get:
+      tags: 
+      - "project"
+      summary: "Query information about the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Project infos"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    post:
+      tags: 
+      - "project"
+      summary: "Update an existing project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Update an existing project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - in: "body"
+        name: "project"
+        required: true
+        schema:
+          $ref: "#/definitions/Project"
+      responses:
+        200:
+          description: "If update was successful"
+        400:
+          description: "If the user validation failed"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    delete:
+      tags: 
+      - "project"
+      summary: "Delete specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Delete specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If project was deleted successfully"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{id}/users:
+    get:
+      tags: 
+      - "project"
+      summary: "Query all users with access to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns all users associated with the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Project infos"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/users/{userId}:
+    delete:
+      tags: 
+      - "project"
+      summary: "Removing a user from the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If user was removed successfully."
+        404:
+          description: "If the project or the user with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    post:
+      tags: 
+      - "project"
+      summary: "Adding a user to the specified project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "userId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        400:
+          description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{id}/pipelines:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Query all pipeline of this project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns all pipelines of the specified project.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipelines"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pipeline"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{id}/pipeline:
+    post:
+      tags: 
+      - "pipeline"
+      summary: "Create new pipeline for that project."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Create new pipeline for that project.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Pipeline"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If successful, the persisted Pipeline."
+          schema:
+            $ref: "#/definitions/Pipeline"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Query the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the pipeline from the specified project.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            $ref: "#/definitions/Pipeline"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    post:
+      tags: 
+      - "pipeline"
+      summary: "Update pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Updates specified pipeline.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/Pipeline"
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If successful."
+        400:
+          description: "If pipeline validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    delete:
+      tags: 
+      - "pipeline"
+      summary: "Delete the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Deletes the pipeline from the specified project.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}/start:
+    post:
+      tags: 
+      - "pipeline"
+      summary: "Start executing the specified pipeline."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Start executing the specified pipeline.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If pipeline started successfully"
+          schema:
+            $ref: "#/definitions/DeploymentInfo"
+        400:
+          description: "If pipeline execution failed on startup"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}/history:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Get execution history."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query the status, date and duration of each pipeline execution.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PipelineHistory"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /project/{projectId}/pipeline/{pipelineId}/history/last:
+    get:
+      tags: 
+      - "pipeline"
+      summary: "Get state of latest execution."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Get state of latest execution.'
+      parameters:
+      - name: "projectId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      - name: "pipelineId"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "Pipeline infos"
+          schema:
+            $ref: "#/definitions/PipelineHistory"
+        400:
+          description: "If the user has no access to that project"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /login:
+    post:
+      tags: 
+      - "users"
+      summary: "Verify the user, given by the auth header."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Verify the user, given by the auth header.'
+      responses:
+        200:
+          description: "logged in User"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "If login failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /users:
+    get:
+      tags: 
+      - "users"
+      summary: "Query all existing users."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Query all existing users.'
+      responses:
+        200:
+          description: "Users"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "If access was denied."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /user/{id}:
+    get:
+      tags: 
+      - "users"
+      summary: "Query an existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "User infos"
+          schema:
+            $ref: "#/definitions/User"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    delete:
+      tags: 
+      - "users"
+      summary: "Delete an existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+    post:
+      tags: 
+      - "users"
+      summary: "Update existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        400:
+          description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /user/{id}/changePassword:
+    post:
+      tags: 
+      - "users"
+      summary: "Update existing user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/ChangePassword"
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: "If successfully changed."
+        400:
+          description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        404:
+          description: "If the project with the given id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /user:
+    post:
+      tags: 
+      - "users"
+      summary: "Create new user."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns the specified user.'
+      security: []
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "The newly persisted user."
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "User validation failed."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /info:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query infos about the running process agents."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns information about the current backend infrastruccture: A list of available process agents and their current state.'
+      responses:
+        200:
+          description: "Common infos"
+          schema:
+            $ref: "#/definitions/Info"
+  /capabilities:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query all available capabilities"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      description: 'Returns information about the capabilities.'
+      responses:
+        200:
+          description: "Available capabilities"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Capability"
+        500:
+          description: "If an unexpected error occurs."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /capabilities/{id}:
+    get:
+      tags: 
+      - "infos"
+      summary: "Query capabilities of a specific agents"
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: integer
+        format: int32
+      description: 'Returns information about the specified agent and its capabilities.'
+      responses:
+        200:
+          description: "Common infos"
+          schema:
+            $ref: "#/definitions/Capabilities"
+        404:
+          description: "If the agent with the specified id does not exist."
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+  /register:
+    get:
+      tags: 
+      - "infos"
+      summary: "Register a new agent to the system."
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+      parameters:
+      - name: "ip"
+        in: "query"
+        required: true
+        type: string
+      - name: "port"
+        in: "query"
+        required: true
+        type: integer
+        format: int32
+      description: 'Register a new agent to the system.'
+      responses:
+        200:
+          description: "If registration succeeds, no further pay load."
+        400:
+          description: "If registration failed."
+definitions:
+  PipelineStep:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        description: 'ID from database'
+        example: 10012
+      Number:
+        type: integer
+        format: int32
+        description: 'pipeline-internal identifier. Must be unique only inside one pipeline'
+        example: 2
+      AgentId:
+        type: integer
+        format: int32
+        example: 15
+      Typ:
+        type: string
+        enum: [source, sink, operation]
+        example: "operation"
+      Content:
+        type: string
+        description: 'actual operation to be executed by that pipeline step; or a source/sink definition'
+        example: "avg"
+      Params:
+        type: array
+        items:
+          type: object
+        description: 'list of key-value pairs, optional with ID'
+        example: [{'paramKey':'paramValue', 'ID':'104'}]
+      Successors:
+        type: array
+        items:
+          type: integer
+          format: int32
+        description: 'list of immediate successor steps, referencing the Number field, NOT the ID'
+        example: [3,4]
+  Pipeline:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      Name:
+        type: string
+        example: "Example Pipeline"
+      Project:
+        $ref: "#/definitions/Project"
+      Sript:
+        type: string
+        example: "Dies -> Das -> Hier -> Und -> Da"
+      LastChanged:
+        type: string
+        format: date-time
+      PipelineSteps:
+        type: array
+        items:
+          $ref: "#/definitions/PipelineStep"
+  PipelineHistory:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 5
+      Status:
+        type: string
+        enum: [failed, finished, running, terminated]
+        example: "finished"
+      StartedAt:
+        type: string
+        format: date-time
+      FinishedAt:
+        type: string
+        format: date-time
+      Duration:
+        type: number
+        format: double
+      Script:
+        type: string
+        example: "source -> avg() -> sink"
+  User:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 5
+      Name:
+        type: string
+        example: "Achmed Schachbrett"
+      Email:
+        type: string
+        example: "achmed.schachbrett@test.de"
+      RegisteredSince:
+        type: string
+        format: date-time
+      Password:
+        type: string
+        description: "This is only to be used when creating a new user. If sending it with another request it will be ignored. This field will never be returned from backend."
+        example: "pwd"
+  Project:
+    type: object
+    properties:
+      ID:
+        type: integer
+        format: int32
+        example: 10
+      Name:
+        type: string
+        example: "Example Project"
+      CreateUser:
+        $ref: "#/definitions/User"
+      CreatedAt:
+        type: string
+        format: date-time
+      Users:
+        type: array
+        items:
+          $ref: "#/definitions/User"
+  Info:
+    type: object
+    properties:
+      NumberOfAgents:
+        type: integer
+        format: int32
+        example: 6
+      NumberOfOnlineAgents:
+        type: integer
+        format: int32
+        example: 3
+      NumberOfOfflineAgents:
+        type: integer
+        format: int32
+        example: 3
+      Agents:
+        type: array
+        items:
+          $ref: "#/definitions/Agent"
+  DeploymentInfo:
+    type: object
+    properties:
+      Status:
+        type: string
+        example: 'running'
+      HistoryID:
+        type: integer
+        format: int32
+        example: 6
+      PartialDeployments:
+        type: array
+        items:
+          $ref: "#/definitions/PartialDeployment"
+  PartialDeployment:
+    type: object
+    properties:
+      AgentAdress:
+        type: string
+        example: '127.0.0.1:8081'
+      PipelineIdOnAgent:
+        type: integer
+        format: int32
+        example: 6
+      PartialScript:
+        type: string
+        example: 'input.csv -> avg() -> 127.0.0.1:60001'
+  Agent:
+    type: object
+    properties:
+      Hostname:
+        type: string
+        example: "worker12"
+      Tags:
+        $ref: "#/definitions/Tag"
+      NumCores:
+        type: integer
+        format: int32
+        example: 6
+      TotalMem:
+        type: integer
+        format: int64
+        example: 456464
+      UsedCpuCores:
+        type: array
+        items:
+          type: number
+          format: double
+        example: [2.3, 4.6, 3.4567]
+      UsedCpu:
+        type: number
+        format: double
+        example: 2.3
+      UsedMem:
+        type: integer
+        format: int64
+        example: 65243
+      NumProcs:
+        type: integer
+        format: int32
+        example: 247
+      Goroutines:
+        type: integer
+        format: int32
+        example: 6
+      Status:
+        type: string
+        enum: [ONLINE, OFFLINE]
+        example: "ONLINE"
+  Capabilities:
+    type: object
+    properties:
+      AgentId:
+        type: integer
+        format: int64
+        example: 1
+      Capabilities:
+        type: array
+        items:
+          $ref: "#/definitions/Capability"
+  Capability:
+    type: object
+    properties:
+      Name:
+        type: string
+        example: "avg"
+      IsFork:
+        type: boolean
+        example: false
+      Description:
+        type: string
+        example: "Add an average metric for every incoming metric. Optional parameter: duration or number of samples. Optional parameters: [window]"
+      RequiredParams:
+        type: array
+        items:
+          type: string
+        example: []
+      OptionalParams:
+        type: array
+        items:
+          type: string
+        example: ["window"]
+  Tag:
+    type: object
+    properties:
+      resources:
+        type: string
+        example: "medium"
+      slots:
+        type: string
+        example: "6"
+  ErrorMessage:
+    type: object
+    properties:
+      errorCode:
+        type: integer
+        format: int32
+        example: 5
+      errorMessage:
+        type: string
+        example: "The specified User you requested does not exist."
+  ChangePassword:
+    type: object
+    properties:
+      oldPassword:
+        type: string
+        example: "oldPassword"
+      newPassword:
+        type: string
+        example: "newPassword"
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

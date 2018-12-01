@@ -1,8 +1,23 @@
-.DS_Store
-.idea/
 .cache
 .vscode/
 dist
 node_modules/
 npm-debug.log
 package-lock.json
+
+# Eclipse
+.classpath
+.project
+.settings/
+ 
+# Intellij
+.idea/
+*.iml
+*.iws
+ 
+# Mac
+.DS_Store
+ 
+# Maven
+target/
+
